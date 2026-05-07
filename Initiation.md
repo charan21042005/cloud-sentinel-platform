@@ -1,24 +1,27 @@
-# 🛡️ AI-Powered Cloud DevOps Incident Management Platform
+<p align="center">
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:FF9900,100:FFCC00&height=300&section=header&text=Initiation%20Phase&fontSize=80&animation=fadeIn&fontAlignY=38" width="100%" />
+</p>
 
-[![AWS](https://img.shields.io/badge/AWS-%23FF9900.svg?style=for-the-badge&logo=amazon-aws&logoColor=white)](https://aws.amazon.com/)
-[![Kubernetes](https://img.shields.io/badge/kubernetes-%23326ce5.svg?style=for-the-badge&logo=kubernetes&logoColor=white)](https://kubernetes.io/)
-[![Terraform](https://img.shields.io/badge/terraform-%235835CC.svg?style=for-the-badge&logo=terraform&logoColor=white)](https://www.terraform.io/)
-[![Jenkins](https://img.shields.io/badge/jenkins-%23D24939.svg?style=for-the-badge&logo=jenkins&logoColor=white)](https://www.jenkins.io/)
-[![Prometheus](https://img.shields.io/badge/Prometheus-E6522C?style=for-the-badge&logo=Prometheus&logoColor=white)](https://prometheus.io/)
+<h3 align="center">🚀 Project Vision & High-Level Design</h3>
+<p align="center"><strong>The blueprint for an industry-grade SRE platform</strong></p>
 
-> **Industry-Graded SRE & Observability Solution**
-> A production-ready platform designed to monitor, detect, and automatically recover from cloud infrastructure anomalies. Think of it as a **Mini-Datadog** tailored for modern DevOps workflows.
+<p align="center">
+  <img src="https://img.shields.io/badge/Phase-Initiation-blue?style=for-the-badge" alt="Initiation Phase" />
+  <img src="https://img.shields.io/badge/Complexity-9%2F10-red?style=for-the-badge" alt="Complexity" />
+  <img src="https://img.shields.io/badge/Status-Approved-brightgreen?style=for-the-badge" alt="Status" />
+</p>
 
 ---
 
-## 🚀 Overview
-Modern distributed systems fail. Whether it's a CPU spike, a pod crash, or a memory leak, downtime costs money. This platform provides an end-to-end Site Reliability Engineering (SRE) dashboard that doesn't just watch your system—it fixes it.
+## 🛡️ Overview
+
+Modern distributed systems fail. Whether it's a CPU spike, a pod crash, or a memory leak, downtime costs money. **Cloud Sentinel** is a production-ready Site Reliability Engineering (SRE) platform designed to monitor, detect, and automatically recover from cloud infrastructure anomalies. Think of it as a **Mini-Datadog** tailored for modern DevOps workflows.
 
 ### Core Capabilities:
-* **Real-time Monitoring:** Tracking pod health and API latency.
-* **Anomaly Detection:** Identifying CPU/Memory spikes before they cause outages.
-* **Automated Recovery:** Self-healing workflows for Kubernetes workloads.
-* **Centralized Observability:** Unified logs and metrics visualization.
+*   **Real-time Monitoring:** Tracking pod health and API latency.
+*   **Anomaly Detection:** Identifying CPU/Memory spikes before they cause outages.
+*   **Automated Recovery:** Self-healing workflows for Kubernetes workloads.
+*   **Centralized Observability:** Unified logs and metrics visualization.
 
 ---
 
@@ -49,8 +52,6 @@ graph TD
 
 ---
 
----
-
 ## 🛠️ Tech Stack & Tooling
 
 | Category | Tools |
@@ -77,43 +78,34 @@ graph TD
 
 ---
 
-## ☸️ Kubernetes Implementation Details
+## ☸️ Kubernetes Implementation
 This project leverages advanced K8s features to mimic a production environment:
 
-* **HPA (Horizontal Pod Autoscaler):** Automatically scales pods based on CPU/RAM metrics.
-* **Self-Healing:** Custom Liveness and Readiness probes for automated container restarts.
-* **ConfigMaps & Secrets:** Secure, decoupled environment and credential management.
-* **Ingress Controller:** Advanced traffic routing, load balancing, and SSL termination.
-
----
-
-## 📊 Monitoring & Observability
-* **Prometheus:** Scrapes pod metrics, API latency, and cluster health.
-* **Loki:** Aggregates logs from all microservices into a single, searchable pane.
-* **Grafana Dashboards:**
-    * **Cluster Health:** Real-time node status and pod distribution.
-    * **SRE Metrics:** Deployment tracking, error rates, and alert statistics.
+*   **HPA (Horizontal Pod Autoscaler):** Automatically scales pods based on CPU/RAM metrics.
+*   **Self-Healing:** Custom Liveness and Readiness probes for automated container restarts.
+*   **ConfigMaps & Secrets:** Secure, decoupled environment and credential management.
+*   **Ingress Controller:** Advanced traffic routing, load balancing, and SSL termination.
 
 ---
 
 ## 🔐 Security (DevSecOps)
-* **Least Privilege:** IAM roles strictly tailored for specific service needs.
-* **Secrets Management:** Sensitive data handled securely via Kubernetes Secrets.
-* **Authentication:** Secure JWT-based user authentication for the dashboard.
-* **Scanning:** Automated container vulnerability scanning within the CI/CD pipeline.
+*   **Least Privilege:** IAM roles strictly tailored for specific service needs.
+*   **Secrets Management:** Sensitive data handled securely via Kubernetes Secrets.
+*   **Authentication:** Secure JWT-based user authentication for the dashboard.
+*   **Scanning:** Automated container vulnerability scanning within the CI/CD pipeline.
 
 ---
 
 ## 📈 Project Value
-* **Estimated Complexity:** 9/10
-* **Resume Impact:** 10/10 (Screams Cloud/DevOps Engineer)
-* **Uniqueness:** Moves beyond basic CRUD into real-world distributed systems reliability.
+*   **Estimated Complexity:** 9/10
+*   **Resume Impact:** 10/10 (Screams Cloud/DevOps Engineer)
+*   **Uniqueness:** Moves beyond basic CRUD into real-world distributed systems reliability.
 
 ---
 
 <p align="center">
-  <b>Built for the Cloud. Optimized for Reliability.</b><br>
-  <sub>Designed by [Your Name] - 2026 DevOps Initiative</sub>
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:FF9900,100:FFCC00&height=100&section=footer" width="100%" />
+</p>DevOps Initiative</sub>
 </p>
 
 ---

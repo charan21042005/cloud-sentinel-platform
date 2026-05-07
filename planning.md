@@ -1,11 +1,19 @@
-# 🗺️ Project Execution Roadmap & Architecture
+<p align="center">
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:FF9900,100:FFCC00&height=300&section=header&text=Execution%20Roadmap&fontSize=80&animation=fadeIn&fontAlignY=38" width="100%" />
+</p>
 
-> **Internal Strategy Document** > This document outlines the technical implementation, deployment phases, and viva strategy for the AI-Powered Cloud DevOps Platform.
+<h3 align="center">🗺️ Project Execution Roadmap & Architecture</h3>
+<p align="center"><strong>Internal Strategy & Implementation Plan</strong></p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Phase-Planning-blue?style=for-the-badge" alt="Planning Phase" />
+  <img src="https://img.shields.io/badge/Architecture-EKS%20%2F%20k3s-brightgreen?style=for-the-badge" alt="Architecture" />
+  <img src="https://img.shields.io/badge/Workflow-CI%2FCD-orange?style=for-the-badge" alt="Workflow" />
+</p>
 
 ---
 
 ## 🏛️ Production-Grade Architecture
-### High-Level System Design
 
 ```mermaid
 graph TD
@@ -47,30 +55,13 @@ graph TD
 
 ---
 
-## 📂 Suggested Repository Structure
-
-```text
-cloud-devops-platform/
-├── frontend/             # React + Tailwind Source
-├── backend/              # FastAPI Source
-├── monitoring/           # Prometheus/Grafana/Loki Configs
-├── kubernetes/           # K8s Manifests (Deployments, HPA, Ingress)
-├── terraform/            # IaC (VPC, EKS, RDS Modules)
-├── jenkins/              # Jenkinsfile & Pipeline Scripts
-├── docker/               # Master Dockerfiles & Build Scripts
-├── docs/                 # Architecture, Diagrams, Screenshots
-└── README.md             # Project Landing Page
-```
-
----
-
 ## 🚀 Advanced Features (Differentiators)
 
-* **Auto-Healing:** Self-correcting infrastructure using **Kubernetes Liveness and Readiness Probes** to ensure 100% uptime.
-* **Slack/Discord Integration:** Real-time **Webhook-based alerting** system that notifies the engineering team of critical infrastructure failures instantly.
-* **AI Log Summarizer:** Integrated **GPT-based insights** for automated incident root-cause analysis, translating complex logs into actionable summaries.
-* **Deployment Strategies:** Advanced implementation of **Blue-Green** or **Canary** deployment workflows to minimize release risk.
-* **Chaos Engineering:** Integrated **"Chaos Monkey"** scripts designed to intentionally inject faults and test the system's resilience under pressure.
+*   **Auto-Healing:** Self-correcting infrastructure using **Kubernetes Liveness and Readiness Probes** to ensure 100% uptime.
+*   **Slack/Discord Integration:** Real-time **Webhook-based alerting** system that notifies the engineering team of critical infrastructure failures instantly.
+*   **AI Log Summarizer:** Integrated **GPT-based insights** for automated incident root-cause analysis, translating complex logs into actionable summaries.
+*   **Deployment Strategies:** Advanced implementation of **Blue-Green** or **Canary** deployment workflows to minimize release risk.
+*   **Chaos Engineering:** Integrated **"Chaos Monkey"** scripts designed to intentionally inject faults and test the system's resilience under pressure.
 
 ---
 
@@ -83,9 +74,9 @@ cloud-devops-platform/
 4.  **The Alert:** Trigger a synthetic CPU spike to show the **Grafana alert** firing and hitting the Slack/Discord dashboard.
 
 ### 🧠 Key Viva Topics to Master
-* **Why Kubernetes?** Be ready to explain container orchestration, horizontal pod autoscaling (HPA), and high availability.
-* **Why CI/CD?** Focus on how automation reduces **MTTR** (Mean Time To Recovery) and eliminates deployment friction.
-* **Why Terraform?** Discuss the benefits of **Infrastructure as Code (IaC)**, specifically reproducibility and state management.
+*   **Why Kubernetes?** Be ready to explain container orchestration, horizontal pod autoscaling (HPA), and high availability.
+*   **Why CI/CD?** Focus on how automation reduces **MTTR** (Mean Time To Recovery) and eliminates deployment friction.
+*   **Why Terraform?** Discuss the benefits of **Infrastructure as Code (IaC)**, specifically reproducibility and state management.
 
 ---
 
@@ -101,8 +92,5 @@ cloud-devops-platform/
 ---
 
 <p align="center">
-  <b>Final Recommendation: AI-Powered Incident Platform</b><br>
-  <i>The strongest choice for Career, Marks, and Mastery.</i>
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:FF9900,100:FFCC00&height=100&section=footer" width="100%" />
 </p>
-
----
