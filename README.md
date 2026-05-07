@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:FF9900,100:FFCC00&height=300&section=header&text=Cloud%20Sentinel&fontSize=90&animation=fadeIn&fontAlignY=38" width="100%" />
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:000046,100:1CB5E0&height=300&section=header&text=Cloud%20Sentinel&fontSize=90&animation=fadeIn&fontAlignY=38&fontColor=ffffff" width="100%" />
 </p>
 
 <h3 align="center">🛡️ Your Cloud-Native Sentinel</h3>
@@ -7,15 +7,15 @@
 <p align="center"><strong>Monitor • Detect • Recover • Scale</strong></p>
 
 <p align="center">
-  <a href="https://aws.amazon.com/"><img src="https://img.shields.io/badge/Infrastructure-AWS-FF9900?style=for-the-badge&logo=amazon-aws&logoColor=white" alt="AWS" /></a>
-  <a href="https://kubernetes.io/"><img src="https://img.shields.io/badge/Orchestration-Kubernetes-326ce5?style=for-the-badge&logo=kubernetes&logoColor=white" alt="Kubernetes" /></a>
-  <a href="https://www.terraform.io/"><img src="https://img.shields.io/badge/IaC-Terraform-5835CC?style=for-the-badge&logo=terraform&logoColor=white" alt="Terraform" /></a>
-  <a href="https://www.jenkins.io/"><img src="https://img.shields.io/badge/CI/CD-Jenkins-D24939?style=for-the-badge&logo=jenkins&logoColor=white" alt="Jenkins" /></a>
+  <a href="https://aws.amazon.com/"><img src="https://img.shields.io/badge/Infrastructure-AWS-000046?style=for-the-badge&logo=amazon-aws&logoColor=white" alt="AWS" /></a>
+  <a href="https://kubernetes.io/"><img src="https://img.shields.io/badge/Orchestration-Kubernetes-1CB5E0?style=for-the-badge&logo=kubernetes&logoColor=white" alt="Kubernetes" /></a>
+  <a href="https://www.terraform.io/"><img src="https://img.shields.io/badge/IaC-Terraform-000046?style=for-the-badge&logo=terraform&logoColor=white" alt="Terraform" /></a>
+  <a href="https://www.jenkins.io/"><img src="https://img.shields.io/badge/CI/CD-Jenkins-1CB5E0?style=for-the-badge&logo=jenkins&logoColor=white" alt="Jenkins" /></a>
 </p>
 <p align="center">
-  <a href="https://prometheus.io/"><img src="https://img.shields.io/badge/Observability-Prometheus-E6522C?style=for-the-badge&logo=Prometheus&logoColor=white" alt="Prometheus" /></a>
-  <a href="https://grafana.com/"><img src="https://img.shields.io/badge/Visualization-Grafana-F46800?style=for-the-badge&logo=grafana&logoColor=white" alt="Grafana" /></a>
-  <a href="https://github.com/charan21042005/cloud-sentinel-platform"><img src="https://img.shields.io/badge/Status-Active-success?style=for-the-badge" alt="Status" /></a>
+  <a href="https://prometheus.io/"><img src="https://img.shields.io/badge/Observability-Prometheus-000046?style=for-the-badge&logo=Prometheus&logoColor=white" alt="Prometheus" /></a>
+  <a href="https://grafana.com/"><img src="https://img.shields.io/badge/Visualization-Grafana-1CB5E0?style=for-the-badge&logo=grafana&logoColor=white" alt="Grafana" /></a>
+  <a href="https://github.com/charan21042005/cloud-sentinel-platform"><img src="https://img.shields.io/badge/Status-Active-000046?style=for-the-badge" alt="Status" /></a>
 </p>
 
 ---
@@ -90,15 +90,15 @@ graph TD
 ## 🛠️ Tech Stack
 
 <p align="center">
-  <img src="https://img.shields.io/badge/FastAPI-005571?style=flat&logo=fastapi&logoColor=white" alt="FastAPI" />
-  <img src="https://img.shields.io/badge/React-61DAFB?style=flat&logo=react&logoColor=black" alt="React" />
-  <img src="https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=flat&logo=tailwind-css&logoColor=white" alt="Tailwind CSS" />
-  <img src="https://img.shields.io/badge/PostgreSQL-4169E1?style=flat&logo=postgresql&logoColor=white" alt="PostgreSQL" />
-  <img src="https://img.shields.io/badge/Docker-2496ED?style=flat&logo=docker&logoColor=white" alt="Docker" />
-  <img src="https://img.shields.io/badge/Kubernetes-326CE5?style=flat&logo=kubernetes&logoColor=white" alt="Kubernetes" />
-  <img src="https://img.shields.io/badge/Terraform-7B42BC?style=flat&logo=terraform&logoColor=white" alt="Terraform" />
-  <img src="https://img.shields.io/badge/Jenkins-D24939?style=flat&logo=jenkins&logoColor=white" alt="Jenkins" />
-  <img src="https://img.shields.io/badge/AWS-232F3E?style=flat&logo=amazon-aws&logoColor=white" alt="AWS" />
+  <img src="https://img.shields.io/badge/FastAPI-000046?style=flat&logo=fastapi&logoColor=white" alt="FastAPI" />
+  <img src="https://img.shields.io/badge/React-1CB5E0?style=flat&logo=react&logoColor=black" alt="React" />
+  <img src="https://img.shields.io/badge/Tailwind_CSS-000046?style=flat&logo=tailwind-css&logoColor=white" alt="Tailwind CSS" />
+  <img src="https://img.shields.io/badge/PostgreSQL-1CB5E0?style=flat&logo=postgresql&logoColor=white" alt="PostgreSQL" />
+  <img src="https://img.shields.io/badge/Docker-000046?style=flat&logo=docker&logoColor=white" alt="Docker" />
+  <img src="https://img.shields.io/badge/Kubernetes-1CB5E0?style=flat&logo=kubernetes&logoColor=white" alt="Kubernetes" />
+  <img src="https://img.shields.io/badge/Terraform-000046?style=flat&logo=terraform&logoColor=white" alt="Terraform" />
+  <img src="https://img.shields.io/badge/Jenkins-1CB5E0?style=flat&logo=jenkins&logoColor=white" alt="Jenkins" />
+  <img src="https://img.shields.io/badge/AWS-000046?style=flat&logo=amazon-aws&logoColor=white" alt="AWS" />
 </p>
 
 ---
@@ -178,8 +178,8 @@ cloud-sentinel-platform/
 *B.Tech Student — Cloud Computing & DevOps Engineering*
 
 <p align="center">
-  <a href="https://linkedin.com/in/yourprofile"><img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn" /></a>
-  <a href="https://github.com/charan21042005"><img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white" alt="GitHub" /></a>
+  <a href="https://linkedin.com/in/yourprofile"><img src="https://img.shields.io/badge/LinkedIn-4facfe?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn" /></a>
+  <a href="https://github.com/charan21042005"><img src="https://img.shields.io/badge/GitHub-00d2ff?style=for-the-badge&logo=github&logoColor=white" alt="GitHub" /></a>
 </p>
 
 ---
@@ -191,5 +191,5 @@ This project is licensed under the MIT License.
 ---
 
 <p align="center">
-  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:FF9900,100:FFCC00&height=100&section=footer" width="100%" />
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:000046,100:1CB5E0&height=100&section=footer" width="100%" />
 </p>

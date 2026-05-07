@@ -1,14 +1,14 @@
 <p align="center">
-  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:FF9900,100:FFCC00&height=300&section=header&text=Execution%20Roadmap&fontSize=80&animation=fadeIn&fontAlignY=38" width="100%" />
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:FF416C,100:FF4B2B&height=300&section=header&text=Execution%20Roadmap&fontSize=80&animation=fadeIn&fontAlignY=38&fontColor=ffffff" width="100%" />
 </p>
 
 <h3 align="center">🗺️ Project Execution Roadmap & Architecture</h3>
 <p align="center"><strong>Internal Strategy & Implementation Plan</strong></p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Phase-Planning-blue?style=for-the-badge" alt="Planning Phase" />
-  <img src="https://img.shields.io/badge/Architecture-EKS%20%2F%20k3s-brightgreen?style=for-the-badge" alt="Architecture" />
-  <img src="https://img.shields.io/badge/Workflow-CI%2FCD-orange?style=for-the-badge" alt="Workflow" />
+  <img src="https://img.shields.io/badge/Phase-Planning-FF416C?style=for-the-badge" alt="Planning Phase" />
+  <img src="https://img.shields.io/badge/Architecture-EKS%20%2F%20k3s-FF4B2B?style=for-the-badge" alt="Architecture" />
+  <img src="https://img.shields.io/badge/Workflow-CI%2FCD-FF416C?style=for-the-badge" alt="Workflow" />
 </p>
 
 ---
@@ -92,5 +92,5 @@ graph TD
 ---
 
 <p align="center">
-  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:FF9900,100:FFCC00&height=100&section=footer" width="100%" />
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:FF416C,100:FF4B2B&height=100&section=footer" width="100%" />
 </p>

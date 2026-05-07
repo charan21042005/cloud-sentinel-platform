@@ -1,14 +1,14 @@
 <p align="center">
-  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:FF9900,100:FFCC00&height=300&section=header&text=Initiation%20Phase&fontSize=80&animation=fadeIn&fontAlignY=38" width="100%" />
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:834d9b,100:d04ed6&height=300&section=header&text=Initiation%20Phase&fontSize=80&animation=fadeIn&fontAlignY=38&fontColor=ffffff" width="100%" />
 </p>
 
 <h3 align="center">🚀 Project Vision & High-Level Design</h3>
 <p align="center"><strong>The blueprint for an industry-grade SRE platform</strong></p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Phase-Initiation-blue?style=for-the-badge" alt="Initiation Phase" />
-  <img src="https://img.shields.io/badge/Complexity-9%2F10-red?style=for-the-badge" alt="Complexity" />
-  <img src="https://img.shields.io/badge/Status-Approved-brightgreen?style=for-the-badge" alt="Status" />
+  <img src="https://img.shields.io/badge/Phase-Initiation-834d9b?style=for-the-badge" alt="Initiation Phase" />
+  <img src="https://img.shields.io/badge/Complexity-9%2F10-d04ed6?style=for-the-badge" alt="Complexity" />
+  <img src="https://img.shields.io/badge/Status-Approved-834d9b?style=for-the-badge" alt="Status" />
 </p>
 
 ---
@@ -104,8 +104,9 @@ This project leverages advanced K8s features to mimic a production environment:
 ---
 
 <p align="center">
-  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:FF9900,100:FFCC00&height=100&section=footer" width="100%" />
-</p>DevOps Initiative</sub>
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:834d9b,100:d04ed6&height=100&section=footer" width="100%" />
+</p>
+DevOps Initiative</sub>
 </p>
 
 ---
