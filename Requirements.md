@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:F2994A,100:F2C94C&height=300&section=header&text=Requirement%20Analysis&fontSize=80&animation=fadeIn&fontAlignY=38&fontColor=ffffff" width="100%" />
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:F2994A,100:F2C94C&height=300&section=header&text=Requirement%20Analysis&fontSize=65&animation=fadeIn&fontAlignY=38&fontColor=ffffff" width="100%" />
 </p>
 
 <h3 align="center">📋 Phase 1: Requirement Analysis</h3>
