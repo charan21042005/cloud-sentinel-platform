@@ -26,35 +26,39 @@
 
 In today's distributed systems, downtime is not an option. Cloud Sentinel doesn't just watch your infrastructure—it understands it. By leveraging a full-stack observability suite and automated recovery workflows, it ensures your services remain resilient under pressure.
 
-### Why It Matters?
-- **Proactive Reliability:** Detect anomalies before they become outages.
-- **Automated Recovery:** Self-healing Kubernetes workloads reduce MTTR (Mean Time To Recovery).
-- **Production Simulation:** Experience the full lifecycle of a cloud-native app, from Terraform provisioning to Jenkins-driven deployments.
-
 ---
 
-## 🎯 Project Goals
+## 🚀 Documentation Roadmap (Learning Flow)
 
-- [x] **Build** a production-grade cloud-native platform.
-- [x] **Demonstrate** complete DevOps lifecycle implementation.
-- [x] **Showcase** Kubernetes orchestration concepts (HPA, Self-healing).
-- [x] **Implement** CI/CD automation pipelines with Jenkins.
-- [x] **Deploy** scalable microservices on AWS.
-- [x] **Integrate** a unified Monitoring & Observability stack.
-- [x] **Practice** Infrastructure as Code (IaC) using Terraform.
+Explore the project through our high-fidelity documentation architecture. Follow the numbered phases for a complete masterclass experience.
 
----
+### 🏛️ Phase 1: Foundation & Architecture
+*   **00 Project Foundation:** [Vision](docs/00_project_foundation/01_Vision.md) • [Requirements](docs/00_project_foundation/02_Requirements.md) • [Initiation](docs/00_project_foundation/03_Initiation.md) • [Planning](docs/00_project_foundation/04_Project_Planning.md)
+*   **01 Architecture:** [System Architecture](docs/01_architecture/System_Architecture.md)
 
-## 🚀 Core Features
+### ⚙️ Phase 2: Core Engineering
+*   **02 Frontend:** [Frontend Engineering](docs/02_frontend/Frontend_Engineering.md)
+*   **03 Backend:** [Backend Engineering](docs/03_backend/Backend_Engineering.md)
+*   **04 Database:** [Database Engineering](docs/04_database/Database_Engineering.md)
 
-| Feature | Description |
-| :--- | :--- |
-| 🔍 **Observability** | Real-time infrastructure monitoring, API performance tracking, and pod health. |
-| ⚙️ **DevOps Automation** | Full CI/CD pipelines, automated Docker builds, and rolling deployments. |
-| ☸️ **K8s Self-Healing** | Liveness/Readiness probes and HPA for autonomous workload management. |
-| 📊 **Monitoring Stack** | Prometheus metrics, Grafana dashboards, and Loki log aggregation. |
-| 🔐 **DevSecOps** | IAM least privilege, JWT auth, and K8s secrets management. |
-| 💥 **Chaos Engineering** | Injecting synthetic faults to test system resilience. |
+### 🐳 Phase 3: Cloud & DevOps
+*   **05 Containerization:** [Docker Containerization](docs/05_containerization/Docker_Containerization.md)
+*   **06 Kubernetes:** [Kubernetes Deep Dive](docs/06_kubernetes/Kubernetes_Deep_Dive.md)
+*   **07 Cloud Infra:** [AWS Cloud Infrastructure](docs/07_cloud_infrastructure/AWS_Cloud_Infrastructure.md)
+*   **08 IaC:** [Terraform IaC](docs/08_iac/Terraform_IaC.md)
+*   **09 CI/CD:** [Jenkins CI/CD Engineering](docs/09_cicd/CICD_Engineering.md)
+
+### 📊 Phase 4: Operations & Security
+*   **10 Observability:** [Monitoring & Observability](docs/10_observability/Monitoring_Observability.md)
+*   **11 Security:** [Security & DevSecOps](docs/11_security/Security_DevSecOps.md)
+*   **12 Deployment:** [Deployment Strategy](docs/12_deployment/Deployment_Strategy.md)
+*   **13 Testing:** [Testing Strategy](docs/13_testing/Testing_Strategy.md)
+
+### 📈 Phase 5: Production & Defense
+*   **14 Workflow:** [Production Workflow](docs/14_production_workflow/Production_Workflow.md)
+*   **15 Documentation:** [GitHub Engineering](docs/15_documentation/Documentation_GitHub_Engineering.md)
+*   **16 Viva Prep:** [Presentation Mastery](docs/16_viva/Viva_Presentation_Preparation.md)
+*   **17 Future Scope:** [Advanced Features](docs/17_advanced_features/Advanced_Features_Future_Scope.md)
 
 ---
 
@@ -87,22 +91,6 @@ graph TD
 
 ---
 
-## 🛠️ Tech Stack
-
-<p align="center">
-  <img src="https://img.shields.io/badge/FastAPI-000046?style=flat&logo=fastapi&logoColor=white" alt="FastAPI" />
-  <img src="https://img.shields.io/badge/React-1CB5E0?style=flat&logo=react&logoColor=black" alt="React" />
-  <img src="https://img.shields.io/badge/Tailwind_CSS-000046?style=flat&logo=tailwind-css&logoColor=white" alt="Tailwind CSS" />
-  <img src="https://img.shields.io/badge/PostgreSQL-1CB5E0?style=flat&logo=postgresql&logoColor=white" alt="PostgreSQL" />
-  <img src="https://img.shields.io/badge/Docker-000046?style=flat&logo=docker&logoColor=white" alt="Docker" />
-  <img src="https://img.shields.io/badge/Kubernetes-1CB5E0?style=flat&logo=kubernetes&logoColor=white" alt="Kubernetes" />
-  <img src="https://img.shields.io/badge/Terraform-000046?style=flat&logo=terraform&logoColor=white" alt="Terraform" />
-  <img src="https://img.shields.io/badge/Jenkins-1CB5E0?style=flat&logo=jenkins&logoColor=white" alt="Jenkins" />
-  <img src="https://img.shields.io/badge/AWS-000046?style=flat&logo=amazon-aws&logoColor=white" alt="AWS" />
-</p>
-
----
-
 ## 📂 Repository Structure
 
 ```text
@@ -110,65 +98,18 @@ cloud-sentinel-platform/
 │
 ├── frontend/             # React + Tailwind Source
 ├── backend/              # FastAPI Source
-├── monitoring/           # Prometheus/Grafana/Loki Configs
+├── infrastructure/       # Terraform Modules (IaC)
 ├── kubernetes/           # K8s Manifests (Deployments, HPA, Ingress)
-├── terraform/            # IaC (VPC, EKS, RDS Modules)
-├── jenkins/              # Jenkinsfile & Pipeline Scripts
-├── docker/               # Master Dockerfiles & Build Scripts
-├── docs/                 # Architecture, Diagrams, Screenshots
-└── assets/               # Branding & Static Assets
+├── monitoring/           # Prometheus/Grafana/Loki Configs
+├── scripts/              # Automation & Helper Scripts
+├── docs/                 # Professional Documentation Hierarchy (Masterclass)
+│   ├── 00_project_foundation/
+│   ├── 01_architecture/
+│   ├── ... (02-17 Modules)
+│   └── README.md         # Documentation Hub
+├── .github/              # GitHub Actions & Workflows
+└── README.md             # Project Landing Page
 ```
-
----
-
-## 🔄 CI/CD Workflow
-
-1.  **Developer Push:** Triggered via GitHub Webhook.
-2.  **Jenkins Pipeline:** Automates testing, linting, and security audits.
-3.  **Artifact Creation:** Builds Docker image and pushes to **AWS ECR**.
-4.  **IaC Validation:** Terraform plan/apply to sync infrastructure.
-5.  **K8s Deployment:** Rolling update to the cluster via Helm/Kubectl.
-6.  **Health Check:** Prometheus verifies service availability.
-
----
-
-## ☁️ AWS Services
-
-- **Amazon EC2/EKS:** Scalable compute and orchestration.
-- **Amazon ECR:** Private container registry.
-- **Amazon RDS:** Managed PostgreSQL database.
-- **AWS IAM:** Granular security and identity management.
-- **Amazon S3:** Scalable object storage for logs/artifacts.
-- **AWS VPC:** Isolated network infrastructure.
-
----
-
-## 📊 Monitoring & Observability
-
-- **Prometheus:** High-dimensional data model for metrics (CPU, RAM, Latency).
-- **Grafana:** Beautifully visualized dashboards for real-time insights.
-- **Loki:** Like Prometheus, but for logs. Optimized for cloud-native workflows.
-
----
-
-## 🔐 Security Objectives
-
-- **Least Privilege:** Tailored IAM roles.
-- **Secrets Management:** K8s Secrets for sensitive data.
-- **Auth:** Secure JWT-based user authentication.
-- **Scanning:** Automated vulnerability scanning in CI/CD.
-
----
-
-## 📅 Project Roadmap
-
-| Phase | Milestone | Status |
-| :--- | :--- | :--- |
-| **Phase 1** | Project Planning & Architecture | ✅ Completed |
-| **Phase 2** | Backend Development (FastAPI) | 🚧 In Progress |
-| **Phase 3** | Frontend Dashboard (React) | ⏳ Upcoming |
-| **Phase 4** | Infrastructure as Code (Terraform) | ⏳ Upcoming |
-| **Phase 5** | Kubernetes & Observability | ⏳ Upcoming |
 
 ---
 
