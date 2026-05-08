@@ -2,7 +2,7 @@
   <img src="https://capsule-render.vercel.app/api?type=waving&color=0:FF4E50,100:F9D423&height=300&section=header&text=AWS%20Cloud%20Infrastructure&fontSize=65&animation=fadeIn&fontAlignY=38&fontColor=ffffff" width="100%" />
 </p>
 
-<h3 align="center">☁️ Phase 8: AWS Cloud Infrastructure</h3>
+<h3 align="center">☁️ Phase 11: AWS Cloud Infrastructure</h3>
 <p align="center"><strong>"Building Cloud Sentinel on a Global Scalable Foundation"</strong></p>
 <p align="center"><strong>EC2 • VPC Networking • IAM Security • Cost Optimization</strong></p>
 
@@ -14,7 +14,18 @@
 
 ---
 
-## 🏢 8.0 The Cloud Revolution
+## 📑 Table of Contents
+* [11.1 The Cloud Revolution](#-111-the-cloud-revolution)
+* [11.2 EC2: The Virtual Engines](#-112-ec2-the-virtual-engines)
+* [11.3 IAM: The Security Guard](#-113-iam-the-security-guard)
+* [11.4 VPC: The Gated Colony](#-114-vpc-the-gated-colony)
+* [11.5 Load Balancers: The Traffic Police](#-115-load-balancers-the-traffic-police)
+* [11.6 AWS Cost Optimization](#-116-aws-cost-optimization-student-guide)
+* [11.7 Beginner vs. Industry Cloud](#-117-beginner-vs-industry-cloud)
+
+---
+
+## 🏢 11.1 The Cloud Revolution
 
 Before the cloud, companies had to buy physical hardware. Today, we rent **Infrastructure on Demand**.
 *   **The Analogy:** Instead of buying your own power generator, you simply plug into the city's electricity grid.
@@ -22,7 +33,7 @@ Before the cloud, companies had to buy physical hardware. Today, we rent **Infra
 
 ---
 
-## 💻 8.3 EC2: The Virtual Engines
+## 💻 11.2 EC2: The Virtual Engines
 
 **EC2 (Elastic Compute Cloud)** provides the raw "processing power" for our platform.
 *   **The Role:** These are virtual servers that run our Docker containers and Kubernetes cluster.
@@ -30,7 +41,7 @@ Before the cloud, companies had to buy physical hardware. Today, we rent **Infra
 
 ---
 
-## 🔐 8.5 IAM: The Security Guard
+## 🔐 11.3 IAM: The Security Guard
 
 **IAM (Identity & Access Management)** determines "who can touch what."
 *   **Best Practice:** **Least Privilege Access**. We never give a service more power than it needs.
@@ -38,7 +49,7 @@ Before the cloud, companies had to buy physical hardware. Today, we rent **Infra
 
 ---
 
-## 🏘️ 8.8 VPC: The Gated Colony
+## 🏘️ 11.4 VPC: The Gated Colony
 
 A **VPC (Virtual Private Cloud)** is our private corner of the AWS cloud.
 *   **Public Subnet:** Holds the **Load Balancer** so users can reach our UI.
@@ -47,7 +58,7 @@ A **VPC (Virtual Private Cloud)** is our private corner of the AWS cloud.
 
 ---
 
-## 🚦 8.13 Load Balancers: The Traffic Police
+## 🚦 11.5 Load Balancers: The Traffic Police
 
 The **Application Load Balancer (ALB)** is the entry point for all users.
 *   **Flow:** `User` ➔ `Route53 (DNS)` ➔ `ALB` ➔ `K8s Ingress` ➔ `Frontend Pod`.
@@ -55,7 +66,7 @@ The **Application Load Balancer (ALB)** is the entry point for all users.
 
 ---
 
-## 💰 AWS Cost Optimization (Student Guide)
+## 💰 11.6 AWS Cost Optimization (Student Guide)
 
 Managed services like **EKS** or **NAT Gateways** can burn a $100 credit in days. We use a "Smart Student Architecture":
 
@@ -72,7 +83,7 @@ Managed services like **EKS** or **NAT Gateways** can burn a $100 credit in days
 
 ---
 
-## ⚖️ Beginner vs. Industry Cloud
+## ⚖️ 11.7 Beginner vs. Industry Cloud
 
 | Feature | Beginner | Industry (Our Project) |
 | :--- | :--- | :--- |
@@ -82,6 +93,22 @@ Managed services like **EKS** or **NAT Gateways** can burn a $100 credit in days
 | **Scaling** | Single server | **Autoscaling & Load Balancing** |
 
 ---
+
+## Continue the Cloud-Native Journey 🚀
+
+> "AWS provides the raw power and networking. Now, let's learn how to manage this massive cloud landscape automatically using Terraform: Infrastructure as Code."
+
+**Previous Module:**
+← [Kubernetes Deep Dive](../06_kubernetes/Kubernetes_Deep_Dive.md)
+
+**Next Module:**
+→ [Terraform IaC](../08_iac/Terraform_IaC.md)
+
+## Cloud Sentinel Platform Documentation Series
+
+---
+
+## Cloud Sentinel Platform — Production-Grade Cloud-Native DevOps & Observability Engineering Documentation
 
 <p align="center">
   <img src="https://capsule-render.vercel.app/api?type=waving&color=0:FF4E50,100:F9D423&height=100&section=footer" width="100%" />

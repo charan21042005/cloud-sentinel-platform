@@ -2,7 +2,7 @@
   <img src="https://capsule-render.vercel.app/api?type=waving&color=0:2193b0,100:6dd5ed&height=300&section=header&text=Frontend%20Engineering&fontSize=80&animation=fadeIn&fontAlignY=38&fontColor=ffffff" width="100%" />
 </p>
 
-<h3 align="center">🎨 Phase 3: Frontend Engineering</h3>
+<h3 align="center">🎨 Phase 6: Frontend Engineering</h3>
 <p align="center"><strong>"Building the Visual Brain of Cloud Sentinel"</strong></p>
 <p align="center"><strong>React • Tailwind CSS • Real-Time Visualization • Modular UX</strong></p>
 
@@ -14,7 +14,21 @@
 
 ---
 
-## 🎨 3.0 What is Frontend Engineering?
+## 📑 Table of Contents
+* [6.1 What is Frontend Engineering?](#-61-what-is-frontend-engineering)
+* [6.2 Why We Choose React](#-62-why-we-choose-react)
+* [6.3 Frontend Architecture](#-63-frontend-architecture)
+* [6.4 Component-Based Architecture](#-64-component-based-architecture-the-lego-model)
+* [6.5 Dashboard Design Philosophy](#-65-dashboard-design-philosophy)
+* [6.6 State Management & API Integration](#-66-state-management--api-integration)
+* [6.7 Metrics Visualization](#-67-metrics-visualization-the-wow-factor)
+* [6.8 Real-Time Updates via WebSockets](#-68-real-time-updates-via-websockets)
+* [6.9 Deployment: The Cloud-Native Way](#-69-deployment-the-cloud-native-way)
+* [6.10 Beginner vs. Industry Frontend](#-610-beginner-vs-industry-frontend)
+
+---
+
+## 🎨 6.1 What is Frontend Engineering?
 
 In the world of DevOps, the Frontend is the **Command Center**.
 *   **The Analogy:** If the Backend is the engine of a car, the Frontend is the **Dashboard**. You don't look at the engine to see your speed; you look at the gauges.
@@ -22,7 +36,7 @@ In the world of DevOps, the Frontend is the **Command Center**.
 
 ---
 
-## ⚛️ 3.1 Why We Choose React
+## ⚛️ 6.2 Why We Choose React
 
 We are using **React** (created by Meta) because it is the industry standard for dashboard-heavy applications.
 *   **Reactivity:** When Prometheus detects a CPU spike, React updates the chart instantly without refreshing the page.
@@ -31,7 +45,7 @@ We are using **React** (created by Meta) because it is the industry standard for
 
 ---
 
-## 🏗️ 3.2 Frontend Architecture
+## 🏗️ 6.3 Frontend Architecture
 
 We avoid the "Beginner Mistake" of putting everything in one file. Instead, we use a **Modular Production Structure**:
 
@@ -48,7 +62,7 @@ frontend/
 
 ---
 
-## 🧱 3.3 Component-Based Architecture (The LEGO Model)
+## 🧱 6.4 Component-Based Architecture (The LEGO Model)
 
 Instead of rewriting code for every page, we build **UI Building Blocks**.
 *   **Example:** We build one `<MetricCard />` component and reuse it for CPU, RAM, and Disk metrics by simply passing different data.
@@ -56,7 +70,7 @@ Instead of rewriting code for every page, we build **UI Building Blocks**.
 
 ---
 
-## 🖌️ 3.4 Dashboard Design Philosophy
+## 🖌️ 6.5 Dashboard Design Philosophy
 
 Monitoring dashboards are **Operational Interfaces**, not standard websites. They are designed for high-stress, rapid decision-making.
 
@@ -68,7 +82,7 @@ Monitoring dashboards are **Operational Interfaces**, not standard websites. The
 
 ---
 
-## 🧠 3.5 State Management & API Integration
+## 🧠 6.6 State Management & API Integration
 
 We use **React Query + Context API** to manage the "brain" of our frontend.
 *   **State:** The "Current Memory" of the UI (e.g., "Is the user logged in?" or "What is the current CPU %?").
@@ -77,7 +91,7 @@ We use **React Query + Context API** to manage the "brain" of our frontend.
 
 ---
 
-## 📊 3.7 Metrics Visualization (The "Wow" Factor)
+## 📊 6.7 Metrics Visualization (The "Wow" Factor)
 
 Since this is an observability project, **Visualization is the product.**
 *   **Library:** **Recharts** (Simple, React-native, and sleek).
@@ -85,14 +99,14 @@ Since this is an observability project, **Visualization is the product.**
 
 ---
 
-## 📞 3.8 Real-Time Updates via WebSockets
+## 📞 6.8 Real-Time Updates via WebSockets
 
 Standard APIs are like **"Sending a Letter"** (Request/Response). WebSockets are like a **"Phone Call"** (Persistent Connection).
 *   **Why?** For live alerts, we cannot wait for the user to refresh the browser. The server "pushes" the alert to the UI the millisecond an incident occurs.
 
 ---
 
-## ☁️ 3.10 Deployment: The Cloud-Native Way
+## ☁️ 6.9 Deployment: The Cloud-Native Way
 
 We don't just "host" the frontend; we containerize it for production.
 1.  **Build:** `npm run build` creates highly optimized static assets.
@@ -101,7 +115,7 @@ We don't just "host" the frontend; we containerize it for production.
 
 ---
 
-## ⚖️ 3.12 Beginner vs. Industry Frontend
+## ⚖️ 6.10 Beginner vs. Industry Frontend
 
 | Feature | Beginner | Industry (Our Project) |
 | :--- | :--- | :--- |
@@ -111,6 +125,22 @@ We don't just "host" the frontend; we containerize it for production.
 | **Deployment** | Manual Upload | **Containerized** (Docker/K8s) |
 
 ---
+
+## Continue the Cloud-Native Journey 🚀
+
+> "The dashboard is the window into the infrastructure. Now that the visual interface is designed, let's build the powerful engine that powers it: the Backend API."
+
+**Previous Module:**
+← [System Architecture](../01_architecture/System_Architecture.md)
+
+**Next Module:**
+→ [Backend Engineering](../03_backend/Backend_Engineering.md)
+
+## Cloud Sentinel Platform Documentation Series
+
+---
+
+## Cloud Sentinel Platform — Production-Grade Cloud-Native DevOps & Observability Engineering Documentation
 
 <p align="center">
   <img src="https://capsule-render.vercel.app/api?type=waving&color=0:2193b0,100:6dd5ed&height=100&section=footer" width="100%" />

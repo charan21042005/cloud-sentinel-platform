@@ -2,7 +2,7 @@
   <img src="https://capsule-render.vercel.app/api?type=waving&color=0:FF416C,100:FF4B2B&height=300&section=header&text=Execution%20Roadmap&fontSize=80&animation=fadeIn&fontAlignY=38&fontColor=ffffff" width="100%" />
 </p>
 
-<h3 align="center">🗺️ Project Execution Roadmap & Architecture</h3>
+<h3 align="center">🗺️ Phase 4: Project Execution Roadmap & Architecture</h3>
 <p align="center"><strong>Internal Strategy & Implementation Plan</strong></p>
 
 <p align="center">
@@ -13,7 +13,16 @@
 
 ---
 
-## 🏛️ Production-Grade Architecture
+## 📑 Table of Contents
+* [4.1 Production-Grade Architecture](#-41-production-grade-architecture)
+* [4.2 Implementation Phases](#-42-implementation-phases)
+* [4.3 Advanced Features (Differentiators)](#-43-advanced-features-differentiators)
+* [4.4 Demo & Viva Strategy](#-44-demo--viva-strategy)
+* [4.5 AWS Cost Optimization](#-45-aws-cost-optimization)
+
+---
+
+## 🏛️ 4.1 Production-Grade Architecture
 
 ```mermaid
 graph TD
@@ -39,7 +48,7 @@ graph TD
 
 ---
 
-## 📅 Implementation Phases
+## 📅 4.2 Implementation Phases
 
 | Phase | Focus | Duration | Key Deliverables |
 | :--- | :--- | :--- | :--- |
@@ -55,7 +64,7 @@ graph TD
 
 ---
 
-## 🚀 Advanced Features (Differentiators)
+## 🚀 4.3 Advanced Features (Differentiators)
 
 *   **Auto-Healing:** Self-correcting infrastructure using **Kubernetes Liveness and Readiness Probes** to ensure 100% uptime.
 *   **Slack/Discord Integration:** Real-time **Webhook-based alerting** system that notifies the engineering team of critical infrastructure failures instantly.
@@ -65,7 +74,7 @@ graph TD
 
 ---
 
-## 🎙️ Demo & Viva Strategy
+## 🎙️ 4.4 Demo & Viva Strategy
 
 ### ⚡ The "Killer" Demo Sequence
 1.  **The Pipeline:** Show a real-time code commit triggering an automated **Jenkins build** and test suite.
@@ -80,7 +89,7 @@ graph TD
 
 ---
 
-## 💰 AWS Cost Optimization
+## 💰 4.5 AWS Cost Optimization
 
 | Resource | Strategy for Students |
 | :--- | :--- |
@@ -90,6 +99,22 @@ graph TD
 | **Automation** | Use scripted **"Stop/Start" routines** to shut down EC2 instances during idle hours (overnight). |
 
 ---
+
+## Continue the Cloud-Native Journey 🚀
+
+> "Planning is the bridge between vision and reality. With the roadmap in hand, we are ready to dive into the high-level system architecture."
+
+**Previous Module:**
+← [Project Initiation](03_Initiation.md)
+
+**Next Module:**
+→ [System Architecture](../01_architecture/System_Architecture.md)
+
+## Cloud Sentinel Platform Documentation Series
+
+---
+
+## Cloud Sentinel Platform — Production-Grade Cloud-Native DevOps & Observability Engineering Documentation
 
 <p align="center">
   <img src="https://capsule-render.vercel.app/api?type=waving&color=0:FF416C,100:FF4B2B&height=100&section=footer" width="100%" />

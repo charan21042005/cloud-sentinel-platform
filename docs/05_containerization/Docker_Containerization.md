@@ -2,7 +2,7 @@
   <img src="https://capsule-render.vercel.app/api?type=waving&color=0:24C6DC,100:514A9D&height=300&section=header&text=Docker%20and%20Containerization&fontSize=55&animation=fadeIn&fontAlignY=38&fontColor=ffffff" width="100%" />
 </p>
 
-<h3 align="center">🐳 Phase 6: Docker & Containerization</h3>
+<h3 align="center">🐳 Phase 9: Docker & Containerization</h3>
 <p align="center"><strong>"Packaging Cloud Sentinel Platform Like Modern Industry Systems"</strong></p>
 <p align="center"><strong>Docker • Multi-Stage Builds • Volumes • Compose Orchestration</strong></p>
 
@@ -14,7 +14,19 @@
 
 ---
 
-## ⚓ 6.0 Why Containerization Changed the Industry
+## 📑 Table of Contents
+* [9.1 Why Containerization Changed the Industry](#-91-why-containerization-changed-the-industry)
+* [9.2 Virtual Machines vs. Containers](#-92-virtual-machines-vs-containers)
+* [9.3 The Dockerfile (The Blueprint)](#-93-the-dockerfile-the-blueprint)
+* [9.4 Persistence with Docker Volumes](#-94-persistence-with-docker-volumes)
+* [9.5 Docker Compose (Local Orchestration)](#-95-docker-compose-local-orchestration)
+* [9.6 Multi-Stage Builds: Production Strategy](#-96-multi-stage-builds-production-strategy)
+* [9.7 Beginner vs. Industry Containerization](#-97-beginner-vs-industry-containerization)
+* [9.8 Mental Models for Docker](#-98-mental-models-for-docker)
+
+---
+
+## ⚓ 9.1 Why Containerization Changed the Industry
 
 Before Docker, engineers faced the **"It works on my machine"** nightmare. Different OS versions or missing libraries caused production outages.
 *   **The Solution:** Containers package code, runtime, and libraries into one portable unit.
@@ -22,7 +34,7 @@ Before Docker, engineers faced the **"It works on my machine"** nightmare. Diffe
 
 ---
 
-## 🏠 6.2 Virtual Machines vs. Containers
+## 🏠 9.2 Virtual Machines vs. Containers
 
 It is critical to understand why the industry chose containers over VMs for the cloud:
 
@@ -37,7 +49,7 @@ It is critical to understand why the industry chose containers over VMs for the 
 
 ---
 
-## 📜 6.6 The Dockerfile (The Blueprint)
+## 📜 9.3 The Dockerfile (The Blueprint)
 
 The `Dockerfile` is a text document containing all the commands a user could call on the command line to assemble an image.
 
@@ -47,7 +59,7 @@ Docker images are built in layers. If you only change your application code but 
 
 ---
 
-## 📦 6.9 Persistence with Docker Volumes
+## 📦 9.4 Persistence with Docker Volumes
 
 Containers are **ephemeral**—meaning if the container dies, any data inside it is deleted.
 *   **The Problem:** We cannot lose our PostgreSQL database or Prometheus metrics every time a pod restarts.
@@ -55,14 +67,14 @@ Containers are **ephemeral**—meaning if the container dies, any data inside it
 
 ---
 
-## 🚀 6.11 Docker Compose (Local Orchestration)
+## 🚀 9.5 Docker Compose (Local Orchestration)
 
 Running six containers manually is chaotic. We use **Docker Compose** as our local "mini-orchestrator."
 *   **Our Setup:** With one command (`docker-compose up`), we launch the Frontend, Backend, Postgres, Prometheus, Grafana, and Loki as a single interconnected network.
 
 ---
 
-## 🏗️ 6.12 Multi-Stage Builds: Production Strategy
+## 🏗️ 9.6 Multi-Stage Builds: Production Strategy
 
 To keep our production images small and secure, we use **Multi-Stage builds**.
 1.  **Stage 1 (Build):** Use a heavy image to compile React or install Python dev-tools.
@@ -71,7 +83,7 @@ To keep our production images small and secure, we use **Multi-Stage builds**.
 
 ---
 
-## ⚖️ Beginner vs. Industry Containerization
+## ⚖️ 9.7 Beginner vs. Industry Containerization
 
 | Feature | Beginner | Industry (Our Project) |
 | :--- | :--- | :--- |
@@ -82,12 +94,28 @@ To keep our production images small and secure, we use **Multi-Stage builds**.
 
 ---
 
-## 🧩 Mental Models for Docker
+## 🧩 9.8 Mental Models for Docker
 1.  **Shipping Container:** Portable, standardized units.
 2.  **Recipe vs. Cake:** Image = Recipe | Container = The running Cake.
 3.  **Blueprint:** Dockerfile = Construction instructions.
 
 ---
+
+## Continue the Cloud-Native Journey 🚀
+
+> "Containers provide the portable units our platform needs. Now, let's learn how to orchestrate these units at production scale using Kubernetes."
+
+**Previous Module:**
+← [Database Engineering](../04_database/Database_Engineering.md)
+
+**Next Module:**
+→ [Kubernetes Deep Dive](../06_kubernetes/Kubernetes_Deep_Dive.md)
+
+## Cloud Sentinel Platform Documentation Series
+
+---
+
+## Cloud Sentinel Platform — Production-Grade Cloud-Native DevOps & Observability Engineering Documentation
 
 <p align="center">
   <img src="https://capsule-render.vercel.app/api?type=waving&color=0:24C6DC,100:514A9D&height=100&section=footer" width="100%" />

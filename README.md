@@ -20,7 +20,16 @@
 
 ---
 
-## 📌 Overview
+## 📑 Table of Contents
+* [1.0 Overview](#-10-overview)
+* [2.0 Documentation Roadmap](#-20-documentation-roadmap-learning-flow)
+* [3.0 High-Level Architecture](#-30-high-level-architecture)
+* [4.0 Repository Structure](#-40-repository-structure)
+* [5.0 Author & License](#-50-author--license)
+
+---
+
+## 📌 1.0 Overview
 
 **Cloud Sentinel Platform** is an industry-inspired cloud-native observability and incident management system designed to simulate real-world **DevOps** and **Site Reliability Engineering (SRE)** workflows.
 
@@ -28,7 +37,7 @@ In today's distributed systems, downtime is not an option. Cloud Sentinel doesn'
 
 ---
 
-## 🚀 Documentation Roadmap (Learning Flow)
+## 🚀 2.0 Documentation Roadmap (Learning Flow)
 
 Explore the project through our high-fidelity documentation architecture. Follow the numbered phases for a complete masterclass experience.
 
@@ -62,7 +71,7 @@ Explore the project through our high-fidelity documentation architecture. Follow
 
 ---
 
-## 🏗️ High-Level Architecture
+## 🏗️ 3.0 High-Level Architecture
 
 ```mermaid
 graph TD
@@ -91,7 +100,7 @@ graph TD
 
 ---
 
-## 📂 Repository Structure
+## 📂 4.0 Repository Structure
 
 ```text
 cloud-sentinel-platform/
@@ -113,7 +122,7 @@ cloud-sentinel-platform/
 
 ---
 
-## 👨‍💻 Author
+## 👨‍💻 5.0 Author & License
 
 **Patty**
 *B.Tech Student — Cloud Computing & DevOps Engineering*
@@ -123,13 +132,11 @@ cloud-sentinel-platform/
   <a href="https://github.com/charan21042005"><img src="https://img.shields.io/badge/GitHub-00d2ff?style=for-the-badge&logo=github&logoColor=white" alt="GitHub" /></a>
 </p>
 
----
-
-## 📜 License
-
 This project is licensed under the MIT License.
 
 ---
+
+## Cloud Sentinel Platform — Production-Grade Cloud-Native DevOps & Observability Engineering Documentation
 
 <p align="center">
   <img src="https://capsule-render.vercel.app/api?type=waving&color=0:000046,100:1CB5E0&height=100&section=footer" width="100%" />

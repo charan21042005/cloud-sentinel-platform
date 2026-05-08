@@ -2,7 +2,7 @@
   <img src="https://capsule-render.vercel.app/api?type=waving&color=0:00FFFF,100:FF00FF&height=300&section=header&text=CICD%20Engineering&fontSize=70&animation=fadeIn&fontAlignY=38&fontColor=ffffff" width="100%" />
 </p>
 
-<h3 align="center">🚀 Phase 10: CI/CD Engineering</h3>
+<h3 align="center">🚀 Phase 13: CI/CD Engineering</h3>
 <p align="center"><strong>"Automating Software Delivery Like Real DevOps Teams"</strong></p>
 <p align="center"><strong>Jenkins • Pipeline-as-Code • Automated Testing • Deployment Strategies</strong></p>
 
@@ -14,7 +14,19 @@
 
 ---
 
-## 🏭 10.0 The CI/CD Revolution
+## 📑 Table of Contents
+* [13.1 The CI/CD Revolution](#-131-the-cicd-revolution)
+* [13.2 Understanding CI vs. CD](#-132-understanding-ci-vs-cd)
+* [13.3 Jenkins: The Robotic DevOps Engineer](#-133-jenkins-the-robotic-devops-engineer)
+* [13.4 Pipeline-as-Code (The Jenkinsfile)](#-134-pipeline-as-code-the-jenkinsfile)
+* [13.5 Kubernetes Deployment Automation](#-135-kubernetes-deployment-automation)
+* [13.6 Advanced Deployment Strategies](#-136-advanced-deployment-strategies)
+* [13.7 Beginner vs. Industry CI/CD](#-137-beginner-vs-industry-cicd)
+* [13.8 Mental Models for CI/CD](#-138-mental-models-for-cicd)
+
+---
+
+## 🏭 13.1 The CI/CD Revolution
 
 Before CI/CD, engineers manually copied files to servers at midnight, hoping nothing would break. **CI/CD** changes this by making deployment a non-event.
 *   **The Analogy:** Instead of handcrafting every product, we build an **Automated Assembly Line**.
@@ -22,14 +34,14 @@ Before CI/CD, engineers manually copied files to servers at midnight, hoping not
 
 ---
 
-## 🔄 10.1 Understanding CI vs. CD
+## 🔄 13.2 Understanding CI vs. CD
 
 *   **Continuous Integration (CI):** Developers push code frequently. Jenkins automatically builds it and runs tests. If the test fails, the code is rejected immediately.
 *   **Continuous Delivery (CD):** The application is *always* in a deployable state. In our project, we use **Continuous Delivery** (manual trigger for final deploy) to keep things safe.
 
 ---
 
-## 🤖 10.2 Jenkins: The Robotic DevOps Engineer
+## 🤖 13.3 Jenkins: The Robotic DevOps Engineer
 
 Jenkins is our central automation server. It acts like a manager that coordinates all the workers.
 *   **Jenkins Master:** The brain that schedules jobs.
@@ -38,7 +50,7 @@ Jenkins is our central automation server. It acts like a manager that coordinate
 
 ---
 
-## 📜 10.4 Pipeline-as-Code (The Jenkinsfile)
+## 📜 13.4 Pipeline-as-Code (The Jenkinsfile)
 
 We don't configure Jenkins by clicking buttons. We write a **Jenkinsfile** that stays in our GitHub repo.
 *   **Stages:** Build ➔ Test ➔ Dockerize ➔ Push to ECR ➔ Deploy to K8s.
@@ -46,7 +58,7 @@ We don't configure Jenkins by clicking buttons. We write a **Jenkinsfile** that 
 
 ---
 
-## ☸️ 10.9 Kubernetes Deployment Automation
+## ☸️ 13.5 Kubernetes Deployment Automation
 
 Once the new Docker image is in **AWS ECR**, Jenkins tells Kubernetes: *"Update to version 2.0."*
 *   **Rolling Updates:** K8s replaces old pods with new ones one by one.
@@ -55,7 +67,7 @@ Once the new Docker image is in **AWS ECR**, Jenkins tells Kubernetes: *"Update 
 
 ---
 
-## 🛡️ Advanced Deployment Strategies
+## 🛡️ 13.6 Advanced Deployment Strategies
 
 These are the concepts that will impress your professors and interviewers:
 1.  **Canary Deployments:** Deploying to only 5% of users first to test for bugs. (Analogy: The canary in the coal mine).
@@ -63,7 +75,7 @@ These are the concepts that will impress your professors and interviewers:
 
 ---
 
-## ⚖️ Beginner vs. Industry CI/CD
+## ⚖️ 13.7 Beginner vs. Industry CI/CD
 
 | Feature | Beginner | Industry (Our Project) |
 | :--- | :--- | :--- |
@@ -74,12 +86,28 @@ These are the concepts that will impress your professors and interviewers:
 
 ---
 
-## 🧩 Mental Models for CI/CD
+## 🧩 13.8 Mental Models for CI/CD
 1.  **Factory Assembly Line:** Code moves through automated quality checkpoints.
 2.  **Domino Chain:** One successful step automatically triggers the next.
 3.  **Airport Baggage System:** Your code (baggage) is automatically scanned and routed to the correct plane (environment).
 
 ---
+
+## Continue the Cloud-Native Journey 🚀
+
+> "The pipeline is now delivering code at high velocity. But how do we know if the running code is healthy? We need to implement full-stack Observability."
+
+**Previous Module:**
+← [Terraform IaC](../08_iac/Terraform_IaC.md)
+
+**Next Module:**
+→ [Monitoring & Observability](../10_observability/Monitoring_Observability.md)
+
+## Cloud Sentinel Platform Documentation Series
+
+---
+
+## Cloud Sentinel Platform — Production-Grade Cloud-Native DevOps & Observability Engineering Documentation
 
 <p align="center">
   <img src="https://capsule-render.vercel.app/api?type=waving&color=0:00FFFF,100:FF00FF&height=100&section=footer" width="100%" />

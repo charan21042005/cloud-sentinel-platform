@@ -2,7 +2,7 @@
   <img src="https://capsule-render.vercel.app/api?type=waving&color=0:cc2b5e,100:753a88&height=300&section=header&text=Kubernetes%20Orchestration&fontSize=65&animation=fadeIn&fontAlignY=38&fontColor=ffffff" width="100%" />
 </p>
 
-<h3 align="center">☸️ Phase 7: Kubernetes Deep Dive</h3>
+<h3 align="center">☸️ Phase 10: Kubernetes Deep Dive</h3>
 <p align="center"><strong>"The Brain of Modern Cloud Infrastructure"</strong></p>
 <p align="center"><strong>Pods • Deployments • Self-Healing • Auto-Scaling</strong></p>
 
@@ -14,7 +14,20 @@
 
 ---
 
-## ☸️ 7.0 Why Kubernetes (K8s) Changed Everything
+## 📑 Table of Contents
+* [10.1 Why Kubernetes (K8s) Changed Everything](#-101-why-kubernetes-k8s-changed-everything)
+* [10.2 Cluster Architecture: Master & Workers](#-102-cluster-architecture-master--workers)
+* [10.3 The Pod: The Smallest Unit of Work](#-103-the-pod-the-smallest-unit-of-work)
+* [10.4 Deployments & Self-Healing](#-104-deployments--self-healing)
+* [10.5 Ingress & Services: The Gateways](#-105-ingress--services-the-gateways)
+* [10.6 ConfigMaps & Secrets](#-106-configmaps--secrets)
+* [10.7 Autoscaling & Rolling Deployments](#-107-autoscaling--rolling-deployments)
+* [10.8 Beginner vs. Industry Kubernetes Usage](#-108-beginner-vs-industry-kubernetes-usage)
+* [10.9 Mental Models for Kubernetes](#-109-mental-models-for-kubernetes)
+
+---
+
+## ☸️ 10.1 Why Kubernetes (K8s) Changed Everything
 
 Docker solved the "packaging" problem, but **Kubernetes** solved the "management" problem.
 *   **The Role:** It is a platform that automatically manages containers at scale—handling deployment, networking, and recovery without human intervention.
@@ -22,7 +35,7 @@ Docker solved the "packaging" problem, but **Kubernetes** solved the "management
 
 ---
 
-## 🏛️ 7.2 Cluster Architecture: Master & Workers
+## 🏛️ 10.2 Cluster Architecture: Master & Workers
 
 A Kubernetes Cluster is a group of machines working together as one unit.
 *   **Control Plane (Master Node):** The Brain. It makes decisions, schedules work, and monitors the cluster's state.
@@ -35,7 +48,7 @@ A Kubernetes Cluster is a group of machines working together as one unit.
 
 ---
 
-## 🚗 7.5 The Pod: The Smallest Unit of Work
+## 🚗 10.3 The Pod: The Smallest Unit of Work
 
 In Kubernetes, we don't deploy containers directly; we deploy **Pods**.
 *   **Concept:** A Pod is a wrapper around one (or more) containers.
@@ -43,7 +56,7 @@ In Kubernetes, we don't deploy containers directly; we deploy **Pods**.
 
 ---
 
-## 🛡️ 7.6 Deployments & Self-Healing
+## 🛡️ 10.4 Deployments & Self-Healing
 
 A **Deployment** is a controller that ensures your desired state matches reality.
 *   **Replicas:** If you tell a Deployment to run 3 pods, it will always ensure 3 are running.
@@ -51,28 +64,28 @@ A **Deployment** is a controller that ensures your desired state matches reality
 
 ---
 
-## 🚪 7.8 Ingress & Services: The Gateways
+## 🚪 10.5 Ingress & Services: The Gateways
 
 *   **Service:** Provides a stable, permanent IP address for a group of pods. Even if pods die and are replaced, the Service name (e.g., `backend-service`) stays the same.
 *   **Ingress:** The **Airport Security Checkpoint**. It is the single entry point for all external traffic, routing `api.yoursite.com` to the backend and `app.yoursite.com` to the frontend.
 
 ---
 
-## 🔐 ConfigMaps & Secrets
+## 🔐 10.6 ConfigMaps & Secrets
 
 *   **ConfigMaps:** For non-sensitive settings like API URLs or environment names.
 *   **Secrets:** For sensitive data like Database passwords or JWT keys. **Industry Practice:** Never hardcode secrets in your Docker images; always inject them via K8s Secrets.
 
 ---
 
-## 📈 Autoscaling & Rolling Deployments
+## 📈 10.7 Autoscaling & Rolling Deployments
 
 *   **HPA (Horizontal Pod Autoscaler):** If CPU usage spikes (e.g., during a sale), K8s automatically adds more pods.
 *   **Rolling Updates:** When you push new code, K8s replaces old pods with new ones one by one, ensuring **zero downtime**.
 
 ---
 
-## ⚖️ Beginner vs. Industry Kubernetes Usage
+## ⚖️ 10.8 Beginner vs. Industry Kubernetes Usage
 
 | Feature | Beginner | Industry (Our Project) |
 | :--- | :--- | :--- |
@@ -83,12 +96,28 @@ A **Deployment** is a controller that ensures your desired state matches reality
 
 ---
 
-## 🧩 Mental Models for Kubernetes
+## 🧩 10.9 Mental Models for Kubernetes
 1.  **Smart City:** An automated manager handling all utilities and traffic.
 2.  **Hospital ICU:** Continuous monitoring and automatic life-support/recovery.
 3.  **Orchestra Conductor:** Coordinating many independent instruments into one song.
 
 ---
+
+## Continue the Cloud-Native Journey 🚀
+
+> "Orchestration is the brain of the cloud. With our cluster ready, it's time to provision the physical foundation on the world's most powerful cloud: AWS Infrastructure."
+
+**Previous Module:**
+← [Docker Containerization](../05_containerization/Docker_Containerization.md)
+
+**Next Module:**
+→ [AWS Cloud Infrastructure](../07_cloud_infrastructure/AWS_Cloud_Infrastructure.md)
+
+## Cloud Sentinel Platform Documentation Series
+
+---
+
+## Cloud Sentinel Platform — Production-Grade Cloud-Native DevOps & Observability Engineering Documentation
 
 <p align="center">
   <img src="https://capsule-render.vercel.app/api?type=waving&color=0:cc2b5e,100:753a88&height=100&section=footer" width="100%" />

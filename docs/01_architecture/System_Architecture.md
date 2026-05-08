@@ -2,7 +2,7 @@
   <img src="https://capsule-render.vercel.app/api?type=waving&color=0:ff00cc,100:3333ff&height=300&section=header&text=System%20Architecture&fontSize=65&animation=fadeIn&fontAlignY=38&fontColor=ffffff" width="100%" />
 </p>
 
-<h3 align="center">🏛️ Phase 2: System Design & Architecture</h3>
+<h3 align="center">🏛️ Phase 5: System Design & Architecture</h3>
 <p align="center"><strong>"Designing Cloud Sentinel Platform Like Real Engineers"</strong></p>
 <p align="center"><strong>Microservices • Kubernetes • Fault Isolation • Scalability</strong></p>
 
@@ -14,7 +14,19 @@
 
 ---
 
-## 🏗️ 2.0 Why System Design Matters
+## 📑 Table of Contents
+* [5.1 Why System Design Matters](#-51-why-system-design-matters)
+* [5.2 Monolith vs. Microservices](#-52-monolith-vs-microservices)
+* [5.3 High-Level Architecture Overview](#-53-high-level-architecture-overview)
+* [5.4 The Complete Request Lifecycle](#-54-the-complete-request-lifecycle)
+* [5.5 Kubernetes: The Warehouse Manager](#-55-kubernetes-the-warehouse-manager)
+* [5.6 Ingress & Load Balancing](#-56-ingress--load-balancing)
+* [5.7 Storage & Data Flow](#-57-storage--data-flow)
+* [5.8 Beginner vs. Industry Architecture](#-58-beginner-vs-industry-architecture)
+
+---
+
+## 🏗️ 5.1 Why System Design Matters
 
 **System Design** is the blueprint for how services talk to each other.
 *   **Bad Architecture:** Leads to "Spaghetti Code," outages, and expensive AWS bills.
@@ -24,7 +36,7 @@
 
 ---
 
-## 🏙️ 2.1 Monolith vs. Microservices
+## 🏙️ 5.2 Monolith vs. Microservices
 
 We are moving away from the "One Big App" (Monolith) approach toward **Microservices**.
 
@@ -38,7 +50,7 @@ We are moving away from the "One Big App" (Monolith) approach toward **Microserv
 
 ---
 
-## 🗺️ 2.3 High-Level Architecture Overview
+## 🗺️ 5.3 High-Level Architecture Overview
 
 ```mermaid
 graph TD
@@ -63,7 +75,7 @@ graph TD
 
 ---
 
-## 🔄 2.4 The Complete Request Lifecycle
+## 🔄 5.4 The Complete Request Lifecycle
 
 When a user opens `https://cloudsentinel.com/dashboard`, the following production-grade flow is triggered:
 
@@ -77,7 +89,7 @@ When a user opens `https://cloudsentinel.com/dashboard`, the following productio
 
 ---
 
-## 🧠 2.6 Kubernetes: The Warehouse Manager
+## 🧠 5.5 Kubernetes: The Warehouse Manager
 
 Kubernetes acts as the "Operating System" for our cloud-native containers, ensuring the "Warehouse" runs at peak efficiency.
 
@@ -87,7 +99,7 @@ Kubernetes acts as the "Operating System" for our cloud-native containers, ensur
 
 ---
 
-## 🚦 2.8 Ingress & Load Balancing
+## 🚦 5.6 Ingress & Load Balancing
 
 To manage high-volume traffic, we separate external entry from internal routing:
 
@@ -97,7 +109,7 @@ To manage high-volume traffic, we separate external entry from internal routing:
 
 ---
 
-## 💾 2.11 Storage & Data Flow
+## 💾 5.7 Storage & Data Flow
 
 Not all data is created equal. Our architecture uses specialized storage for different needs:
 
@@ -107,7 +119,7 @@ Not all data is created equal. Our architecture uses specialized storage for dif
 
 ---
 
-## 🚀 2.15 Beginner vs. Industry Architecture
+## 🚀 5.8 Beginner vs. Industry Architecture
 
 We are moving beyond simple academic setups to build a resume-defining platform.
 
@@ -117,6 +129,22 @@ We are moving beyond simple academic setups to build a resume-defining platform.
 **We are building the Industry version.** This ensures the project is not just a "homework assignment," but a production-grade engineering feat.
 
 ---
+
+## Continue the Cloud-Native Journey 🚀
+
+> "Architecture is the blueprint for resilience. Now that the design is finalized, it's time to bring the interface to life through Frontend Engineering."
+
+**Previous Module:**
+← [Project Execution Roadmap](../00_project_foundation/04_Project_Planning.md)
+
+**Next Module:**
+→ [Frontend Engineering](../02_frontend/Frontend_Engineering.md)
+
+## Cloud Sentinel Platform Documentation Series
+
+---
+
+## Cloud Sentinel Platform — Production-Grade Cloud-Native DevOps & Observability Engineering Documentation
 
 <p align="center">
   <img src="https://capsule-render.vercel.app/api?type=waving&color=0:ff00cc,100:3333ff&height=100&section=footer" width="100%" />

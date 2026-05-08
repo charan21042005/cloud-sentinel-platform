@@ -2,7 +2,7 @@
   <img src="https://capsule-render.vercel.app/api?type=waving&color=0:4e54c8,100:8f94fb&height=300&section=header&text=Database%20Engineering&fontSize=80&animation=fadeIn&fontAlignY=38&fontColor=ffffff" width="100%" />
 </p>
 
-<h3 align="center">🗄️ Phase 5: Database Engineering</h3>
+<h3 align="center">🗄️ Phase 8: Database Engineering</h3>
 <p align="center"><strong>"Designing the Memory & Persistence Layer of Cloud Sentinel"</strong></p>
 <p align="center"><strong>PostgreSQL • AWS RDS • Schema Design • Query Optimization</strong></p>
 
@@ -14,7 +14,19 @@
 
 ---
 
-## 🗄️ 5.0 What is Database Engineering?
+## 📑 Table of Contents
+* [8.1 What is Database Engineering?](#-81-what-is-database-engineering)
+* [8.2 Why We Choose PostgreSQL](#-82-why-we-choose-postgresql)
+* [8.3 Database Schema Design](#-83-database-schema-design-the-blueprint)
+* [8.4 Entity Relationships](#-84-entity-relationships)
+* [8.5 Metrics Storage: SQL vs. Time-Series](#-85-metrics-storage-sql-vs-time-series)
+* [8.6 Indexing & Optimization](#-86-indexing--optimization)
+* [8.7 Managed Cloud Database: AWS RDS](#-87-managed-cloud-database-aws-rds)
+* [8.8 Beginner vs. Industry Database Design](#-88-beginner-vs-industry-database-design)
+
+---
+
+## 🗄️ 8.1 What is Database Engineering?
 
 If the **Frontend** is the face and the **Backend** is the brain logic, the **Database** is the **Long-Term Memory**.
 *   **The Role:** It ensures that when a server restarts, the application doesn't "forget" its users or past incidents.
@@ -22,7 +34,7 @@ If the **Frontend** is the face and the **Backend** is the brain logic, the **Da
 
 ---
 
-## 🐘 5.1 Why We Choose PostgreSQL
+## 🐘 8.2 Why We Choose PostgreSQL
 
 We are using **PostgreSQL**, an advanced, open-source relational database.
 *   **Relational Integrity:** It excels at connecting data (e.g., linking a specific 'Incident' to the 'User' who resolved it).
@@ -31,7 +43,7 @@ We are using **PostgreSQL**, an advanced, open-source relational database.
 
 ---
 
-## 📐 5.3 Database Schema Design (The Blueprint)
+## 📐 8.3 Database Schema Design (The Blueprint)
 
 We don't just "dump" data; we organize it into structured tables:
 
@@ -52,7 +64,7 @@ Users Table           Incidents Table
 
 ---
 
-## 🔗 5.4 Entity Relationships
+## 🔗 8.4 Entity Relationships
 
 We implement **One-to-Many** relationships to structurally link our platform data:
 *   **The Logic:** One **User** (DevOps Engineer) can acknowledge and resolve **Many Incidents**.
@@ -60,7 +72,7 @@ We implement **One-to-Many** relationships to structurally link our platform dat
 
 ---
 
-## 📊 5.6 Metrics Storage: SQL vs. Time-Series
+## 📊 8.5 Metrics Storage: SQL vs. Time-Series
 
 **Industry Insight:** Monitoring metrics (like CPU usage every 5 seconds) are high-volume and fundamentally different from standard relational data.
 
@@ -70,7 +82,7 @@ We implement **One-to-Many** relationships to structurally link our platform dat
 
 ---
 
-## 📖 5.8 Indexing & Optimization
+## 📖 8.6 Indexing & Optimization
 
 To prevent system latency as our incident logs grow into the thousands:
 *   **Indexing:** Acts like a book's index. Instead of the database scanning every single row (Full Table Scan), it jumps directly to the relevant data using a B-Tree or Hash index.
@@ -79,7 +91,7 @@ To prevent system latency as our incident logs grow into the thousands:
 
 ---
 
-## ☁️ 5.13 Managed Cloud Database: AWS RDS
+## ☁️ 8.7 Managed Cloud Database: AWS RDS
 
 In a production environment, we do not manage the underlying database server OS manually. We use **AWS RDS (Relational Database Service)**.
 *   **The Benefits:** Automated daily backups, automated software patching, and vertical/horizontal scaling at the click of a button.
@@ -87,7 +99,7 @@ In a production environment, we do not manage the underlying database server OS 
 
 ---
 
-## ⚖️ 5.15 Beginner vs. Industry Database Design
+## ⚖️ 8.8 Beginner vs. Industry Database Design
 
 | Feature | Beginner | Industry (Our Project) |
 | :--- | :--- | :--- |
@@ -97,6 +109,22 @@ In a production environment, we do not manage the underlying database server OS 
 | **Operations** | Manual SQL edits | **Schema Migrations (Alembic/Flyway)** |
 
 ---
+
+## Continue the Cloud-Native Journey 🚀
+
+> "Data is the lifeblood of observability. With persistence secured, it's time to package our entire ecosystem for the cloud using Docker Containerization."
+
+**Previous Module:**
+← [Backend Engineering](../03_backend/Backend_Engineering.md)
+
+**Next Module:**
+→ [Docker Containerization](../05_containerization/Docker_Containerization.md)
+
+## Cloud Sentinel Platform Documentation Series
+
+---
+
+## Cloud Sentinel Platform — Production-Grade Cloud-Native DevOps & Observability Engineering Documentation
 
 <p align="center">
   <img src="https://capsule-render.vercel.app/api?type=waving&color=0:4e54c8,100:8f94fb&height=100&section=footer" width="100%" />

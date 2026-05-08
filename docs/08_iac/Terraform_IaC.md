@@ -2,7 +2,7 @@
   <img src="https://capsule-render.vercel.app/api?type=waving&color=0:00b09b,100:96c93d&height=300&section=header&text=Infrastructure%20as%20Code&fontSize=65&animation=fadeIn&fontAlignY=38&fontColor=ffffff" width="100%" />
 </p>
 
-<h3 align="center">🤖 Phase 9: Infrastructure as Code (Terraform)</h3>
+<h3 align="center">🤖 Phase 12: Infrastructure as Code (Terraform)</h3>
 <p align="center"><strong>"Automating Cloud Infrastructure Like Real DevOps Engineers"</strong></p>
 <p align="center"><strong>Terraform • S3 Remote State • Modules • Declarative Automation</strong></p>
 
@@ -14,7 +14,19 @@
 
 ---
 
-## 🏗️ 9.0 Why Infrastructure Automation?
+## 📑 Table of Contents
+* [12.1 Why Infrastructure Automation?](#-121-why-infrastructure-automation)
+* [12.2 What is Terraform?](#-122-what-is-terraform)
+* [12.3 Terraform Architecture & Workflow](#-123-terraform-architecture--workflow)
+* [12.4 The State File: Terraform’s Memory](#-124-the-state-file-terraforms-memory)
+* [12.5 Modular Architecture](#-125-modular-architecture-the-lego-model)
+* [12.6 How OUR Platform is Automated](#-126-how-our-platform-is-automated)
+* [12.7 Beginner vs. Industry IaC](#-127-beginner-vs-industry-iac)
+* [12.8 Mental Models for Terraform](#-128-mental-models-for-terraform)
+
+---
+
+## 🏗️ 12.1 Why Infrastructure Automation?
 
 Before **IaC**, engineers manually clicked through the AWS console. This led to human errors and "Snowflake Servers" (servers that are unique and impossible to replicate).
 *   **The Solution:** Infrastructure becomes **Code**. You write the definition, and the machine builds the reality.
@@ -22,7 +34,7 @@ Before **IaC**, engineers manually clicked through the AWS console. This led to 
 
 ---
 
-## 🤖 9.2 What is Terraform?
+## 🤖 12.2 What is Terraform?
 
 Terraform (by HashiCorp) is the industry-standard tool for building cloud resources.
 *   **Declarative vs. Imperative:**
@@ -32,7 +44,7 @@ Terraform (by HashiCorp) is the industry-standard tool for building cloud resour
 
 ---
 
-## 🔄 9.4 Terraform Architecture & Workflow
+## 🔄 12.3 Terraform Architecture & Workflow
 
 Terraform works by comparing your code to the actual cloud state.
 
@@ -43,7 +55,7 @@ Terraform works by comparing your code to the actual cloud state.
 
 ---
 
-## 🧠 9.7 The State File: Terraform’s Memory
+## 🧠 12.4 The State File: Terraform’s Memory
 
 The `.tfstate` file is the "Long-Term Memory" of your infrastructure.
 *   **The Risk:** If you lose this file, Terraform forgets what it built, leading to orphaned resources and billing nightmares.
@@ -51,7 +63,7 @@ The `.tfstate` file is the "Long-Term Memory" of your infrastructure.
 
 ---
 
-## 🧱 📂 Modular Architecture (The LEGO Model)
+## 🧱 12.5 Modular Architecture (The LEGO Model)
 
 We don't put 500 lines of code in one file. We use **Modules** to keep things clean.
 
@@ -67,7 +79,7 @@ terraform/
 
 ---
 
-## 🛠️ 9.16 How OUR Platform is Automated
+## 🛠️ 12.6 How OUR Platform is Automated
 
 Terraform acts as the master automation engine for our cloud footprint. Instead of manual setup, Terraform will automatically provision:
 
@@ -78,7 +90,7 @@ Terraform acts as the master automation engine for our cloud footprint. Instead 
 
 ---
 
-## ⚖️ 9.17 Beginner vs. Industry IaC
+## ⚖️ 12.7 Beginner vs. Industry IaC
 
 | Feature | Beginner (Click-Ops) | Industry (Our Project) |
 | :--- | :--- | :--- |
@@ -89,7 +101,7 @@ Terraform acts as the master automation engine for our cloud footprint. Instead 
 
 ---
 
-## 🧩 9.18 Mental Models for Terraform
+## 🧩 12.8 Mental Models for Terraform
 
 To master Terraform, keep these three analogies in mind:
 1.  **Blueprint:** The master architectural plan for our entire "Cloud City."
@@ -97,6 +109,22 @@ To master Terraform, keep these three analogies in mind:
 3.  **State Engine:** An persistent brain constantly ensuring that the **Cloud Reality** matches your **Code.**
 
 ---
+
+## Continue the Cloud-Native Journey 🚀
+
+> "Infrastructure is now automated. Now, let's connect our code repository directly to our infrastructure using high-velocity CI/CD pipelines."
+
+**Previous Module:**
+← [AWS Cloud Infrastructure](../07_cloud_infrastructure/AWS_Cloud_Infrastructure.md)
+
+**Next Module:**
+→ [CI/CD Engineering](../09_cicd/CICD_Engineering.md)
+
+## Cloud Sentinel Platform Documentation Series
+
+---
+
+## Cloud Sentinel Platform — Production-Grade Cloud-Native DevOps & Observability Engineering Documentation
 
 <p align="center">
   <img src="https://capsule-render.vercel.app/api?type=waving&color=0:00b09b,100:96c93d&height=100&section=footer" width="100%" />

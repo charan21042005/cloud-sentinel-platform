@@ -2,7 +2,7 @@
   <img src="https://capsule-render.vercel.app/api?type=waving&color=0:F2994A,100:F2C94C&height=300&section=header&text=Requirement%20Analysis&fontSize=65&animation=fadeIn&fontAlignY=38&fontColor=ffffff" width="100%" />
 </p>
 
-<h3 align="center">📋 Phase 1: Requirement Analysis</h3>
+<h3 align="center">📋 Phase 2: Requirement Analysis</h3>
 <p align="center"><strong>"Designing the system before building it."</strong></p>
 <p align="center"><strong>Functional • Non-Functional • User Roles • Scalability</strong></p>
 
@@ -14,7 +14,19 @@
 
 ---
 
-## 🏗️ 1.0 What is Requirement Analysis?
+## 📑 Table of Contents
+* [2.1 What is Requirement Analysis?](#-21-what-is-requirement-analysis)
+* [2.2 Product Definition](#-22-product-definition)
+* [2.3 Functional Requirements](#-23-functional-requirements-what-it-must-do)
+* [2.4 Non-Functional Requirements](#-24-non-functional-requirements-how-it-performs)
+* [2.5 User Roles (RBAC)](#-25-user-roles-rbac)
+* [2.6 MVP vs. Advanced Scope](#-26-the-mvp-vs-advanced-scope)
+* [2.7 Scalability Goals](#-27-scalability-goals)
+* [2.8 Mental Model: The Layered Approach](#-28-mental-model-the-layered-approach)
+
+---
+
+## 🏗️ 2.1 What is Requirement Analysis?
 
 In industry, we don't start "placing bricks" (coding) without a blueprint. Requirement analysis prevents **Scope Creep**, where a project becomes too messy to finish.
 
@@ -23,14 +35,14 @@ Before building a skyscraper, engineers calculate load capacity and define rooms
 
 ---
 
-## 📝 1.1 Product Definition
+## 📝 2.2 Product Definition
 
 *   **Non-Technical View:** A smart dashboard that helps engineers see if their servers are "healthy" and fixes them automatically if they "get sick."
 *   **Technical View:** A distributed observability platform providing metrics collection (Prometheus), log aggregation (Loki), and automated recovery (Kubernetes).
 
 ---
 
-## ✅ 1.2 Functional Requirements (What it MUST do)
+## ✅ 2.3 Functional Requirements (What it MUST do)
 
 | Feature | Description | Tech Component |
 | :--- | :--- | :--- |
@@ -43,7 +55,7 @@ Before building a skyscraper, engineers calculate load capacity and define rooms
 
 ---
 
-## ⚡ 1.3 Non-Functional Requirements (How it performs)
+## ⚡ 2.4 Non-Functional Requirements (How it performs)
 
 *   **Scalability:** The architecture must be **Horizontally Scalable** (add more pods, not just a bigger server).
 *   **Availability:** The dashboard must have **99.9% Uptime** targets.
@@ -52,7 +64,7 @@ Before building a skyscraper, engineers calculate load capacity and define rooms
 
 ---
 
-## 🔐 1.4 User Roles (RBAC)
+## 🔐 2.5 User Roles (RBAC)
 
 We implement **Role-Based Access Control (RBAC)**, a core security concept:
 1.  **Admin:** Full access to infrastructure settings and user management.
@@ -61,7 +73,7 @@ We implement **Role-Based Access Control (RBAC)**, a core security concept:
 
 ---
 
-## 🎯 1.5 The MVP vs. Advanced Scope
+## 🎯 2.6 The MVP vs. Advanced Scope
 
 To ensure we finish within the semester, we follow the **MVP (Minimum Viable Product)** approach:
 
@@ -78,7 +90,7 @@ To ensure we finish within the semester, we follow the **MVP (Minimum Viable Pro
 
 ---
 
-## 📈 1.6 Scalability Goals
+## 📈 2.7 Scalability Goals
 
 We aren't building a "static" app. We are building for growth:
 *   **Horizontal Pod Autoscaler (HPA):** If traffic spikes, Kubernetes will automatically spin up more containers.
@@ -86,7 +98,7 @@ We aren't building a "static" app. We are building for growth:
 
 ---
 
-## 🗺️ 1.7 Mental Model: The Layered Approach
+## 🗺️ 2.8 Mental Model: The Layered Approach
 
 We think in layers to keep the system organized:
 1.  **User Layer:** Accessing the UI.
@@ -96,6 +108,22 @@ We think in layers to keep the system organized:
 5.  **Infra Layer:** Kubernetes & AWS.
 
 ---
+
+## Continue the Cloud-Native Journey 🚀
+
+> "Requirements are the contracts of engineering. With the blueprint finalized, it's time to initiate the actual project lifecycle."
+
+**Previous Module:**
+← [Project Vision](01_Vision.md)
+
+**Next Module:**
+→ [Project Initiation](03_Initiation.md)
+
+## Cloud Sentinel Platform Documentation Series
+
+---
+
+## Cloud Sentinel Platform — Production-Grade Cloud-Native DevOps & Observability Engineering Documentation
 
 <p align="center">
   <img src="https://capsule-render.vercel.app/api?type=waving&color=0:F2994A,100:F2C94C&height=100&section=footer" width="100%" />
