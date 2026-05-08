@@ -54,24 +54,50 @@ We are moving away from the "One Big App" (Monolith) approach toward **Microserv
 
 ```mermaid
 graph TD
-    Internet((Internet)) --> ALB[AWS Load Balancer]
-    ALB --> K8sIngress[Kubernetes Ingress]
+    %% Node Definitions
+    INET["🌐 Internet"]
+    ALB["🛰️ AWS Load Balancer"]
+    ING["🚦 Kubernetes Ingress"]
     
-    subgraph K8s_Cluster [Kubernetes Smart City]
-        FE[Frontend - React]
-        BE[Backend API - FastAPI]
-        AUTH[Auth Service]
+    subgraph K8S ["☸️ Kubernetes Smart City"]
+        FE["💻 Frontend - React"]
+        BE["⚙️ Backend API - FastAPI"]
+        AUTH["🔐 Auth Service"]
         
-        subgraph Observability
-            PROM[Prometheus]
-            GRAF[Grafana]
-            LOKI[Loki]
+        subgraph OBS ["📊 Observability Stack"]
+            PROM["🔥 Prometheus"]
+            GRAF["📉 Grafana"]
+            LOKI["🪵 Loki"]
         end
     end
 
-    BE --> DB[(PostgreSQL RDS)]
+    DB[("🗄️ PostgreSQL RDS")]
+
+    %% Connections
+    INET --> ALB
+    ALB --> ING
+    ING --> FE
+    ING --> BE
+    ING --> AUTH
+    BE --> DB
     BE --> PROM
+    PROM --> GRAF
+    LOKI --> GRAF
+
+    %% Styling Definitions
+    style INET fill:#fff9f0,stroke:#FF9900,stroke-width:2px
+    style ALB fill:#f0f4ff,stroke:#326CE5,stroke-width:2px
+    style ING fill:#f0f4ff,stroke:#326CE5,stroke-width:2px
+    style FE fill:#e6fffa,stroke:#05998b,stroke-width:2px
+    style BE fill:#e6fffa,stroke:#05998b,stroke-width:2px
+    style AUTH fill:#e6fffa,stroke:#05998b,stroke-width:2px
+    style PROM fill:#fff5f5,stroke:#E6522C,stroke-width:2px
+    style GRAF fill:#fff5f5,stroke:#E6522C,stroke-width:2px
+    style LOKI fill:#fff5f5,stroke:#E6522C,stroke-width:2px
+    style DB fill:#f0f0ff,stroke:#0f0c29,stroke-width:2px
 ```
+
+
 
 ---
 

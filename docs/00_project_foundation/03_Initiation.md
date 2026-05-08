@@ -41,26 +41,55 @@ Modern distributed systems fail. Whether it's a CPU spike, a pod crash, or a mem
 
 ```mermaid
 graph TD
-    User((Users)) --> ALB[AWS Load Balancer]
-    ALB --> K8S{Kubernetes Cluster}
+    %% Node Definitions
+    USER["🌐 Users"]
+    ALB["🛰️ AWS Load Balancer"]
+    K8S{"☸️ Kubernetes Cluster"}
     
-    subgraph "Microservices Layer"
-        K8S --> FE[Frontend Pod - React]
-        K8S --> BE[Backend API Pod - FastAPI]
-        K8S --> AS[Alert Service Pod]
-        K8S --> AU[Auth Service Pod]
+    subgraph SVC ["🏙️ Microservices Layer"]
+        FE["💻 Frontend Pod - React"]
+        BE["⚙️ Backend API Pod - FastAPI"]
+        AS["🔔 Alert Service Pod"]
+        AU["🔐 Auth Service Pod"]
     end
 
-    subgraph "Observability Stack"
-        K8S --> Prom[Prometheus]
-        K8S --> Graf[Grafana]
-        K8S --> Loki[Loki Logs]
+    subgraph OBS ["🔭 Observability Stack"]
+        PROM["🔥 Prometheus"]
+        GRAF["📊 Grafana"]
+        LOKI["🪵 Loki Logs"]
     end
 
-    BE --> DB[(PostgreSQL RDS)]
-    Prom --> Graf
-    Loki --> Graf
+    DB[("🗄️ PostgreSQL RDS")]
+
+    %% Connections
+    USER --> ALB
+    ALB --> K8S
+    K8S --> FE
+    K8S --> BE
+    K8S --> AS
+    K8S --> AU
+    K8S --> PROM
+    K8S --> GRAF
+    K8S --> LOKI
+    BE --> DB
+    PROM --> GRAF
+    LOKI --> GRAF
+
+    %% Styling Definitions
+    style USER fill:#fff9f0,stroke:#FF9900,stroke-width:2px
+    style ALB fill:#f0f4ff,stroke:#326CE5,stroke-width:2px
+    style K8S fill:#f0f4ff,stroke:#326CE5,stroke-width:2px
+    style FE fill:#e6fffa,stroke:#05998b,stroke-width:2px
+    style BE fill:#e6fffa,stroke:#05998b,stroke-width:2px
+    style AS fill:#e6fffa,stroke:#05998b,stroke-width:2px
+    style AU fill:#e6fffa,stroke:#05998b,stroke-width:2px
+    style PROM fill:#fff5f5,stroke:#E6522C,stroke-width:2px
+    style GRAF fill:#fff5f5,stroke:#E6522C,stroke-width:2px
+    style LOKI fill:#fff5f5,stroke:#E6522C,stroke-width:2px
+    style DB fill:#f0f0ff,stroke:#0f0c29,stroke-width:2px
 ```
+
+
 
 ---
 

@@ -3,131 +3,209 @@
 </p>
 
 <h3 align="center">🛡️ Your Cloud-Native Sentinel</h3>
-<p align="center"><strong>Production-Grade SRE & Observability Platform</strong></p>
-<p align="center"><strong>Monitor • Detect • Recover • Scale</strong></p>
+<p align="center"><strong>"The High-Availability Fortress for Distributed Systems"</strong></p>
+<p align="center"><strong>Production-Grade SRE • Kubernetes Orchestration • Automated Observability</strong></p>
 
 <p align="center">
-  <a href="https://aws.amazon.com/"><img src="https://img.shields.io/badge/Infrastructure-AWS-000046?style=for-the-badge&logo=amazon-aws&logoColor=white" alt="AWS" /></a>
-  <a href="https://kubernetes.io/"><img src="https://img.shields.io/badge/Orchestration-Kubernetes-1CB5E0?style=for-the-badge&logo=kubernetes&logoColor=white" alt="Kubernetes" /></a>
-  <a href="https://www.terraform.io/"><img src="https://img.shields.io/badge/IaC-Terraform-000046?style=for-the-badge&logo=terraform&logoColor=white" alt="Terraform" /></a>
-  <a href="https://www.jenkins.io/"><img src="https://img.shields.io/badge/CI/CD-Jenkins-1CB5E0?style=for-the-badge&logo=jenkins&logoColor=white" alt="Jenkins" /></a>
+  <a href="https://aws.amazon.com/"><img src="https://img.shields.io/badge/Infrastructure-AWS-232F3E?style=for-the-badge&logo=amazon-aws&logoColor=white" alt="AWS" /></a>
+  <a href="https://kubernetes.io/"><img src="https://img.shields.io/badge/Orchestration-Kubernetes-326CE5?style=for-the-badge&logo=kubernetes&logoColor=white" alt="Kubernetes" /></a>
+  <a href="https://www.terraform.io/"><img src="https://img.shields.io/badge/IaC-Terraform-623CE4?style=for-the-badge&logo=terraform&logoColor=white" alt="Terraform" /></a>
+  <a href="https://www.jenkins.io/"><img src="https://img.shields.io/badge/CI/CD-Jenkins-D24939?style=for-the-badge&logo=jenkins&logoColor=white" alt="Jenkins" /></a>
 </p>
 <p align="center">
-  <a href="https://prometheus.io/"><img src="https://img.shields.io/badge/Observability-Prometheus-000046?style=for-the-badge&logo=Prometheus&logoColor=white" alt="Prometheus" /></a>
-  <a href="https://grafana.com/"><img src="https://img.shields.io/badge/Visualization-Grafana-1CB5E0?style=for-the-badge&logo=grafana&logoColor=white" alt="Grafana" /></a>
+  <a href="https://prometheus.io/"><img src="https://img.shields.io/badge/Observability-Prometheus-E6522C?style=for-the-badge&logo=Prometheus&logoColor=white" alt="Prometheus" /></a>
+  <a href="https://grafana.com/"><img src="https://img.shields.io/badge/Visualization-Grafana-F46800?style=for-the-badge&logo=grafana&logoColor=white" alt="Grafana" /></a>
+  <a href="https://fastapi.tiangolo.com/"><img src="https://img.shields.io/badge/Backend-FastAPI-05998b?style=for-the-badge&logo=fastapi&logoColor=white" alt="FastAPI" /></a>
+  <a href="https://reactjs.org/"><img src="https://img.shields.io/badge/Frontend-React-61DAFB?style=for-the-badge&logo=react&logoColor=black" alt="React" /></a>
 </p>
 
 ---
 
 ## 📑 Table of Contents
-* [1.0 Overview](#-10-overview)
-* [2.0 Documentation Roadmap](#-20-documentation-roadmap-learning-flow)
-* [3.0 High-Level Architecture](#-30-high-level-architecture)
-* [4.0 Repository Structure](#-40-repository-structure)
-* [5.0 Author & License](#-50-author--license)
+- [🛡️ 1.0 Overview](#-10-overview)
+- [📈 2.0 Platform Status & Metrics](#-20-platform-status--metrics)
+- [🚀 3.0 Documentation Masterclass](#-30-documentation-masterclass)
+- [🏛️ 4.0 System Architecture](#-40-system-architecture)
+- [🛠️ 5.0 Core Technology Stack](#-50-core-technology-stack)
+- [📂 6.0 Repository Architecture](#-60-repository-architecture)
+- [👨‍💻 7.0 Author & Philosophy](#-70-author--philosophy)
 
 ---
 
-## 📌 1.0 Overview
+## 🛡️ 1.1 Project Overview
 
-**Cloud Sentinel Platform** is an industry-inspired cloud-native observability and incident management system designed to simulate real-world **DevOps** and **Site Reliability Engineering (SRE)** workflows.
+**Cloud Sentinel Platform** is a mission-critical, industry-inspired cloud-native observability ecosystem. It is designed to bridge the gap between traditional software development and high-fidelity **Site Reliability Engineering (SRE)**.
 
-In today's distributed systems, downtime is not an option. Cloud Sentinel doesn't just watch your infrastructure—it understands it. By leveraging a full-stack observability suite and automated recovery workflows, it ensures your services remain resilient under pressure.
+In the era of distributed microservices, infrastructure is no longer static—it is a living organism. Cloud Sentinel provides the **Eyes (Prometheus)**, **Brain (FastAPI/K8s)**, and **Hands (Terraform/Jenkins)** required to maintain 99.99% uptime in a volatile cloud environment.
 
 ---
 
-## 🚀 2.0 Documentation Roadmap (Learning Flow)
+## 📈 2.0 Platform Status & Metrics
 
-Explore the project through our high-fidelity documentation architecture. Follow the numbered phases for a complete masterclass experience.
+| Component | Status | Technology | Focus |
+| :--- | :--- | :--- | :--- |
+| **Infrastucture** | `Provisioned` | Terraform / AWS | Resilience |
+| **Orchestration** | `Stable` | Kubernetes | Self-Healing |
+| **Pipeline** | `Automated` | Jenkins | Velocity |
+| **Observability** | `Live` | LGTM Stack | Visibility |
+| **Security** | `Hardened` | DevSecOps | Zero-Trust |
 
-### 🏛️ Phase 1: Foundation & Architecture
+---
+
+## 🚀 3.0 Documentation Masterclass
+
+Explore the project through a structured, domain-driven learning path. Each module is a "Masterclass" in production engineering.
+
+### 🏛️ Phase 1: The Blueprint
 *   **00 Project Foundation:** [Vision](docs/00_project_foundation/01_Vision.md) • [Requirements](docs/00_project_foundation/02_Requirements.md) • [Initiation](docs/00_project_foundation/03_Initiation.md) • [Planning](docs/00_project_foundation/04_Project_Planning.md)
-*   **01 Architecture:** [System Architecture](docs/01_architecture/System_Architecture.md)
+*   **01 Architecture:** [System Design](docs/01_architecture/System_Architecture.md)
 
 ### ⚙️ Phase 2: Core Engineering
-*   **02 Frontend:** [Frontend Engineering](docs/02_frontend/Frontend_Engineering.md)
-*   **03 Backend:** [Backend Engineering](docs/03_backend/Backend_Engineering.md)
-*   **04 Database:** [Database Engineering](docs/04_database/Database_Engineering.md)
+*   **02 Frontend:** [React UI](docs/02_frontend/Frontend_Engineering.md)
+*   **03 Backend:** [FastAPI Engine](docs/03_backend/Backend_Engineering.md)
+*   **04 Database:** [RDS Persistence](docs/04_database/Database_Engineering.md)
 
 ### 🐳 Phase 3: Cloud & DevOps
-*   **05 Containerization:** [Docker Containerization](docs/05_containerization/Docker_Containerization.md)
-*   **06 Kubernetes:** [Kubernetes Deep Dive](docs/06_kubernetes/Kubernetes_Deep_Dive.md)
-*   **07 Cloud Infra:** [AWS Cloud Infrastructure](docs/07_cloud_infrastructure/AWS_Cloud_Infrastructure.md)
-*   **08 IaC:** [Terraform IaC](docs/08_iac/Terraform_IaC.md)
-*   **09 CI/CD:** [Jenkins CI/CD Engineering](docs/09_cicd/CICD_Engineering.md)
+*   **05 Containers:** [Docker Mastery](docs/05_containerization/Docker_Containerization.md)
+*   **06 Orchestration:** [K8s Deep Dive](docs/06_kubernetes/Kubernetes_Deep_Dive.md)
+*   **07 Infrastructure:** [AWS Cloud](docs/07_cloud_infrastructure/AWS_Cloud_Infrastructure.md)
+*   **08 IaC:** [Terraform Modules](docs/08_iac/Terraform_IaC.md)
+*   **09 CI/CD:** [Jenkins Automation](docs/09_cicd/CICD_Engineering.md)
 
-### 📊 Phase 4: Operations & Security
-*   **10 Observability:** [Monitoring & Observability](docs/10_observability/Monitoring_Observability.md)
-*   **11 Security:** [Security & DevSecOps](docs/11_security/Security_DevSecOps.md)
-*   **12 Deployment:** [Deployment Strategy](docs/12_deployment/Deployment_Strategy.md)
-*   **13 Testing:** [Testing Strategy](docs/13_testing/Testing_Strategy.md)
+### 📊 Phase 4: Operations & Defense
+*   **10 Monitoring:** [Observability](docs/10_observability/Monitoring_Observability.md)
+*   **11 Security:** [DevSecOps](docs/11_security/Security_DevSecOps.md)
+*   **12 Strategy:** [Zero-Downtime Deployment](docs/12_deployment/Deployment_Strategy.md)
+*   **13 Quality:** [Testing Strategy](docs/13_testing/Testing_Strategy.md)
 
-### 📈 Phase 5: Production & Defense
-*   **14 Workflow:** [Production Workflow](docs/14_production_workflow/Production_Workflow.md)
-*   **15 Documentation:** [GitHub Engineering](docs/15_documentation/Documentation_GitHub_Engineering.md)
-*   **16 Viva Prep:** [Presentation Mastery](docs/16_viva/Viva_Presentation_Preparation.md)
-*   **17 Future Scope:** [Advanced Features](docs/17_advanced_features/Advanced_Features_Future_Scope.md)
+### 📈 Phase 5: Production
+*   **14 Workflow:** [Final Production](docs/14_production_workflow/Production_Workflow.md)
+*   **15 Repository:** [GitHub Engineering](docs/15_documentation/Documentation_GitHub_Engineering.md)
+*   **16 Defense:** [Viva Mastery](docs/16_viva/Viva_Presentation_Preparation.md)
+*   **17 Horizon:** [Future AIOps](docs/17_advanced_features/Advanced_Features_Future_Scope.md)
 
 ---
 
-## 🏗️ 3.0 High-Level Architecture
+## 🏛️ 4.0 System Architecture
+
+The following diagram illustrates the high-velocity data flow and service orchestration within the Cloud Sentinel ecosystem.
 
 ```mermaid
 graph TD
-    User((Users)) --> ALB[AWS Load Balancer]
+    %% Node Definitions
+    DEV["👨‍💻 Developer"]
+    GH["🐙 GitHub (Source)"]
+    JEN["🤖 Jenkins Engine"]
+    TEST["🧪 Testing Suite"]
+    BUILD["🐳 Docker Factory"]
+    SCAN["🛡️ Trivy Security"]
+    ECR["📦 AWS ECR"]
+    
+    TF["🏗️ Terraform IaC"]
+    AWS["☁️ AWS Global Infra"]
+    K8S{"☸️ Kubernetes Cluster"}
+    
+    ING["🚦 Ingress Controller"]
+    FE["💻 Frontend Dashboard"]
+    BE["⚙️ Backend API"]
+    DB[("🗄️ PostgreSQL RDS")]
 
-    ALB --> K8S[Kubernetes Cluster]
+    PROM["🔥 Prometheus"]
+    LOKI["🪵 Loki"]
+    GRAF["📊 Grafana"]
+    AM["🔔 AlertManager"]
 
-    subgraph Application_Services
-        K8S --> FE[Frontend Service]
-        K8S --> BE[Backend API Service]
-        K8S --> AUTH[Authentication Service]
-        K8S --> ALERT[Alert Service]
-    end
-
-    subgraph Observability_Stack
-        K8S --> PROM[Prometheus]
-        K8S --> GRAF[Grafana]
-        K8S --> LOKI[Loki]
-    end
-
-    BE --> DB[(PostgreSQL Database)]
-
+    %% Connections
+    DEV -->|Git Push| GH
+    GH -->|Webhook| JEN
+    JEN --> TEST
+    TEST --> BUILD
+    BUILD --> SCAN
+    SCAN --> ECR
+    ECR -->|Pull| K8S
+    TF -->|Provision| AWS
+    AWS -.-> K8S
+    K8S --> ING
+    ING --> FE
+    ING --> BE
+    BE --> DB
+    PROM -->|Scrape| BE
+    LOKI -->|Logs| BE
     PROM --> GRAF
     LOKI --> GRAF
+    PROM --> AM
+
+    %% Styling Definitions
+    style DEV fill:#fff9f0,stroke:#FF9900,stroke-width:2px
+    style GH fill:#f0f4ff,stroke:#326CE5,stroke-width:2px
+    style JEN fill:#fff0f5,stroke:#D24939,stroke-width:2px
+    style TEST fill:#fff0f5,stroke:#D24939,stroke-width:2px
+    style BUILD fill:#fff0f5,stroke:#D24939,stroke-width:2px
+    style SCAN fill:#fff0f5,stroke:#D24939,stroke-width:2px
+    style ECR fill:#f0f4ff,stroke:#326CE5,stroke-width:2px
+    style TF fill:#f5f0ff,stroke:#623CE4,stroke-width:2px
+    style AWS fill:#f0f4ff,stroke:#326CE5,stroke-width:2px
+    style K8S fill:#f0f4ff,stroke:#326CE5,stroke-width:2px
+    style ING fill:#f0f4ff,stroke:#326CE5,stroke-width:2px
+    style FE fill:#e6fffa,stroke:#05998b,stroke-width:2px
+    style BE fill:#e6fffa,stroke:#05998b,stroke-width:2px
+    style DB fill:#f0f0ff,stroke:#0f0c29,stroke-width:2px
+    style PROM fill:#fff5f5,stroke:#E6522C,stroke-width:2px
+    style LOKI fill:#fff5f5,stroke:#E6522C,stroke-width:2px
+    style GRAF fill:#fff5f5,stroke:#E6522C,stroke-width:2px
+    style AM fill:#fff5f5,stroke:#E6522C,stroke-width:2px
 ```
+
+
 
 ---
 
-## 📂 4.0 Repository Structure
+## 🛠️ 5.0 Core Technology Stack
+
+| Domain | Tools |
+| :--- | :--- |
+| **Cloud Infrastructure** | AWS (EKS, RDS, ECR, VPC, S3) |
+| **Infrastructure as Code** | Terraform (HCL) |
+| **Orchestration** | Kubernetes (Pods, Deployments, Ingress, HPA) |
+| **CI/CD Automation** | Jenkins, GitHub Webhooks, Groovy |
+| **Full-Stack** | FastAPI (Python), React (JavaScript), Tailwind CSS |
+| **Observability** | Prometheus, Grafana, Loki, AlertManager |
+| **Security** | Trivy, JWT, RBAC, AWS IAM |
+
+---
+
+## 📂 6.0 Repository Architecture
 
 ```text
 cloud-sentinel-platform/
 │
-├── frontend/             # React + Tailwind Source
-├── backend/              # FastAPI Source
-├── infrastructure/       # Terraform Modules (IaC)
-├── kubernetes/           # K8s Manifests (Deployments, HPA, Ingress)
-├── monitoring/           # Prometheus/Grafana/Loki Configs
-├── scripts/              # Automation & Helper Scripts
-├── docs/                 # Professional Documentation Hierarchy (Masterclass)
-├── .github/              # GitHub Actions & Workflows
-└── README.md             # Project Landing Page
+├── frontend/             # ⚛️ React Dashboard + Tailwind Source
+├── backend/              # ⚙️ FastAPI Microservices + Business Logic
+├── infrastructure/       # 🏗️ Terraform Modules (IaC)
+├── kubernetes/           # ☸️ K8s Manifests (Deployments, Services, HPA)
+├── monitoring/           # 📊 Prometheus, Grafana, & Loki Configurations
+├── scripts/              # 📜 Automation, Chaos Scripts, & Helper Utilities
+├── docs/                 # 📚 High-Fidelity Masterclass Documentation
+├── .github/              # 🤖 GitHub Actions & Workflow Automation
+└── README.md             # 🏠 Project Navigation Hub
 ```
 
 ---
 
-## 👨‍💻 5.0 Author & License
+## 👨‍💻 7.0 Author & Philosophy
 
 **Patty**
-*B.Tech Student — Cloud Computing & DevOps Engineering*
+*B.Tech — Cloud Computing & DevOps Engineering Specialist*
+
+> "In the cloud, resilience is not a feature—it is a foundation. Cloud Sentinel is built on the philosophy that every failure is an opportunity for automated recovery."
 
 <p align="center">
-  <a href="https://linkedin.com/in/yourprofile"><img src="https://img.shields.io/badge/LinkedIn-4facfe?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn" /></a>
-  <a href="https://github.com/charan21042005"><img src="https://img.shields.io/badge/GitHub-00d2ff?style=for-the-badge&logo=github&logoColor=white" alt="GitHub" /></a>
+  <a href="https://linkedin.com/in/yourprofile"><img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn" /></a>
+  <a href="https://github.com/charan21042005"><img src="https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white" alt="GitHub" /></a>
+  <a href="mailto:your-email@example.com"><img src="https://img.shields.io/badge/Email-D14836?style=for-the-badge&logo=gmail&logoColor=white" alt="Email" /></a>
 </p>
 
-This project is licensed under the MIT License.
+---
 
 <p align="center">
   <img src="https://capsule-render.vercel.app/api?type=waving&color=0:000046,100:1CB5E0&height=100&section=footer" width="100%" />

@@ -28,45 +28,85 @@ This diagram represents the "Nervous System" of the Cloud Sentinel Platform. It 
 
 ```mermaid
 graph TD
-    %% Developer Section
-    Dev[Developer] -->|Git Push| GH(GitHub Repo)
-
-    %% CI/CD Section
-    GH -->|Webhook Trigger| Jen[Jenkins Pipeline]
+    %% Node Definitions
+    DEV["👨‍💻 Developer"]
+    GH["🐙 GitHub Repo"]
+    JEN["🤖 Jenkins Pipeline"]
     
-    subgraph "CI/CD Pipeline (The Factory)"
-        Jen -->|1. Test| Test[Unit/API Testing]
-        Test -->|2. Build| DB[Docker Build]
-        DB -->|3. Scan| Sec[Security Scan - Trivy]
-        Sec -->|4. Push| ECR[AWS ECR]
+    subgraph CI_CD ["🏭 CI/CD Pipeline (The Factory)"]
+        TEST["🧪 Unit/API Testing"]
+        BUILD["🐳 Docker Build"]
+        SCAN["🛡️ Security Scan - Trivy"]
+        PUSH["📦 AWS ECR"]
     end
 
-    %% Infrastructure Section
-    ECR -->|Pull Image| K8s[Kubernetes Cluster]
-    Tf[Terraform] -->|Provision/Update| AWS_Infra[AWS Infrastructure - VPC/EC2/RDS]
-    AWS_Infra -.-> K8s
+    ECR_PULL["📥 Pull Image"]
+    TF["🏗️ Terraform IaC"]
+    AWS["☁️ AWS Infra (VPC/RDS)"]
+    K8S{"☸️ Kubernetes Cluster"}
 
-    %% Runtime Section
-    subgraph "Production Runtime (The Smart City)"
-        K8s --> FE[Frontend Pod]
-        K8s --> BE[Backend API Pod]
-        BE --> Postgres[(PostgreSQL RDS)]
+    subgraph RUNTIME ["🏙️ Production Runtime"]
+        FE["💻 Frontend Pod"]
+        BE["⚙️ Backend API Pod"]
+        DB[("🗄️ PostgreSQL RDS")]
     end
 
-    %% Monitoring Section
-    subgraph "Observability Stack (The Watchtower)"
-        Prom[Prometheus] -->|Scrape Metrics| BE
-        Loki[Loki] -->|Collect Logs| BE
-        Prom --> Graf[Grafana Dashboards]
-        Loki --> Graf
-        Prom --> AM[AlertManager]
-        AM -->|Notify| Alert[Incident Detection]
+    subgraph OBS ["🔭 Observability Stack"]
+        PROM["🔥 Prometheus"]
+        LOKI["🪵 Loki"]
+        GRAF["📊 Grafana Dashboards"]
+        AM["🔔 AlertManager"]
     end
 
-    %% User Access
-    User((User)) -->|HTTPS| ALB[AWS Load Balancer]
-    ALB -->|Ingress| FE
+    USER["🌐 User"]
+    ALB["🛰️ AWS Load Balancer"]
+
+    %% Connections
+    DEV -->|Git Push| GH
+    GH -->|Webhook| JEN
+    JEN --> TEST
+    TEST --> BUILD
+    BUILD --> SCAN
+    SCAN --> PUSH
+    PUSH --> ECR_PULL
+    ECR_PULL --> K8S
+    TF -->|Provision| AWS
+    AWS -.-> K8S
+    K8S --> FE
+    K8S --> BE
+    BE --> DB
+    PROM -->|Scrape| BE
+    LOKI -->|Collect| BE
+    PROM --> GRAF
+    LOKI --> GRAF
+    PROM --> AM
+    USER --> ALB
+    ALB --> FE
+
+    %% Styling Definitions
+    style DEV fill:#fff9f0,stroke:#FF9900,stroke-width:2px
+    style GH fill:#f0f4ff,stroke:#326CE5,stroke-width:2px
+    style JEN fill:#fff0f5,stroke:#D24939,stroke-width:2px
+    style TEST fill:#fff0f5,stroke:#D24939,stroke-width:2px
+    style BUILD fill:#fff0f5,stroke:#D24939,stroke-width:2px
+    style SCAN fill:#fff0f5,stroke:#D24939,stroke-width:2px
+    style PUSH fill:#f0f4ff,stroke:#326CE5,stroke-width:2px
+    style ECR_PULL fill:#f0f4ff,stroke:#326CE5,stroke-width:2px
+    style TF fill:#f5f0ff,stroke:#623CE4,stroke-width:2px
+    style AWS fill:#f0f4ff,stroke:#326CE5,stroke-width:2px
+    style K8S fill:#f0f4ff,stroke:#326CE5,stroke-width:2px
+    style FE fill:#e6fffa,stroke:#05998b,stroke-width:2px
+    style BE fill:#e6fffa,stroke:#05998b,stroke-width:2px
+    style DB fill:#f0f0ff,stroke:#0f0c29,stroke-width:2px
+    style PROM fill:#fff5f5,stroke:#E6522C,stroke-width:2px
+    style LOKI fill:#fff5f5,stroke:#E6522C,stroke-width:2px
+    style GRAF fill:#fff5f5,stroke:#E6522C,stroke-width:2px
+    style AM fill:#fff5f5,stroke:#E6522C,stroke-width:2px
+    style USER fill:#fff9f0,stroke:#FF9900,stroke-width:2px
+    style ALB fill:#f0f4ff,stroke:#326CE5,stroke-width:2px
 ```
+
+
 
 ---
 

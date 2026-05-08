@@ -26,25 +26,55 @@
 
 ```mermaid
 graph TD
-    Internet((Internet)) --> ALB[AWS Application Load Balancer]
-    ALB --> K8sIngress[Kubernetes Ingress Controller]
+    %% Node Definitions
+    INET["🌐 Internet"]
+    ALB["🛰️ AWS Load Balancer"]
+    ING["🚦 Kubernetes Ingress"]
     
-    subgraph EKS_Cluster [EKS / k3s Cluster]
-        FE[Frontend - React]
-        BE[Backend API - FastAPI]
-        AM[Alert Manager Service]
-        AU[Auth Service]
+    subgraph K8S ["☸️ EKS / k3s Cluster"]
+        FE["💻 Frontend - React"]
+        BE["⚙️ Backend API - FastAPI"]
+        AM["🔔 Alert Manager"]
+        AU["🔐 Auth Service"]
         
-        subgraph Monitoring_Stack
-            Prom[Prometheus]
-            Graf[Grafana]
-            Loki[Loki]
+        subgraph OBS ["📊 Monitoring Stack"]
+            PROM["🔥 Prometheus"]
+            GRAF["📉 Grafana"]
+            LOKI["🪵 Loki"]
         end
     end
 
-    BE --> RDS[(PostgreSQL RDS)]
-    BE --> S3[[AWS S3]]
+    RDS[("🗄️ PostgreSQL RDS")]
+    S3["📦 AWS S3"]
+
+    %% Connections
+    INET --> ALB
+    ALB --> ING
+    ING --> FE
+    ING --> BE
+    ING --> AM
+    ING --> AU
+    BE --> RDS
+    BE --> S3
+    PROM --> GRAF
+    LOKI --> GRAF
+
+    %% Styling Definitions
+    style INET fill:#fff9f0,stroke:#FF9900,stroke-width:2px
+    style ALB fill:#f0f4ff,stroke:#326CE5,stroke-width:2px
+    style ING fill:#f0f4ff,stroke:#326CE5,stroke-width:2px
+    style FE fill:#e6fffa,stroke:#05998b,stroke-width:2px
+    style BE fill:#e6fffa,stroke:#05998b,stroke-width:2px
+    style AM fill:#e6fffa,stroke:#05998b,stroke-width:2px
+    style AU fill:#e6fffa,stroke:#05998b,stroke-width:2px
+    style PROM fill:#fff5f5,stroke:#E6522C,stroke-width:2px
+    style GRAF fill:#fff5f5,stroke:#E6522C,stroke-width:2px
+    style LOKI fill:#fff5f5,stroke:#E6522C,stroke-width:2px
+    style RDS fill:#f0f0ff,stroke:#0f0c29,stroke-width:2px
+    style S3 fill:#f0f4ff,stroke:#326CE5,stroke-width:2px
 ```
+
+
 
 ---
 
