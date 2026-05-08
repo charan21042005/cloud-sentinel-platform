@@ -93,12 +93,6 @@ Moving from **Reactive** to **Proactive**.
 **Main Hub:**
 🏠 [Documentation Home](../README.md)
 
-## Cloud Sentinel Platform Documentation Series
-
----
-
-## Cloud Sentinel Platform — Production-Grade Cloud-Native DevOps & Observability Engineering Documentation
-
 <p align="center">
   <img src="https://capsule-render.vercel.app/api?type=waving&color=0:f7ff00,100:db36a4&height=100&section=footer" width="100%" />
 </p>

@@ -1,101 +1,97 @@
 <p align="center">
-  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:00FFFF,100:FF00FF&height=300&section=header&text=CICD%20Engineering&fontSize=70&animation=fadeIn&fontAlignY=38&fontColor=ffffff" width="100%" />
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:f46b45,100:eea849&height=300&section=header&text=Jenkins%20CI/CD%20Pipeline&fontSize=65&animation=fadeIn&fontAlignY=38&fontColor=ffffff" width="100%" />
 </p>
 
-<h3 align="center">🚀 Phase 13: CI/CD Engineering</h3>
-<p align="center"><strong>"Automating Software Delivery Like Real DevOps Teams"</strong></p>
-<p align="center"><strong>Jenkins • Pipeline-as-Code • Automated Testing • Deployment Strategies</strong></p>
+<h3 align="center">🚀 Phase 13: Jenkins CI/CD Engineering</h3>
+<p align="center"><strong>"The Automated Assembly Line of Cloud Sentinel"</strong></p>
+<p align="center"><strong>Pipeline as Code • GitHub Webhooks • Build • Scan • Deploy</strong></p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Phase-CICD-00FFFF?style=for-the-badge&logoColor=black" alt="CICD Phase" />
-  <img src="https://img.shields.io/badge/Tool-Jenkins-FF00FF?style=for-the-badge&logo=jenkins&logoColor=white" alt="Jenkins" />
-  <img src="https://img.shields.io/badge/Goal-Automation-00FFFF?style=for-the-badge&logoColor=black" alt="Goal" />
+  <img src="https://img.shields.io/badge/Phase-CICD-f46b45?style=for-the-badge&logoColor=white" alt="CICD Phase" />
+  <img src="https://img.shields.io/badge/Tool-Jenkins-eea849?style=for-the-badge&logo=jenkins&logoColor=white" alt="Jenkins" />
+  <img src="https://img.shields.io/badge/Method-Automated-f46b45?style=for-the-badge&logoColor=white" alt="Method" />
 </p>
 
 ---
 
 ## 📑 Table of Contents
-* [13.1 The CI/CD Revolution](#-131-the-cicd-revolution)
-* [13.2 Understanding CI vs. CD](#-132-understanding-ci-vs-cd)
-* [13.3 Jenkins: The Robotic DevOps Engineer](#-133-jenkins-the-robotic-devops-engineer)
-* [13.4 Pipeline-as-Code (The Jenkinsfile)](#-134-pipeline-as-code-the-jenkinsfile)
-* [13.5 Kubernetes Deployment Automation](#-135-kubernetes-deployment-automation)
-* [13.6 Advanced Deployment Strategies](#-136-advanced-deployment-strategies)
-* [13.7 Beginner vs. Industry CI/CD](#-137-beginner-vs-industry-cicd)
+* [13.1 What is CI/CD?](#-131-what-is-cicd)
+* [13.2 Jenkins: The Industry Workhorse](#-132-jenkins-the-industry-workhorse)
+* [13.3 Pipeline as Code (Jenkinsfile)](#-133-pipeline-as-code-jenkinsfile)
+* [13.4 The Multi-Stage Workflow](#-134-the-multi-stage-workflow)
+* [13.5 Webhooks: Real-Time Integration](#-135-webhooks-real-time-integration)
+* [13.6 Artifact Management: Docker & ECR](#-136-artifact-management-docker--ecr)
+* [13.7 Beginner vs. Industry Automation](#-137-beginner-vs-industry-automation)
 * [13.8 Mental Models for CI/CD](#-138-mental-models-for-cicd)
 
 ---
 
-## 🏭 13.1 The CI/CD Revolution
+## 🏎️ 13.1 What is CI/CD?
 
-Before CI/CD, engineers manually copied files to servers at midnight, hoping nothing would break. **CI/CD** changes this by making deployment a non-event.
-*   **The Analogy:** Instead of handcrafting every product, we build an **Automated Assembly Line**.
-*   **The Goal:** Detect, respond, and recover fast. If a human touches a server, it's a bug; if a script touches it, it's DevOps.
-
----
-
-## 🔄 13.2 Understanding CI vs. CD
-
-*   **Continuous Integration (CI):** Developers push code frequently. Jenkins automatically builds it and runs tests. If the test fails, the code is rejected immediately.
-*   **Continuous Delivery (CD):** The application is *always* in a deployable state. In our project, we use **Continuous Delivery** (manual trigger for final deploy) to keep things safe.
+In the old days, software was manually uploaded to servers. This was slow and buggy.
+*   **Continuous Integration (CI):** Every time a developer saves code, it is automatically merged and **Tested**.
+*   **Continuous Delivery (CD):** Every valid change is automatically **Built** and **Deployed** to the cloud.
+*   **The Advantage:** High velocity. You can deploy 10 times a day without fear of breaking the system.
 
 ---
 
-## 🤖 13.3 Jenkins: The Robotic DevOps Engineer
+## ⚙️ 13.2 Jenkins: The Industry Workhorse
 
-Jenkins is our central automation server. It acts like a manager that coordinates all the workers.
-*   **Jenkins Master:** The brain that schedules jobs.
-*   **Jenkins Agents:** The workers that actually run the builds and tests.
-*   **GitHub Webhooks:** The "Phone Call" that tells Jenkins: *"Hey, new code just arrived, start the assembly line!"*
-
----
-
-## 📜 13.4 Pipeline-as-Code (The Jenkinsfile)
-
-We don't configure Jenkins by clicking buttons. We write a **Jenkinsfile** that stays in our GitHub repo.
-*   **Stages:** Build ➔ Test ➔ Dockerize ➔ Push to ECR ➔ Deploy to K8s.
-*   **Benefit:** Version control for our deployment process. If our pipeline breaks, we can roll back the code just like our app.
+**Jenkins** is an open-source automation server. It acts as the "Manager" of our entire software lifecycle.
+*   **The Role:** It watches GitHub, runs our tests, builds Docker images, and tells Kubernetes to update.
+*   **Why Jenkins?** It is highly flexible with thousands of plugins, making it the most used CI/CD tool in the world.
 
 ---
 
-## ☸️ 13.5 Kubernetes Deployment Automation
+## 📜 13.3 Pipeline as Code (Jenkinsfile)
 
-Once the new Docker image is in **AWS ECR**, Jenkins tells Kubernetes: *"Update to version 2.0."*
-*   **Rolling Updates:** K8s replaces old pods with new ones one by one.
-*   **Self-Healing:** If the new version crashes, Kubernetes stops the rollout.
-*   **Rollbacks:** We can instantly revert using `kubectl rollout undo`.
-
----
-
-## 🛡️ 13.6 Advanced Deployment Strategies
-
-These are the concepts that will impress your professors and interviewers:
-1.  **Canary Deployments:** Deploying to only 5% of users first to test for bugs. (Analogy: The canary in the coal mine).
-2.  **Blue-Green Deployments:** Having two identical environments; one is live, one is idle with the new version. We switch traffic instantly.
+We don't configure Jenkins by clicking buttons; we write a **Jenkinsfile**.
+*   **Concept:** The entire build logic is written in Groovy script and stored in our GitHub repository.
+*   **Benefit:** The pipeline itself is version-controlled. If the build process changes, we can see who changed it and why.
 
 ---
 
-## ⚖️ 13.7 Beginner vs. Industry CI/CD
+## 🏗️ 13.4 The Multi-Stage Workflow
+
+Our pipeline is divided into logical "Stages" to catch errors early:
+1.  **Checkout:** Pull the latest code from GitHub.
+2.  **Test:** Run unit and integration tests. If they fail, the pipeline stops.
+3.  **Security Scan:** Use **Trivy** to scan for vulnerabilities in our code and libraries.
+4.  **Build:** Create the Docker image.
+5.  **Push:** Send the image to **AWS ECR**.
+6.  **Deploy:** Update the Kubernetes cluster to use the new image.
+
+---
+
+## ⚓ 13.5 Webhooks: Real-Time Integration
+
+We use **GitHub Webhooks** to make the system feel "alive."
+*   **The Flow:** Developer pushes code $\rightarrow$ GitHub sends a signal to Jenkins $\rightarrow$ Jenkins immediately starts the build.
+*   **Result:** Zero manual effort between writing code and seeing it live in production.
+
+---
+
+## ⚖️ 13.7 Beginner vs. Industry Automation
 
 | Feature | Beginner | Industry (Our Project) |
 | :--- | :--- | :--- |
-| **Deployment** | Manual (Copy-Paste) | **Fully Automated Pipeline** |
-| **Testing** | "It works on my machine" | **Automated Unit & Integration Tests** |
-| **Images** | Manual `docker build` | **Automated ECR Push Workflow** |
-| **Safety** | No rollback plan | **Kubernetes Rolling Updates & Undo** |
+| **Method** | Manual Deployment | **100% Automated Pipeline** |
+| **Testing** | "I'll test it later" | **Automated Unit/Integration Tests** |
+| **Pipeline** | UI-configured | **Declarative Jenkinsfile** |
+| **Feedback** | No notification | **Slack/Email Alerts on Failure** |
 
 ---
 
 ## 🧩 13.8 Mental Models for CI/CD
-1.  **Factory Assembly Line:** Code moves through automated quality checkpoints.
-2.  **Domino Chain:** One successful step automatically triggers the next.
-3.  **Airport Baggage System:** Your code (baggage) is automatically scanned and routed to the correct plane (environment).
+1.  **Assembly Line:** Raw code enters; finished products exit.
+2.  **Quality Gate:** Every stage must pass for the code to move forward.
+3.  **The Heartbeat:** Continuous integration is the pulse of a healthy dev team.
 
 ---
 
 ## Continue the Cloud-Native Journey 🚀
 
-> "The pipeline is now delivering code at high velocity. But how do we know if the running code is healthy? We need to implement full-stack Observability."
+> "The assembly line is operational. Now, let's learn how to monitor the health of our deployed platform using the Prometheus and Grafana Observability stack."
 
 **Previous Module:**
 ← [Terraform IaC](../08_iac/Terraform_IaC.md)
@@ -103,12 +99,6 @@ These are the concepts that will impress your professors and interviewers:
 **Next Module:**
 → [Monitoring & Observability](../10_observability/Monitoring_Observability.md)
 
-## Cloud Sentinel Platform Documentation Series
-
----
-
-## Cloud Sentinel Platform — Production-Grade Cloud-Native DevOps & Observability Engineering Documentation
-
 <p align="center">
-  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:00FFFF,100:FF00FF&height=100&section=footer" width="100%" />
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:f46b45,100:eea849&height=100&section=footer" width="100%" />
 </p>

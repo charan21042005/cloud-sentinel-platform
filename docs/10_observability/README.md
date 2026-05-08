@@ -35,12 +35,6 @@ This directory contains the operational design of the **Cloud Sentinel Platform'
 **Back to Documentation Hub:**
 🏠 [Documentation Home](../README.md)
 
-## Cloud Sentinel Platform Documentation Series
-
----
-
-## Cloud Sentinel Platform — Production-Grade Cloud-Native DevOps & Observability Engineering Documentation
-
 <p align="center">
   <img src="https://capsule-render.vercel.app/api?type=waving&color=0:11998e,100:38ef7d&height=100&section=footer" width="100%" />
 </p>

@@ -52,12 +52,12 @@ We avoid the "Beginner Mistake" of putting everything in one file. Instead, we u
 ```text
 frontend/
 ├── src/
-│   ├── components/  # Reusable UI (Buttons, MetricCards)
-│   ├── pages/       # Full views (Dashboard, Login, Alerts)
-│   ├── services/    # API communication logic (Axios/Fetch)
-│   ├── hooks/       # Custom React logic
-│   ├── charts/      # Recharts/D3 visualization logic
-│   └── utils/       # Formatting & Helper functions
+├── components/  # Reusable UI (Buttons, MetricCards)
+├── pages/       # Full views (Dashboard, Login, Alerts)
+├── services/    # API communication logic (Axios/Fetch)
+├── hooks/       # Custom React logic
+├── charts/      # Recharts/D3 visualization logic
+└── utils/       # Formatting & Helper functions
 ```
 
 ---
@@ -135,12 +135,6 @@ We don't just "host" the frontend; we containerize it for production.
 
 **Next Module:**
 → [Backend Engineering](../03_backend/Backend_Engineering.md)
-
-## Cloud Sentinel Platform Documentation Series
-
----
-
-## Cloud Sentinel Platform — Production-Grade Cloud-Native DevOps & Observability Engineering Documentation
 
 <p align="center">
   <img src="https://capsule-render.vercel.app/api?type=waving&color=0:2193b0,100:6dd5ed&height=100&section=footer" width="100%" />

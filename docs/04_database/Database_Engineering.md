@@ -120,12 +120,6 @@ In a production environment, we do not manage the underlying database server OS 
 **Next Module:**
 → [Docker Containerization](../05_containerization/Docker_Containerization.md)
 
-## Cloud Sentinel Platform Documentation Series
-
----
-
-## Cloud Sentinel Platform — Production-Grade Cloud-Native DevOps & Observability Engineering Documentation
-
 <p align="center">
   <img src="https://capsule-render.vercel.app/api?type=waving&color=0:4e54c8,100:8f94fb&height=100&section=footer" width="100%" />
 </p>

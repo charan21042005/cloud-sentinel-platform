@@ -36,7 +36,7 @@
 
 ---
 
-## 🏙️ 5.2 Monolith vs. Microservices
+##  city 🏙️ 5.2 Monolith vs. Microservices
 
 We are moving away from the "One Big App" (Monolith) approach toward **Microservices**.
 
@@ -139,12 +139,6 @@ We are moving beyond simple academic setups to build a resume-defining platform.
 
 **Next Module:**
 → [Frontend Engineering](../02_frontend/Frontend_Engineering.md)
-
-## Cloud Sentinel Platform Documentation Series
-
----
-
-## Cloud Sentinel Platform — Production-Grade Cloud-Native DevOps & Observability Engineering Documentation
 
 <p align="center">
   <img src="https://capsule-render.vercel.app/api?type=waving&color=0:ff00cc,100:3333ff&height=100&section=footer" width="100%" />

@@ -113,12 +113,6 @@ A **Deployment** is a controller that ensures your desired state matches reality
 **Next Module:**
 → [AWS Cloud Infrastructure](../07_cloud_infrastructure/AWS_Cloud_Infrastructure.md)
 
-## Cloud Sentinel Platform Documentation Series
-
----
-
-## Cloud Sentinel Platform — Production-Grade Cloud-Native DevOps & Observability Engineering Documentation
-
 <p align="center">
   <img src="https://capsule-render.vercel.app/api?type=waving&color=0:cc2b5e,100:753a88&height=100&section=footer" width="100%" />
 </p>

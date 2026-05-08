@@ -119,12 +119,6 @@ We think in layers to keep the system organized:
 **Next Module:**
 → [Project Initiation](03_Initiation.md)
 
-## Cloud Sentinel Platform Documentation Series
-
----
-
-## Cloud Sentinel Platform — Production-Grade Cloud-Native DevOps & Observability Engineering Documentation
-
 <p align="center">
   <img src="https://capsule-render.vercel.app/api?type=waving&color=0:F2994A,100:F2C94C&height=100&section=footer" width="100%" />
 </p>

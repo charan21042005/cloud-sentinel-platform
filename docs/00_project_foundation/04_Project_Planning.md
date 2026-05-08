@@ -110,12 +110,6 @@ graph TD
 **Next Module:**
 → [System Architecture](../01_architecture/System_Architecture.md)
 
-## Cloud Sentinel Platform Documentation Series
-
----
-
-## Cloud Sentinel Platform — Production-Grade Cloud-Native DevOps & Observability Engineering Documentation
-
 <p align="center">
   <img src="https://capsule-render.vercel.app/api?type=waving&color=0:FF416C,100:FF4B2B&height=100&section=footer" width="100%" />
 </p>

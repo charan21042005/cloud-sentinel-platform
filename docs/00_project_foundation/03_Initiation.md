@@ -125,12 +125,6 @@ This project leverages advanced K8s features to mimic a production environment:
 **Next Module:**
 → [Project Planning](04_Project_Planning.md)
 
-## Cloud Sentinel Platform Documentation Series
-
----
-
-## Cloud Sentinel Platform — Production-Grade Cloud-Native DevOps & Observability Engineering Documentation
-
 <p align="center">
   <img src="https://capsule-render.vercel.app/api?type=waving&color=0:834d9b,100:d04ed6&height=100&section=footer" width="100%" />
 </p>

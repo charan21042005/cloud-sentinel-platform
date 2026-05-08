@@ -111,12 +111,6 @@ To keep our production images small and secure, we use **Multi-Stage builds**.
 **Next Module:**
 → [Kubernetes Deep Dive](../06_kubernetes/Kubernetes_Deep_Dive.md)
 
-## Cloud Sentinel Platform Documentation Series
-
----
-
-## Cloud Sentinel Platform — Production-Grade Cloud-Native DevOps & Observability Engineering Documentation
-
 <p align="center">
   <img src="https://capsule-render.vercel.app/api?type=waving&color=0:24C6DC,100:514A9D&height=100&section=footer" width="100%" />
 </p>

@@ -103,12 +103,6 @@ Our **Jenkins Pipeline** acts as the Quality Gate:
 **Next Module:**
 → [Production Workflow](../14_production_workflow/Production_Workflow.md)
 
-## Cloud Sentinel Platform Documentation Series
-
----
-
-## Cloud Sentinel Platform — Production-Grade Cloud-Native DevOps & Observability Engineering Documentation
-
 <p align="center">
   <img src="https://capsule-render.vercel.app/api?type=waving&color=0:7028e4,100:e5e5be&height=100&section=footer" width="100%" />
 </p>

@@ -2,9 +2,8 @@
   <img src="https://capsule-render.vercel.app/api?type=waving&color=0:000046,100:1CB5E0&height=300&section=header&text=Technical%20Documentation&fontSize=70&animation=fadeIn&fontAlignY=38&fontColor=ffffff" width="100%" />
 </p>
 
-# 📚 Technical Documentation Hub
-
-Welcome to the central documentation repository for the **Cloud Sentinel Platform**. This directory contains the complete engineering blueprint, from project foundation to advanced production workflows.
+<h3 align="center">📚 Technical Documentation Hub</h3>
+<p align="center"><strong>"The Engineering Blueprint of Cloud Sentinel"</strong></p>
 
 ---
 
@@ -68,12 +67,6 @@ The documentation is organized sequentially to follow the project's development 
 
 **Next Module:**
 → [Project Vision](00_project_foundation/01_Vision.md)
-
-## Cloud Sentinel Platform Documentation Series
-
----
-
-## Cloud Sentinel Platform — Production-Grade Cloud-Native DevOps & Observability Engineering Documentation
 
 <p align="center">
   <img src="https://capsule-render.vercel.app/api?type=waving&color=0:000046,100:1CB5E0&height=100&section=footer" width="100%" />

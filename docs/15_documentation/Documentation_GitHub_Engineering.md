@@ -113,12 +113,6 @@ We include a dedicated **Demo Guide** in `docs/demo/` to ensure a flawless prese
 **Next Module:**
 → [Viva & Presentation Preparation](../16_viva/Viva_Presentation_Preparation.md)
 
-## Cloud Sentinel Platform Documentation Series
-
----
-
-## Cloud Sentinel Platform — Production-Grade Cloud-Native DevOps & Observability Engineering Documentation
-
 <p align="center">
   <img src="https://capsule-render.vercel.app/api?type=waving&color=0:4776E6,100:f11712&height=100&section=footer" width="100%" />
 </p>

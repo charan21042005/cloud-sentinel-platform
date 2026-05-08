@@ -97,12 +97,6 @@ Most student projects are simple **CRUD** applications. Cloud Sentinel demonstra
 **Next Module:**
 → [Technical Requirements](02_Requirements.md)
 
-## Cloud Sentinel Platform Documentation Series
-
----
-
-## Cloud Sentinel Platform — Production-Grade Cloud-Native DevOps & Observability Engineering Documentation
-
 <p align="center">
   <img src="https://capsule-render.vercel.app/api?type=waving&color=0:02AAB0,100:00CDAC&height=100&section=footer" width="100%" />
 </p>

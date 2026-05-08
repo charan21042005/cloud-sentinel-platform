@@ -15,7 +15,6 @@
 <p align="center">
   <a href="https://prometheus.io/"><img src="https://img.shields.io/badge/Observability-Prometheus-000046?style=for-the-badge&logo=Prometheus&logoColor=white" alt="Prometheus" /></a>
   <a href="https://grafana.com/"><img src="https://img.shields.io/badge/Visualization-Grafana-1CB5E0?style=for-the-badge&logo=grafana&logoColor=white" alt="Grafana" /></a>
-  <a href="https://github.com/charan21042005/cloud-sentinel-platform"><img src="https://img.shields.io/badge/Status-Active-000046?style=for-the-badge" alt="Status" /></a>
 </p>
 
 ---
@@ -112,10 +111,6 @@ cloud-sentinel-platform/
 ├── monitoring/           # Prometheus/Grafana/Loki Configs
 ├── scripts/              # Automation & Helper Scripts
 ├── docs/                 # Professional Documentation Hierarchy (Masterclass)
-│   ├── 00_project_foundation/
-│   ├── 01_architecture/
-│   ├── ... (02-17 Modules)
-│   └── README.md         # Documentation Hub
 ├── .github/              # GitHub Actions & Workflows
 └── README.md             # Project Landing Page
 ```
@@ -133,10 +128,6 @@ cloud-sentinel-platform/
 </p>
 
 This project is licensed under the MIT License.
-
----
-
-## Cloud Sentinel Platform — Production-Grade Cloud-Native DevOps & Observability Engineering Documentation
 
 <p align="center">
   <img src="https://capsule-render.vercel.app/api?type=waving&color=0:000046,100:1CB5E0&height=100&section=footer" width="100%" />
