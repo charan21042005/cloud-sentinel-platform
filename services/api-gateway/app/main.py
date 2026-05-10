@@ -10,24 +10,25 @@ def create_application() -> FastAPI:
     App Factory for Cloud Sentinel API Gateway.
     """
     application = FastAPI(
-        title=settings.PROJECT_NAME,
-        version=settings.VERSION,
+        title="Cloud Sentinel API Gateway",
+        version="1.0.0",
         description="Scalable API Gateway for Cloud Sentinel Observability Platform",
         docs_url="/docs",
         redoc_url="/redoc"
     )
 
-    # Set all CORS enabled origins
+    # Standard Middleware
     application.add_middleware(
         CORSMiddleware,
-        allow_origins=["*"],  # In production, replace with specific origins
+        allow_origins=["*"],
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
     )
 
-    # Include centralized router
-    application.include_router(api_router, prefix=settings.API_V1_STR)
+    # Mount the central router at the root level
+    # This allows /health to be accessed directly at http://localhost:8000/health
+    application.include_router(api_router)
 
     @application.on_event("startup")
     async def startup_event():
