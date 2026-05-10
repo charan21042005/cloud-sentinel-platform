@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  # --- Backend API Gateway ---
+  api-gateway:
+    build:
+      context: ../../services/api-gateway
+      dockerfile: Dockerfile
+    container_name: sentinel-api-gateway
+    restart: always
+    ports:
+      - "8000:8000"
+    env_file:
+      - ../../services/api-gateway/.env
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    networks:
+      - cloud-sentinel-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # --- Relational Database ---
+  postgres:
+    image: postgres:16
+    container_name: sentinel-postgres
+    restart: always
+    environment:
+      POSTGRES_DB: cloud_sentinel
+      POSTGRES_USER: sentinel_user
+      POSTGRES_PASSWORD: sentinel_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - cloud-sentinel-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sentinel_user -d cloud_sentinel"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # --- Cache & Messaging ---
+  redis:
+    image: redis:7-alpine
+    container_name: sentinel-redis
+    restart: always
+    ports:
+      - "6379:6379"
+    networks:
+      - cloud-sentinel-network
+
+networks:
+  cloud-sentinel-network:
+    driver: bridge
+    name: cloud-sentinel-network
+
+volumes:
+  postgres_data:
+    name: sentinel_postgres_data
