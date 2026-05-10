@@ -56,6 +56,16 @@ services:
     networks:
       - cloud-sentinel-network
 
+  # --- SQL Viewer (Adminer) ---
+  adminer:
+    image: adminer:latest
+    container_name: sentinel-adminer
+    restart: always
+    ports:
+      - "8888:8080"
+    networks:
+      - cloud-sentinel-network
+
 networks:
   cloud-sentinel-network:
     driver: bridge
