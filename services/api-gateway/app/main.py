@@ -1,9 +1,48 @@
+from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.router import api_router
 from app.core.config import settings
 from app.core.logging import logger
+from app.db.redis import redis_manager
+from app.db.session import engine
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """
+    Lifecycle manager for Cloud Sentinel API.
+    Handles startup and shutdown of critical infrastructure connections.
+    """
+    # --- Startup ---
+    logger.info("🎬 Initializing Cloud Sentinel Platform...")
+    
+    # Initialize Redis connection pool
+    try:
+        await redis_manager.connect()
+        logger.info("✅ Redis connected successfully.")
+    except Exception as e:
+        logger.error(f"❌ Redis connection failed: {e}")
+
+    # Validate Database connectivity
+    try:
+        # Pre-ping is handled by SQLAlchemy engine, but we do a test connection here
+        async with engine.connect() as conn:
+            logger.info("✅ PostgreSQL connected successfully.")
+    except Exception as e:
+        logger.error(f"❌ PostgreSQL connection failed: {e}")
+
+    yield
+    
+    # --- Shutdown ---
+    logger.info("🛑 Shutting down Cloud Sentinel Platform...")
+    
+    # Close Redis
+    await redis_manager.disconnect()
+    
+    # Close Database Engine
+    await engine.dispose()
+    logger.info("🔌 Database and Cache connections closed.")
 
 def create_application() -> FastAPI:
     """
@@ -14,7 +53,8 @@ def create_application() -> FastAPI:
         version="1.0.0",
         description="Scalable API Gateway for Cloud Sentinel Observability Platform",
         docs_url="/docs",
-        redoc_url="/redoc"
+        redoc_url="/redoc",
+        lifespan=lifespan
     )
 
     # Standard Middleware
@@ -26,13 +66,8 @@ def create_application() -> FastAPI:
         allow_headers=["*"],
     )
 
-    # Mount the central router at the root level
-    # This allows /health to be accessed directly at http://localhost:8000/health
+    # Mount the central router
     application.include_router(api_router)
-
-    @application.on_event("startup")
-    async def startup_event():
-        logger.info(f"Starting {settings.PROJECT_NAME} in {settings.ENVIRONMENT} mode")
 
     return application
 

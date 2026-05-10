@@ -17,7 +17,7 @@ class Settings(BaseSettings):
     # --- Project Metadata ---
     PROJECT_NAME: str = "Cloud Sentinel API"
     VERSION: str = "1.0.0"
-    API_V1_STR: str = ""  # Root level as requested in previous turn
+    API_V1_STR: str = ""
     ENVIRONMENT: str = "development"
 
     # --- Server Config ---
@@ -29,8 +29,8 @@ class Settings(BaseSettings):
     SECRET_KEY: str = "PROD_SECRET_KEY_REPLACE_ME"
 
     # --- Database Config ---
-    # Defaulting to localhost for native dev, but overridden by env in Docker
-    DATABASE_URL: str = "postgresql://sentinel_user:sentinel_password@localhost:5432/cloud_sentinel"
+    # MUST use +asyncpg for asynchronous operation
+    DATABASE_URL: str = "postgresql+asyncpg://sentinel_user:sentinel_password@localhost:5432/cloud_sentinel"
 
     # --- Redis Config ---
     REDIS_URL: str = "redis://localhost:6379/0"

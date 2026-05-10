@@ -1,10 +1,8 @@
 from fastapi import APIRouter
-from app.api.routes.health import router as health_router
+from app.api.routes import health, database_health
 
 api_router = APIRouter()
 
-# Include infrastructure routes at the root level of this router
-api_router.include_router(health_router)
-
-# Future domain routers can be added here with prefixes:
-# api_router.include_router(auth_router, prefix="/auth", tags=["Authentication"])
+# Infrastructure & Health
+api_router.include_router(health.router)
+api_router.include_router(database_health.router)
