@@ -178,14 +178,24 @@ graph TD
 
 ```text
 cloud-sentinel-platform/
-├── apps/                   # ⚛️ User-facing applications (Dashboard)
-├── services/               # ⚙️ Microservices & API Gateways (FastAPI)
-├── infra/                  # 🏗️ Infrastructure & Orchestration (IaC & K8s)
-├── packages/               # 📦 Shared core logic & types
-├── scripts/                # 📜 Automation & Bootstrap Utilities
-├── docs/                   # 📚 Engineering Knowledge Base (Existing 00-17)
-├── Makefile                # 🛠️ Centralized Developer Workflow Commands
-└── README.md               # 🏠 Project Landing Page
+├── apps/
+│   └── web-dashboard/      # ⚛️ React Dashboard (UI Only)
+├── services/
+│   ├── api-gateway/        # ⚙️ Primary Entry Point (FastAPI)
+│   ├── auth-service/       # 🔐 Identity & Access
+│   ├── incident-service/   # 🚨 Fault & Event Management
+│   ├── monitoring-service/ # 📊 Metrics Aggregation
+│   └── notification-service/# 🔔 Alerting & Webhooks
+├── infrastructure/         # 🏗️ Platform DevOps Brain
+│   ├── docker/             # Local Orchestration
+│   ├── kubernetes/         # K8s Manifests/Helm
+│   ├── terraform/          # IaC Modules
+│   └── monitoring/         # Grafana/Prometheus Configs
+├── scripts/                # 📜 Automation Utilities
+├── configs/                # 🛠️ Shared Tooling Configs
+├── docs/                   # 📚 Engineering Knowledge Base
+├── Makefile                # 🛠️ Workflow Command Hub
+└── README.md               # 🏠 Project Navigation Hub
 ```
 
 ---

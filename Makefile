@@ -1,7 +1,7 @@
 .PHONY: setup dev build clean test help
 
 # Project Variables
-DOCKER_COMPOSE = docker-compose -f infra/docker/docker-compose.yml
+DOCKER_COMPOSE = docker-compose -f infrastructure/docker/docker-compose.yml
 
 help: ## Show this help message
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
