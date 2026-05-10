@@ -174,25 +174,51 @@ graph TD
 
 ---
 
-## 📂 6.0 Repository Architecture
+## 📂 6.0 Repository Architecture (Monorepo)
 
 ```text
 cloud-sentinel-platform/
-│
-├── frontend/             # ⚛️ React Dashboard + Tailwind Source
-├── backend/              # ⚙️ FastAPI Microservices + Business Logic
-├── infrastructure/       # 🏗️ Terraform Modules (IaC)
-├── kubernetes/           # ☸️ K8s Manifests (Deployments, Services, HPA)
-├── monitoring/           # 📊 Prometheus, Grafana, & Loki Configurations
-├── scripts/              # 📜 Automation, Chaos Scripts, & Helper Utilities
-├── docs/                 # 📚 High-Fidelity Masterclass Documentation
-├── .github/              # 🤖 GitHub Actions & Workflow Automation
-└── README.md             # 🏠 Project Navigation Hub
+├── apps/                   # ⚛️ User-facing applications (Dashboard)
+├── services/               # ⚙️ Microservices & API Gateways (FastAPI)
+├── infra/                  # 🏗️ Infrastructure & Orchestration (IaC & K8s)
+├── packages/               # 📦 Shared core logic & types
+├── scripts/                # 📜 Automation & Bootstrap Utilities
+├── docs/                   # 📚 Engineering Knowledge Base (Existing 00-17)
+├── Makefile                # 🛠️ Centralized Developer Workflow Commands
+└── README.md               # 🏠 Project Landing Page
 ```
 
 ---
 
-## 👨‍💻 7.0 Author & Philosophy
+## ⚡ 7.0 Quick Start (Developer Experience)
+
+The platform utilizes a **Makefile-driven workflow** to ensure a consistent development experience across the team.
+
+### 1. Prerequisites
+- Docker & Docker Compose
+- Python 3.10+
+- Node.js 20+
+
+### 2. Initial Setup
+```bash
+# Bootstrap the project (Env setup & dependencies)
+make setup
+```
+
+### 3. Start Local Development
+```bash
+# Start all services via Docker Compose
+make dev
+```
+
+### 4. Build Production Images
+```bash
+make build
+```
+
+---
+
+## 👨‍💻 8.0 Author & Philosophy
 
 **Patty**
 *B.Tech — Cloud Computing & DevOps Engineering Specialist*
