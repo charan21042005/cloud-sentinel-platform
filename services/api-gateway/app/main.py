@@ -31,7 +31,7 @@ def create_application() -> FastAPI:
 
     @application.on_event("startup")
     async def startup_event():
-        logger.info(f"🚀 Starting {settings.PROJECT_NAME} in {settings.ENVIRONMENT} mode")
+        logger.info(f"Starting {settings.PROJECT_NAME} in {settings.ENVIRONMENT} mode")
 
     return application
 
