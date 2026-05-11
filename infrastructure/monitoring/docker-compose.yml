@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+  prometheus:
+    image: prom/prometheus:v2.45.0
+    container_name: sentinel-prometheus
+    volumes:
+      - ./prometheus:/etc/prometheus
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=15d'
+    ports:
+      - "9090:9090"
+    restart: unless-stopped
+    networks:
+      - sentinel-network
+
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: sentinel-node-exporter
+    pid: host
+    volumes:
+      - /:/rootfs:ro
+    command:
+      - '--path.rootfs=/rootfs'
+    ports:
+      - "9100:9100"
+    restart: unless-stopped
+    networks:
+      - sentinel-network
+
+  grafana:
+    image: grafana/grafana:10.1.1
+    container_name: sentinel-grafana
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=sentinel_admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+    ports:
+      - "3002:3000"
+    restart: unless-stopped
+    networks:
+      - sentinel-network
+
+volumes:
+  prometheus_data:
+  grafana_data:
+
+networks:
+  sentinel-network:
+    external: true

@@ -1,4 +1,4 @@
-import { usePolling } from '@/services/realtime/usePolling';
+import { usePolling } from '@/services/realtime/polling/usePolling';
 import { metricsApi } from '../api';
 import { SystemMetrics } from '../types';
 

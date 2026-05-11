@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { alertsApi } from '../api';
-import { usePolling } from '@/services/realtime/usePolling';
+import { usePolling } from '@/services/realtime/polling/usePolling';
 import { PlatformAlert } from '../types';
 import { toast } from 'sonner';
 

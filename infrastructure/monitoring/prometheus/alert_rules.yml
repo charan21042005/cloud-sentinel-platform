@@ -1,0 +1,32 @@
+groups:
+  - name: sentinel_infrastructure_alerts
+    rules:
+      - alert: HostHighCpuLoad
+        expr: 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 90
+        for: 5m
+        labels:
+          severity: critical
+          source: NodeExporter
+        annotations:
+          summary: "Host high CPU load (instance {{ $labels.instance }})"
+          description: "CPU load is > 90%\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+      - alert: PostgresHighConnectionCount
+        expr: pg_stat_activity_count > 80
+        for: 2m
+        labels:
+          severity: warning
+          source: PostgresExporter
+        annotations:
+          summary: "Database connection saturation"
+          description: "Active connections exceed 80. Nearing pool limit."
+
+      - alert: FastApiHighErrorRate
+        expr: rate(fastapi_responses_total{status=~"5.."}[1m]) > 0.05
+        for: 1m
+        labels:
+          severity: critical
+          source: APIGateway
+        annotations:
+          summary: "API Gateway High Error Rate"
+          description: "Over 5% of requests are failing with HTTP 5xx errors."
