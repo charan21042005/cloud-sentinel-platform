@@ -34,7 +34,14 @@ async def get_current_user(
         )
     
     user_repo = UserRepository(db)
-    user = await user_repo.get(token_data.sub)
+    try:
+        from uuid import UUID
+        user = await user_repo.get(UUID(token_data.sub))
+    except (ValueError, TypeError):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Invalid user ID format",
+        )
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     if not user.is_active:
