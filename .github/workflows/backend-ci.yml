@@ -24,15 +24,11 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r services/api-gateway/requirements.txt
         pip install -r services/api-gateway/requirements-dev.txt
-        # Install aiosqlite for async tests
-        pip install aiosqlite
 
     - name: Lint with flake8
       run: |
-        # stop the build if there are Python syntax errors or undefined names
-        flake8 services/api-gateway --count --select=E9,F63,F7,F82 --show-source --statistics
-        # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
-        flake8 services/api-gateway --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+        # Config is read from services/api-gateway/.flake8
+        flake8 services/api-gateway --count --statistics
 
     - name: Check formatting with black
       run: |
@@ -42,10 +38,11 @@ jobs:
       env:
         SECRET_KEY: ${{ secrets.SECRET_KEY || 'ci-test-secret-key-123' }}
         ALGORITHM: HS256
+        PYTHONPATH: .
       run: |
         cd services/api-gateway
         pytest
-
+    
     - name: Verify Docker Build
       run: |
         docker build -t cloud-sentinel-api-gateway:ci services/api-gateway
