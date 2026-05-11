@@ -23,8 +23,10 @@ class BaseRepository(Generic[ModelType]):
         result = await self.db.execute(query)
         return result.scalars().all()
 
-    async def create(self, obj_in_data: dict) -> ModelType:
-        db_obj = self.model(**obj_in_data)
+    async def create(self, db_obj: ModelType) -> ModelType:
+        """
+        Persist a model instance to the database.
+        """
         self.db.add(db_obj)
         await self.db.commit()
         await self.db.refresh(db_obj)
