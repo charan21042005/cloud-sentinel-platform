@@ -60,7 +60,7 @@ export default function TimeSeriesChart({
           }}
           itemStyle={{ color: '#fafafa' }}
           labelStyle={{ color: '#a1a1aa', marginBottom: '4px' }}
-          formatter={(value: number) => [`${value}${valueSuffix}`, 'Value']}
+          formatter={(value: any) => [`${value}${valueSuffix}`, 'Value']}
           labelFormatter={(label) => new Date(label).toLocaleTimeString()}
         />
         <Area 
