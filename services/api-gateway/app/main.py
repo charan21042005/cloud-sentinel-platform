@@ -1,4 +1,5 @@
 from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -11,6 +12,7 @@ from app.db.session import engine
 # Initialize structured logging
 setup_logging()
 
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """
@@ -19,7 +21,7 @@ async def lifespan(app: FastAPI):
     """
     # --- Startup ---
     logger.info("🎬 Initializing Cloud Sentinel Platform...")
-    
+
     # Initialize Redis connection pool
     try:
         await redis_manager.connect()
@@ -36,16 +38,17 @@ async def lifespan(app: FastAPI):
         logger.error(f"❌ PostgreSQL connection failed: {e}")
 
     yield
-    
+
     # --- Shutdown ---
     logger.info("🛑 Shutting down Cloud Sentinel Platform...")
-    
+
     # Close Redis
     await redis_manager.disconnect()
-    
+
     # Close Database Engine
     await engine.dispose()
     logger.info("🔌 Database and Cache connections closed.")
+
 
 def create_application() -> FastAPI:
     """
@@ -57,7 +60,7 @@ def create_application() -> FastAPI:
         description="Scalable API Gateway for Cloud Sentinel Observability Platform",
         docs_url="/docs",
         redoc_url="/redoc",
-        lifespan=lifespan
+        lifespan=lifespan,
     )
 
     # Standard Middleware
@@ -73,5 +76,6 @@ def create_application() -> FastAPI:
     application.include_router(api_router)
 
     return application
+
 
 app = create_application()

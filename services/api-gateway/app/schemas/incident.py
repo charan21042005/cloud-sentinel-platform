@@ -1,7 +1,9 @@
 from datetime import datetime
-from uuid import UUID
 from typing import Optional
+from uuid import UUID
+
 from pydantic import BaseModel, ConfigDict, Field
+
 
 class IncidentBase(BaseModel):
     title: str = Field(..., min_length=5, max_length=255)
@@ -9,8 +11,10 @@ class IncidentBase(BaseModel):
     severity: str = Field(default="low")
     status: str = Field(default="open")
 
+
 class IncidentCreate(IncidentBase):
     pass
+
 
 class IncidentResponse(IncidentBase):
     model_config = ConfigDict(from_attributes=True)

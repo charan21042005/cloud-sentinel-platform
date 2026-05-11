@@ -1,6 +1,7 @@
 import pytest
-from httpx import AsyncClient
 from fastapi import status
+from httpx import AsyncClient
+
 
 @pytest.mark.asyncio
 async def test_get_my_profile(auth_client: AsyncClient):
@@ -12,6 +13,7 @@ async def test_get_my_profile(auth_client: AsyncClient):
     data = response.json()
     assert data["username"] == "auth_tester"
     assert "role" in data
+
 
 @pytest.mark.asyncio
 async def test_unauthorized_profile_access(client: AsyncClient):

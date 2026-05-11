@@ -1,17 +1,21 @@
 import logging
+
 from fastapi import APIRouter, Depends, HTTPException, status
-from app.schemas.auth import UserRegister, UserLogin, Token
+
+from app.dependencies.services import get_auth_service
+from app.schemas.auth import Token, UserLogin, UserRegister
 from app.schemas.user import UserResponse
 from app.services.auth_service import AuthService
-from app.dependencies.services import get_auth_service
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
 
-@router.post("/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
+
+@router.post(
+    "/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED
+)
 async def register(
-    user_in: UserRegister,
-    auth_service: AuthService = Depends(get_auth_service)
+    user_in: UserRegister, auth_service: AuthService = Depends(get_auth_service)
 ):
     """
     Register a new sentinel on the platform.
@@ -21,17 +25,17 @@ async def register(
     logger.info(f"User successfully registered: {user.username} (ID: {user.id})")
     return user
 
+
 @router.post("/login", response_model=Token)
 async def login(
-    login_data: UserLogin,
-    auth_service: AuthService = Depends(get_auth_service)
+    login_data: UserLogin, auth_service: AuthService = Depends(get_auth_service)
 ):
     """
     Authenticate and receive a JWT access token.
     """
     logger.info(f"Login attempt for user: {login_data.username}")
     user = await auth_service.authenticate_user(login_data)
-    
+
     if not user:
         logger.warning(f"Failed login attempt for user: {login_data.username}")
         raise HTTPException(
@@ -39,7 +43,7 @@ async def login(
             detail="Incorrect username or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    
+
     token = auth_service.create_user_token(user)
     logger.info(f"User logged in successfully: {user.username}")
     return token

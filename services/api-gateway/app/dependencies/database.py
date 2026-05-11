@@ -1,6 +1,9 @@
 from collections.abc import AsyncGenerator
+
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.db.session import SessionLocal
+
 
 async def get_db() -> AsyncGenerator[AsyncSession, None]:
     """
@@ -12,5 +15,6 @@ async def get_db() -> AsyncGenerator[AsyncSession, None]:
             yield session
         finally:
             await session.close()
-            
+
+
 # Future Redis dependency can be added here

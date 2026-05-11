@@ -25,24 +25,24 @@ jobs:
         pip install -r services/api-gateway/requirements.txt
         pip install -r services/api-gateway/requirements-dev.txt
 
-    - name: Lint with flake8
-      run: |
-        # Config is read from services/api-gateway/.flake8
-        flake8 services/api-gateway --count --statistics
-
     - name: Check formatting with black
       run: |
         black --check services/api-gateway
+
+    - name: Lint with flake8
+      run: |
+        # Explicitly point to the config file
+        flake8 --config=services/api-gateway/.flake8 services/api-gateway
 
     - name: Run tests with pytest
       env:
         SECRET_KEY: ${{ secrets.SECRET_KEY || 'ci-test-secret-key-123' }}
         ALGORITHM: HS256
-        PYTHONPATH: .
+        PYTHONPATH: ${{ github.workspace }}/services/api-gateway
       run: |
         cd services/api-gateway
         pytest
-    
+
     - name: Verify Docker Build
       run: |
         docker build -t cloud-sentinel-api-gateway:ci services/api-gateway

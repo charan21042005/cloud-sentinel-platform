@@ -1,13 +1,17 @@
 from typing import Optional
+
 from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.db.models.user import User
 from app.repositories.base import BaseRepository
-from sqlalchemy.ext.asyncio import AsyncSession
+
 
 class UserRepository(BaseRepository[User]):
     """
     User-specific Repository for specialized queries.
     """
+
     def __init__(self, db: AsyncSession):
         super().__init__(User, db)
 

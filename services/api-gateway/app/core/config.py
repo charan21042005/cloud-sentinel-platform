@@ -1,17 +1,17 @@
 import logging
 import sys
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
 
 class Settings(BaseSettings):
     """
     Centralized Settings using Pydantic BaseSettings.
     Environment variables are automatically mapped to these fields.
     """
+
     model_config = SettingsConfigDict(
-        env_file=".env", 
-        env_file_encoding="utf-8", 
-        case_sensitive=True,
-        extra="ignore"
+        env_file=".env", env_file_encoding="utf-8", case_sensitive=True, extra="ignore"
     )
 
     # --- Project Metadata ---
@@ -32,9 +32,12 @@ class Settings(BaseSettings):
 
     # --- Database Config ---
     # MUST use +asyncpg for asynchronous operation
-    DATABASE_URL: str = "postgresql+asyncpg://sentinel_user:sentinel_password@localhost:5432/cloud_sentinel"
+    DATABASE_URL: str = (
+        "postgresql+asyncpg://sentinel_user:sentinel_password@localhost:5432/cloud_sentinel"
+    )
 
     # --- Redis Config ---
     REDIS_URL: str = "redis://localhost:6379/0"
+
 
 settings = Settings()

@@ -1,14 +1,18 @@
 from typing import Optional
+
 from fastapi import HTTPException, status
-from app.repositories.user_repository import UserRepository
-from app.schemas.auth import UserRegister, UserLogin, Token
-from app.core.security import get_password_hash, verify_password, create_access_token
+
+from app.core.security import create_access_token, get_password_hash, verify_password
 from app.db.models.user import User
+from app.repositories.user_repository import UserRepository
+from app.schemas.auth import Token, UserLogin, UserRegister
+
 
 class AuthService:
     """
     Business logic for Authentication and Identity Management.
     """
+
     def __init__(self, user_repo: UserRepository):
         self.user_repo = user_repo
 
@@ -19,14 +23,13 @@ class AuthService:
         if existing_user:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Email already registered"
+                detail="Email already registered",
             )
-        
+
         existing_username = await self.user_repo.get_by_username(user_in.username)
         if existing_username:
             raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Username already taken"
+                status_code=status.HTTP_400_BAD_REQUEST, detail="Username already taken"
             )
 
         # Hash password and save
@@ -34,7 +37,7 @@ class AuthService:
             username=user_in.username,
             email=user_in.email,
             hashed_password=get_password_hash(user_in.password),
-            role="viewer" # Default role
+            role="viewer",  # Default role
         )
         return await self.user_repo.create(user_obj)
 

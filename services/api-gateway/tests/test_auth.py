@@ -1,6 +1,7 @@
 import pytest
-from httpx import AsyncClient
 from fastapi import status
+from httpx import AsyncClient
+
 
 @pytest.mark.asyncio
 async def test_auth_registration_flow(client: AsyncClient):
@@ -10,7 +11,7 @@ async def test_auth_registration_flow(client: AsyncClient):
     user_data = {
         "username": "test_sentinel",
         "email": "sentinel@test.com",
-        "password": "securepassword123"
+        "password": "securepassword123",
     }
 
     # 1. Successful Registration
@@ -25,11 +26,12 @@ async def test_auth_registration_flow(client: AsyncClient):
     duplicate_user = {
         "username": "test_sentinel",
         "email": "different@test.com",
-        "password": "newpassword123"
+        "password": "newpassword123",
     }
     response = await client.post("/api/v1/auth/register", json=duplicate_user)
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     assert "Username already taken" in response.json()["detail"]
+
 
 @pytest.mark.asyncio
 async def test_auth_login_flow(client: AsyncClient):
@@ -40,15 +42,12 @@ async def test_auth_login_flow(client: AsyncClient):
     user_data = {
         "username": "login_user",
         "email": "login@test.com",
-        "password": "password123"
+        "password": "password123",
     }
     await client.post("/api/v1/auth/register", json=user_data)
 
     # 1. Successful Login
-    login_data = {
-        "username": "login_user",
-        "password": "password123"
-    }
+    login_data = {"username": "login_user", "password": "password123"}
     response = await client.post("/api/v1/auth/login", json=login_data)
     assert response.status_code == status.HTTP_200_OK
     data = response.json()
@@ -56,10 +55,7 @@ async def test_auth_login_flow(client: AsyncClient):
     assert data["token_type"] == "bearer"
 
     # 2. Invalid Password Failure
-    bad_login = {
-        "username": "login_user",
-        "password": "wrongpassword"
-    }
+    bad_login = {"username": "login_user", "password": "wrongpassword"}
     response = await client.post("/api/v1/auth/login", json=bad_login)
     assert response.status_code == status.HTTP_401_UNAUTHORIZED
     assert "Incorrect username or password" in response.json()["detail"]
