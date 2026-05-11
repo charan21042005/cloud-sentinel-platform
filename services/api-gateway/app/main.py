@@ -32,7 +32,7 @@ async def lifespan(_app: FastAPI):
     # Validate Database connectivity
     try:
         # Pre-ping is handled by SQLAlchemy engine, but we do a test connection here
-        async with engine.connect() as conn:
+        async with engine.connect():
             logger.info("✅ PostgreSQL connected successfully.")
     except Exception as e:
         logger.error(f"❌ PostgreSQL connection failed: {e}")
