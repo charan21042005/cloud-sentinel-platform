@@ -12,8 +12,8 @@ from sqlalchemy.ext.asyncio import async_engine_from_config
 # Ensure the 'app' directory is discoverable by Alembic
 sys.path.insert(0, os.path.realpath(os.path.join(os.path.dirname(__file__), "..")))
 
-from app.core.config import settings
-from app.db.models import Base
+from app.core.config import settings  # noqa: E402
+from app.db.models import Base  # noqa: E402
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

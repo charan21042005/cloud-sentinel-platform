@@ -14,7 +14,7 @@ setup_logging()
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI):
+async def lifespan(_app: FastAPI):
     """
     Lifecycle manager for Cloud Sentinel API.
     Handles startup and shutdown of critical infrastructure connections.
