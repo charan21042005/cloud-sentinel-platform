@@ -1,9 +1,7 @@
-'use client';
-
-import React from 'react';
 import { X, Clock, Shield, User, MessageSquare } from 'lucide-react';
 import { Incident } from '../types';
 import StatusBadge from '@/components/ui/StatusBadge';
+import RequireRole from '@/components/auth/RequireRole';
 
 interface IncidentDetailProps {
   incident: Incident | null;
@@ -79,9 +77,11 @@ export default function IncidentDetail({ incident, isOpen, onClose }: IncidentDe
 
         <div className="border-t border-zinc-800 p-6 bg-zinc-900/20">
           <div className="flex items-center space-x-4">
-            <button className="flex-1 rounded-xl bg-zinc-100 py-3 text-sm font-bold text-zinc-950 hover:bg-zinc-200 transition-colors">
-              Update Status
-            </button>
+            <RequireRole role="analyst" fallback="disabled">
+              <button className="flex-1 rounded-xl bg-zinc-100 py-3 text-sm font-bold text-zinc-950 hover:bg-zinc-200 transition-colors">
+                Update Status
+              </button>
+            </RequireRole>
             <button className="flex h-12 w-12 items-center justify-center rounded-xl border border-zinc-800 text-zinc-400 hover:bg-zinc-900">
               <MessageSquare size={20} />
             </button>
