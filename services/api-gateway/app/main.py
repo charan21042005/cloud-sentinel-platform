@@ -4,9 +4,12 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.router import api_router
 from app.core.config import settings
-from app.core.logging import logger
+from app.core.logging import logger, setup_logging
 from app.db.redis import redis_manager
 from app.db.session import engine
+
+# Initialize structured logging
+setup_logging()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):

@@ -14,5 +14,6 @@ class UserResponse(UserBase):
 
     id: UUID
     is_active: bool
+    role: str
     created_at: datetime
     updated_at: datetime

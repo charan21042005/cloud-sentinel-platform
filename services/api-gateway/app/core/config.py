@@ -28,7 +28,7 @@ class Settings(BaseSettings):
     # --- Security ---
     SECRET_KEY: str = "PROD_SECRET_KEY_REPLACE_ME"
     ALGORITHM: str = "HS256"
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 7  # 7 days
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 8  # 8 days
 
     # --- Database Config ---
     # MUST use +asyncpg for asynchronous operation

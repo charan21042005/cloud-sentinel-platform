@@ -8,11 +8,9 @@ class UserRepository(BaseRepository[User]):
     User-specific Repository for specialized queries.
     """
     async def get_by_email(self, email: str) -> Optional[User]:
-        query = select(User).where(User.email == email)
-        result = await self.db.execute(query)
+        result = await self.db.execute(select(User).where(User.email == email))
         return result.scalars().first()
 
     async def get_by_username(self, username: str) -> Optional[User]:
-        query = select(User).where(User.username == username)
-        result = await self.db.execute(query)
+        result = await self.db.execute(select(User).where(User.username == username))
         return result.scalars().first()
