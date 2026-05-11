@@ -15,29 +15,34 @@
 
 ## 📌 1. Infrastructure Overview
 
-This module manages the lifecycle of the **Cloud Sentinel** distributed stack. We use **Docker Compose** to orchestrate a cluster of high-performance services that mirror a production cloud environment, ensuring "it works on my machine" translates perfectly to "it works in production."
+This module manages the lifecycle of the **Cloud Sentinel** distributed stack. We use **Docker Compose** to orchestrate a cluster of high-performance services that mirror a production cloud environment.
 
 ### 🌐 Network Topology
 
 ```mermaid
-graph TD
-    subgraph "Sentinel Virtual Network"
-        API[⚡ API Gateway]
-        DB[(🐘 PostgreSQL)]
-        Cache[(🔴 Redis)]
-        Admin[🛠️ Adminer UI]
+graph LR
+    User("🌐 External User")
+    
+    subgraph "Orchestration"
+        API("⚡ API Gateway")
+        Admin("🛠️ Adminer UI")
     end
     
-    User((External User)) -->|Port 8000| API
-    User -->|Port 8888| Admin
+    subgraph "Data"
+        DB[("🐘 PostgreSQL")]
+        Cache[("🔴 Redis")]
+    end
     
-    API -->|Port 5432| DB
-    API -->|Port 6379| Cache
-    Admin -->|Internal DNS| DB
+    User --> API
+    User --> Admin
     
+    API --> DB
+    API --> Cache
+    Admin --> DB
+
     style API fill:#e0f7fa,stroke:#00acc1
-    style DB fill:#e0f7fa,stroke:#00acc1
-    style Cache fill:#ffebee,stroke:#e53935
+    style DB fill:#ecfdf5,stroke:#059669
+    style Cache fill:#fff1f2,stroke:#e11d48
     style Admin fill:#f3e5f5,stroke:#8e24aa
 ```
 
@@ -66,8 +71,8 @@ docker compose up -d
 # Stop all services
 docker compose stop
 
-# Cleanup volumes (caution: wipes data)
-docker compose down -v
+# Check Service Health
+docker compose ps
 ```
 
 ---
