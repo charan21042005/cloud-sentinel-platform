@@ -1,0 +1,17 @@
+import React from 'react';
+import Sidebar from './Sidebar/Sidebar';
+import Topbar from './Topbar/Topbar';
+
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="flex h-screen w-full overflow-hidden bg-zinc-950">
+      <Sidebar />
+      <div className="flex flex-1 flex-col overflow-hidden">
+        <Topbar />
+        <main className="flex-1 overflow-y-auto bg-zinc-950 p-8">
+          {children}
+        </main>
+      </div>
+    </div>
+  );
+}
