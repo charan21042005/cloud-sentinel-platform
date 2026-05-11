@@ -178,6 +178,7 @@ graph TD
 
 ```text
 cloud-sentinel-platform/
+├── .github/                # 🤖 GitHub Actions CI/CD Pipelines
 ├── frontend/               # ⚡ Sentinel Interface (CSI) - Next.js
 ├── services/
 │   ├── api-gateway/        # ⚙️ Primary Entry Point (FastAPI)
