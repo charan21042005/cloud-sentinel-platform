@@ -10,7 +10,7 @@
   <a href="https://aws.amazon.com/"><img src="https://img.shields.io/badge/Infrastructure-AWS-232F3E?style=for-the-badge&logo=amazon-aws&logoColor=white" alt="AWS" /></a>
   <a href="https://kubernetes.io/"><img src="https://img.shields.io/badge/Orchestration-Kubernetes-326CE5?style=for-the-badge&logo=kubernetes&logoColor=white" alt="Kubernetes" /></a>
   <a href="https://www.terraform.io/"><img src="https://img.shields.io/badge/IaC-Terraform-623CE4?style=for-the-badge&logo=terraform&logoColor=white" alt="Terraform" /></a>
-  <a href="https://www.jenkins.io/"><img src="https://img.shields.io/badge/CI/CD-Jenkins-D24939?style=for-the-badge&logo=jenkins&logoColor=white" alt="Jenkins" /></a>
+  <a href="https://github.com/features/actions"><img src="https://img.shields.io/badge/CI/CD-GitHub_Actions-2088FF?style=for-the-badge&logo=github-actions&logoColor=white" alt="GitHub Actions" /></a>
 </p>
 <p align="center">
   <a href="https://prometheus.io/"><img src="https://img.shields.io/badge/Observability-Prometheus-E6522C?style=for-the-badge&logo=Prometheus&logoColor=white" alt="Prometheus" /></a>
@@ -46,7 +46,7 @@ In the era of distributed microservices, infrastructure is no longer static—it
 | :--- | :--- | :--- | :--- |
 | **Infrastucture** | `Provisioned` | Terraform / AWS | Resilience |
 | **Orchestration** | `Stable` | Kubernetes | Self-Healing |
-| **Pipeline** | `Automated` | Jenkins | Velocity |
+| **Pipeline** | `Automated` | GitHub Actions | Velocity |
 | **Observability** | `Live` | LGTM Stack | Visibility |
 | **Security** | `Hardened` | DevSecOps | Zero-Trust |
 
@@ -70,7 +70,7 @@ Explore the project through a structured, domain-driven learning path. Each modu
 *   **06 Orchestration:** [K8s Deep Dive](docs/06_kubernetes/Kubernetes_Deep_Dive.md)
 *   **07 Infrastructure:** [AWS Cloud](docs/07_cloud_infrastructure/AWS_Cloud_Infrastructure.md)
 *   **08 IaC:** [Terraform Modules](docs/08_iac/Terraform_IaC.md)
-*   **09 CI/CD:** [Jenkins Automation](docs/09_cicd/CICD_Engineering.md)
+*   **09 CI/CD:** [GitHub Actions](docs/09_cicd/CICD_Engineering.md)
 
 ### 📊 Phase 4: Operations & Defense
 *   **10 Monitoring:** [Observability](docs/10_observability/Monitoring_Observability.md)
@@ -95,7 +95,7 @@ graph TD
     %% Node Definitions
     DEV["👨‍💻 Developer"]
     GH["🐙 GitHub (Source)"]
-    JEN["🤖 Jenkins Engine"]
+    GA["🤖 GitHub Actions"]
     TEST["🧪 Testing Suite"]
     BUILD["🐳 Docker Factory"]
     SCAN["🛡️ Trivy Security"]
@@ -117,8 +117,8 @@ graph TD
 
     %% Connections
     DEV -->|Git Push| GH
-    GH -->|Webhook| JEN
-    JEN --> TEST
+    GH -->|Workflow| GA
+    GA --> TEST
     TEST --> BUILD
     BUILD --> SCAN
     SCAN --> ECR
@@ -138,7 +138,7 @@ graph TD
     %% Styling Definitions
     style DEV fill:#fff9f0,stroke:#FF9900,stroke-width:2px
     style GH fill:#f0f4ff,stroke:#326CE5,stroke-width:2px
-    style JEN fill:#fff0f5,stroke:#D24939,stroke-width:2px
+    style GA fill:#f0f4ff,stroke:#2088FF,stroke-width:2px
     style TEST fill:#fff0f5,stroke:#D24939,stroke-width:2px
     style BUILD fill:#fff0f5,stroke:#D24939,stroke-width:2px
     style SCAN fill:#fff0f5,stroke:#D24939,stroke-width:2px
@@ -167,7 +167,7 @@ graph TD
 | **Cloud Infrastructure** | AWS (EKS, RDS, ECR, VPC, S3) |
 | **Infrastructure as Code** | Terraform (HCL) |
 | **Orchestration** | Kubernetes (Pods, Deployments, Ingress, HPA) |
-| **CI/CD Automation** | Jenkins, GitHub Webhooks, Groovy |
+| **CI/CD Automation** | GitHub Actions, YAML Workflows, Docker Buildx |
 | **Full-Stack** | Next.js 14, FastAPI, Tailwind CSS, React Query |
 | **Observability** | Prometheus, Grafana, Loki, AlertManager |
 | **Security** | Trivy, JWT, RBAC, AWS IAM |

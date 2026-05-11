@@ -20,17 +20,21 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'npm'
           cache-dependency-path: frontend/package-lock.json
 
-      - name: Install dependencies
+      - name: Install deterministic dependencies
         working-directory: ./frontend
         run: npm ci
 
-      - name: Run RBAC Security Audit (Vitest)
+      - name: Run RBAC Security Audit (Vitest Coverage)
         working-directory: ./frontend
         run: npm run test:ci
+
+      - name: Verify Production Next.js Build
+        working-directory: ./frontend
+        run: npm run build
 
   build-and-push:
     needs: test-and-verify
