@@ -2,10 +2,14 @@ import type { Metadata } from 'next';
 import AppProvider from '@/providers';
 import './globals.css';
 
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+};
+
 export const metadata: Metadata = {
   title: 'Cloud Sentinel | Platform',
   description: 'Enterprise-grade cloud observability and incident management platform.',
-  viewport: 'width=device-width, initial-scale=1',
 };
 
 export default function RootLayout({
