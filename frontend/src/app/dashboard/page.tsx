@@ -29,5 +29,3 @@ export default function DashboardPage() {
     </div>
   );
 }
-
-import { BarChart3 } from 'lucide-react';
