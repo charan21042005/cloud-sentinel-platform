@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 import { 
   LayoutDashboard, 
   AlertCircle, 
+  ShieldAlert,
   BarChart3, 
   Users, 
   Settings, 
@@ -15,25 +16,35 @@ import {
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { useAuth } from '@/features/auth/context/AuthContext';
+import { usePermissions } from '@/features/rbac/hooks/usePermissions';
+import { AppPermission } from '@/features/rbac/types';
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-const navItems = [
-  { name: 'Overview', href: '/dashboard', icon: LayoutDashboard },
-  { name: 'Incidents', href: '/dashboard/incidents', icon: AlertCircle },
-  { name: 'Metrics', href: '/dashboard/metrics', icon: BarChart3 },
-  { name: 'Team', href: '/dashboard/users', icon: Users, roles: ['admin'] },
-  { name: 'Settings', href: '/dashboard/settings', icon: Settings },
+interface NavItem {
+  name: string;
+  href: string;
+  icon: React.ElementType;
+  permission?: AppPermission;
+}
+
+const navigation: NavItem[] = [
+  { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
+  { name: 'Incidents', href: '/dashboard/incidents', icon: ShieldAlert, permission: 'incident:view' },
+  { name: 'Metrics', href: '/dashboard/metrics', icon: BarChart3, permission: 'metrics:view' },
+  { name: 'Sentinels', href: '/dashboard/sentinels', icon: Users, permission: 'users:manage' },
+  { name: 'Settings', href: '/dashboard/settings', icon: Settings, permission: 'settings:view' },
 ];
 
 export default function Sidebar() {
   const pathname = usePathname();
   const { user } = useAuth();
+  const { hasPermission } = usePermissions();
 
-  const filteredNavItems = navItems.filter(item => 
-    !item.roles || (user && item.roles.includes(user.role))
+  const filteredNavigation = navigation.filter(
+    (item) => !item.permission || hasPermission(item.permission)
   );
 
   return (
@@ -47,8 +58,8 @@ export default function Sidebar() {
         </div>
       </div>
 
-      <nav className="flex-1 space-y-1 px-3 py-4">
-        {filteredNavItems.map((item) => {
+      <nav className="flex-1 space-y-2 p-4">
+        {filteredNavigation.map((item) => {
           const isActive = pathname === item.href;
           return (
             <Link
