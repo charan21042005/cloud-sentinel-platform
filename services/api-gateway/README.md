@@ -1,50 +1,82 @@
-# Cloud Sentinel API Gateway — Foundation
+<p align="center">
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:667eea,100:764ba2&height=300&section=header&text=API%20Gateway&fontSize=80&animation=fadeIn&fontAlignY=38&fontColor=ffffff" width="100%" />
+</p>
 
-Primary entry point for the Cloud Sentinel observability platform. Built with FastAPI and optimized for high-throughput cloud-native environments.
+<h3 align="center">🔮 Sentinel Core Command Center</h3>
+<p align="center"><strong>"Distributed Intelligence • High-Concurrency Engine • Asynchronous Mastery"</strong></p>
 
-## 🏗️ Architecture Reasoning
-- **Router Pattern:** Decouples endpoints from the app factory.
-- **Pydantic Settings:** Ensures type-safe configuration via environment variables.
-- **Slim Containerization:** Follows the "Least Privilege" principle with non-root users.
+<p align="center">
+  <img src="https://img.shields.io/badge/Module-API--Gateway-667eea?style=for-the-badge" alt="Module" />
+  <img src="https://img.shields.io/badge/Stack-FastAPI--Async-764ba2?style=for-the-badge" alt="Stack" />
+  <img src="https://img.shields.io/badge/Security-Sentinel--Guard-667eea?style=for-the-badge" alt="Security" />
+</p>
 
-## 🚀 Getting Started
+---
 
-### Prerequisites
-- Python 3.12+
-- Docker (optional)
+## 📌 1. Platform Intelligence
 
-### Installation (Local)
-1. Navigate to the service:
-   ```bash
-   cd services/api-gateway
-   ```
-2. Create and activate a virtual environment:
-   ```bash
-   python -m venv .venv
-   source .venv/bin/activate  # Or .venv\Scripts\activate on Windows
-   ```
-3. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
+The **API Gateway** serves as the distributed brain of the Cloud Sentinel Platform. It orchestrates high-speed data flow between our observers and the persistence layer, using a sophisticated **Service-Repository** architecture to ensure zero-latency business logic processing.
 
-### Running Locally
-```bash
-python run.py
+### 🏗️ Domain Orchestration
+
+```mermaid
+graph LR
+    subgraph "Ingress"
+        R[API Controllers]
+    end
+    
+    subgraph "Core Intelligence"
+        S[Domain Services]
+    end
+    
+    subgraph "Deep Memory"
+        Repo[Async Repositories]
+        DB[(PostgreSQL)]
+    end
+    
+    R --> S
+    S --> Repo
+    Repo --> DB
+    
+    style R fill:#eef2ff,stroke:#667eea
+    style S fill:#eef2ff,stroke:#667eea
+    style Repo fill:#eef2ff,stroke:#667eea
+    style DB fill:#f5f3ff,stroke:#7c3aed
 ```
-The API will be available at `http://localhost:8000`. 
-Interactive docs: `http://localhost:8000/docs`.
 
-### Docker Commands
-```bash
-# Build the image
-docker build -t sentinel-api-gateway .
+---
 
-# Run the container
-docker run -p 8000:8000 sentinel-api-gateway
+## 🚀 2. Command Catalog (v1)
+
+| Method | Endpoint | Logic Domain | Action |
+| :--- | :--- | :--- | :--- |
+| `POST` | `/api/v1/users/` | Identity | Register new platform sentinel |
+| `POST` | `/api/v1/incidents/` | Observability | Ingest real-time platform incident |
+| `GET` | `/api/v1/incidents/` | Observability | Stream historical incident logs |
+| `GET` | `/health` | Liveness | Core platform heartbeat |
+
+---
+
+## 🛠️ 3. Operations & DX
+
+### Schema Evolution
+Managed via **Alembic** (Asyncpg).
+```powershell
+# Sync database to latest head
+docker compose exec api-gateway alembic upgrade head
+
+# Generate intelligence revision
+docker compose exec api-gateway alembic revision --autogenerate -m "new_feature_schema"
 ```
 
-## 📊 Health Check Usage
-- **Endpoint:** `/api/v1/health`
-- **Method:** `GET`
-- **Purpose:** Used by Kubernetes `livenessProbe` and `readinessProbe`.
+### Integrated Testing
+```powershell
+# Run the sentinel validation suite
+docker compose exec api-gateway pytest
+```
+
+---
+
+<p align="center">
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:667eea,100:764ba2&height=120&section=footer" width="100%" />
+</p>
