@@ -168,7 +168,7 @@ graph TD
 | **Infrastructure as Code** | Terraform (HCL) |
 | **Orchestration** | Kubernetes (Pods, Deployments, Ingress, HPA) |
 | **CI/CD Automation** | Jenkins, GitHub Webhooks, Groovy |
-| **Full-Stack** | FastAPI (Python), React (JavaScript), Tailwind CSS |
+| **Full-Stack** | Next.js 14, FastAPI, Tailwind CSS, React Query |
 | **Observability** | Prometheus, Grafana, Loki, AlertManager |
 | **Security** | Trivy, JWT, RBAC, AWS IAM |
 
@@ -178,8 +178,7 @@ graph TD
 
 ```text
 cloud-sentinel-platform/
-├── apps/
-│   └── web-dashboard/      # ⚛️ React Dashboard (UI Only)
+├── frontend/               # ⚡ Sentinel Interface (CSI) - Next.js
 ├── services/
 │   ├── api-gateway/        # ⚙️ Primary Entry Point (FastAPI)
 │   ├── auth-service/       # 🔐 Identity & Access
