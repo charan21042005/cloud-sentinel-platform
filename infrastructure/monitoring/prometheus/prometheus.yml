@@ -2,16 +2,15 @@ global:
   scrape_interval: 15s
   evaluation_interval: 15s
 
-# Alertmanager configuration
+# Load rules once and periodically evaluate them according to the global 'evaluation_interval'.
+rule_files:
+  - "alert.rules.yml"
+
 alerting:
   alertmanagers:
     - static_configs:
         - targets:
-            - 'alertmanager:9093'
-
-# Load rules once and periodically evaluate them
-rule_files:
-  - "alert_rules.yml"
+          - alertmanager:9093
 
 scrape_configs:
   # The FastAPI Backend Gateway

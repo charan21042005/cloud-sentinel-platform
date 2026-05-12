@@ -22,7 +22,9 @@ services:
     container_name: sentinel-grafana
     volumes:
       - grafana_data:/var/lib/grafana
-      - ../monitoring/grafana/provisioning:/etc/grafana/provisioning
+      - ../monitoring/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources:ro
+      - ../monitoring/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards:ro
+      - ../monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
     environment:
       - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=sentinel_admin
@@ -65,6 +67,28 @@ services:
       REDIS_ADDR: "redis://redis:6379"
     ports:
       - "9121:9121"
+    restart: unless-stopped
+    networks:
+      - cloud-sentinel-network
+
+  alertmanager:
+    image: prom/alertmanager:latest
+    container_name: sentinel-alertmanager
+    restart: unless-stopped
+    volumes:
+      - ../monitoring/alertmanager/config.yml:/etc/alertmanager/config.yml:ro
+    command:
+      - '--config.file=/etc/alertmanager/config.yml'
+      - '--storage.path=/alertmanager'
+    ports:
+      - "9093:9093"
+    networks:
+      - cloud-sentinel-network
+
+  traffic-generator:
+    build: 
+      context: ../tools/traffic_generator
+    container_name: sentinel-traffic-generator
     restart: unless-stopped
     networks:
       - cloud-sentinel-network
