@@ -8,6 +8,7 @@ router = APIRouter()
 # Instantiate the aggregator singleton
 aggregator = TelemetryAggregator()
 
+
 @router.get("/system/live", response_model=SystemTelemetryResponse)
 async def get_live_telemetry():
     """

@@ -6,11 +6,13 @@ from app.services.telemetry.prometheus_client import PrometheusAsyncClient
 from app.services.telemetry.transformers import TelemetryTransformer
 from app.core.logging import logger
 
+
 class TelemetryAggregator:
     """
     Enterprise Telemetry Orchestration Service.
     Parallelizes TSDB queries and enforces strict Pydantic DTO hydration.
     """
+
     def __init__(self):
         self.client = PrometheusAsyncClient()
 
@@ -27,7 +29,7 @@ class TelemetryAggregator:
             self.client.query(PromQLRegistry.API_LATENCY),
             self.client.query_range(PromQLRegistry.CPU_HISTORY, start, now, step),
             self.client.query_range(PromQLRegistry.MEMORY_HISTORY, start, now, step),
-            return_exceptions=True
+            return_exceptions=True,
         )
 
         # Defensive unpacking
@@ -52,6 +54,6 @@ class TelemetryAggregator:
             latency_ms=round(latency, 1),
             history=SystemMetricsHistory(
                 cpu=TelemetryTransformer.normalize_time_series(raw_cpu_history),
-                memory=TelemetryTransformer.normalize_time_series(raw_memory_history)
-            )
+                memory=TelemetryTransformer.normalize_time_series(raw_memory_history),
+            ),
         )

@@ -21,7 +21,7 @@ async def alertmanager_webhook(
 ) -> Dict[str, Any]:
     """
     Enterprise Alertmanager Webhook Receiver.
-    Ingests raw alert batches, extracts cryptographic signatures, executes automated 
+    Ingests raw alert batches, extracts cryptographic signatures, executes automated
     deduplication loops, and registers immutable forensic events.
     Internal monitoring route.
     """
@@ -60,7 +60,9 @@ async def acknowledge_incident(
     Acknowledges active chains, silencing paging loops and assigning user actor attribution.
     Requires Authentication.
     """
-    incident = await service.acknowledge_incident(incident_id, actor=current_user.username)
+    incident = await service.acknowledge_incident(
+        incident_id, actor=current_user.username
+    )
     if not incident:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

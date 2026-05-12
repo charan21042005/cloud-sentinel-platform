@@ -32,7 +32,9 @@ class IncidentService:
         label_str = json.dumps(sorted_labels)
         return hashlib.sha256(label_str.encode()).hexdigest()[:16]
 
-    async def process_webhook(self, payload: AlertmanagerWebhookPayload) -> List[Incident]:
+    async def process_webhook(
+        self, payload: AlertmanagerWebhookPayload
+    ) -> List[Incident]:
         """
         Primary entrypoint for the SRE Observability Control Plane.
         Iterates over Alertmanager batch payloads, applying correlation windows
@@ -47,11 +49,17 @@ class IncidentService:
             fingerprint = alert.fingerprint or self._generate_fingerprint(alert.labels)
             alertname = alert.labels.get("alertname", "PlatformAnomaly")
             severity = alert.labels.get("severity", "warning").lower()
-            summary = alert.annotations.get("summary") or f"Alert triggered: {alertname}"
-            affected_service = alert.labels.get("instance") or alert.labels.get("service")
+            summary = (
+                alert.annotations.get("summary") or f"Alert triggered: {alertname}"
+            )
+            affected_service = alert.labels.get("instance") or alert.labels.get(
+                "service"
+            )
 
             # Check if active chain exists
-            active_incident = await self.incident_repo.get_active_by_fingerprint(fingerprint)
+            active_incident = await self.incident_repo.get_active_by_fingerprint(
+                fingerprint
+            )
 
             if alert.status == "firing":
                 now_utc = datetime.now(timezone.utc)
@@ -59,36 +67,54 @@ class IncidentService:
                     # Apply Correlation Window logic
                     # If last seen is within the window, correlate
                     window_seconds = active_incident.correlation_window
-                    elapsed = (now_utc - active_incident.last_seen_at.replace(tzinfo=timezone.utc)).total_seconds()
+                    elapsed = (
+                        now_utc
+                        - active_incident.last_seen_at.replace(tzinfo=timezone.utc)
+                    ).total_seconds()
 
                     if elapsed <= window_seconds:
-                        logger.info(f"[Correlation Engine] Correlating duplicate alert into chain [{active_incident.id}]")
+                        logger.info(
+                            f"[Correlation Engine] Correlating duplicate alert into chain [{active_incident.id}]"
+                        )
                         active_incident.occurrence_count += 1
                         active_incident.event_count += 1
                         active_incident.last_seen_at = now_utc
                         active_incident.raw_payload = alert.model_dump()
 
                         # Check for severity escalation
-                        if severity == "critical" and active_incident.severity != "critical":
+                        if (
+                            severity == "critical"
+                            and active_incident.severity != "critical"
+                        ):
                             active_incident.severity = "critical"
                             active_incident.escalation_level += 1
                             await self._append_event(
-                                active_incident, "severity_changed", "Alertmanager", {"new_severity": "critical"}
+                                active_incident,
+                                "severity_changed",
+                                "Alertmanager",
+                                {"new_severity": "critical"},
                             )
 
                         await self.incident_repo.db.commit()
                         await self.incident_repo.db.refresh(active_incident)
                         processed_incidents.append(active_incident)
-                        
+
                         # Add audit log for correlation detection
                         await self._append_event(
-                            active_incident, "correlation_detected", "Alertmanager", {"fingerprint": fingerprint}
+                            active_incident,
+                            "correlation_detected",
+                            "Alertmanager",
+                            {"fingerprint": fingerprint},
                         )
                         continue
                     else:
-                        logger.info(f"[Correlation Engine] Chain expired. Creating fresh incident chain.")
+                        logger.info(
+                            f"[Correlation Engine] Chain expired. Creating fresh incident chain."
+                        )
                         # Active chain exists but outside correlation window. Resolve old chain.
-                        await self.resolve_incident(active_incident.id, "System Auto-Expiry")
+                        await self.resolve_incident(
+                            active_incident.id, "System Auto-Expiry"
+                        )
 
                 # Create fresh incident chain
                 logger.info(f"[Incident Engine] Creating new incident chain: {summary}")
@@ -108,19 +134,32 @@ class IncidentService:
                 persisted = await self.incident_repo.create(new_incident)
 
                 # Initialize timeline audit history
-                await self._append_event(persisted, "triggered", "Alertmanager", {"initial_severity": severity})
+                await self._append_event(
+                    persisted,
+                    "triggered",
+                    "Alertmanager",
+                    {"initial_severity": severity},
+                )
                 processed_incidents.append(persisted)
 
             elif alert.status == "resolved" and active_incident:
-                logger.info(f"[Incident Engine] Auto-resolving incident chain [{active_incident.id}]")
-                resolved = await self.resolve_incident(active_incident.id, "Alertmanager Auto-Resolve")
+                logger.info(
+                    f"[Incident Engine] Auto-resolving incident chain [{active_incident.id}]"
+                )
+                resolved = await self.resolve_incident(
+                    active_incident.id, "Alertmanager Auto-Resolve"
+                )
                 if resolved:
                     processed_incidents.append(resolved)
 
         return processed_incidents
 
     async def _append_event(
-        self, incident: Incident, event_type: str, actor: str, metadata: Optional[dict] = None
+        self,
+        incident: Incident,
+        event_type: str,
+        actor: str,
+        metadata: Optional[dict] = None,
     ) -> IncidentEvent:
         """Appends an immutable log event to the forensic timeline."""
         event = IncidentEvent(
@@ -128,16 +167,20 @@ class IncidentService:
             event_type=event_type,
             actor=actor,
             event_metadata=metadata,
-            timestamp=datetime.now(timezone.utc)
+            timestamp=datetime.now(timezone.utc),
         )
         incident.event_count += 1
         return await self.incident_repo.create_event(event)
 
-    async def list_incidents(self, skip: int = 0, limit: int = 100) -> Sequence[Incident]:
+    async def list_incidents(
+        self, skip: int = 0, limit: int = 100
+    ) -> Sequence[Incident]:
         """Retrieves hydrated incident domains for frontend execution dashboards."""
         return await self.incident_repo.list_active(skip=skip, limit=limit)
 
-    async def acknowledge_incident(self, incident_id: any, actor: str) -> Optional[Incident]:
+    async def acknowledge_incident(
+        self, incident_id: any, actor: str
+    ) -> Optional[Incident]:
         """Silences notifications and assigns initial SRE ownership."""
         incident = await self.incident_repo.get_with_events(incident_id)
         if not incident or incident.status == "resolved":
@@ -145,12 +188,16 @@ class IncidentService:
 
         incident.status = "acknowledged"
         incident.acknowledged_at = datetime.now(timezone.utc)
-        await self._append_event(incident, "acknowledged", actor, {"action": "Acknowledged by SRE"})
+        await self._append_event(
+            incident, "acknowledged", actor, {"action": "Acknowledged by SRE"}
+        )
         await self.incident_repo.db.commit()
         await self.incident_repo.db.refresh(incident)
         return incident
 
-    async def resolve_incident(self, incident_id: any, actor: str) -> Optional[Incident]:
+    async def resolve_incident(
+        self, incident_id: any, actor: str
+    ) -> Optional[Incident]:
         """Terminates active chains and closes operational lifecycle."""
         incident = await self.incident_repo.get_with_events(incident_id)
         if not incident or incident.status == "resolved":
@@ -158,7 +205,9 @@ class IncidentService:
 
         incident.status = "resolved"
         incident.resolved_at = datetime.now(timezone.utc)
-        await self._append_event(incident, "resolved", actor, {"resolution_source": actor})
+        await self._append_event(
+            incident, "resolved", actor, {"resolution_source": actor}
+        )
         await self.incident_repo.db.commit()
         await self.incident_repo.db.refresh(incident)
         return incident

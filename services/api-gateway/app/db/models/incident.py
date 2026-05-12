@@ -29,9 +29,15 @@ class Incident(Base, UUIDPrimaryKeyMixin, TimestampMixin):
     affected_service: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
 
     # Forensic Timestamps
-    triggered_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow, index=True)
-    acknowledged_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
-    resolved_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    triggered_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=datetime.utcnow, index=True
+    )
+    acknowledged_at: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    resolved_at: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
 
     # Preserved JSON payloads for downstream AI Analysis
     labels: Mapped[Optional[Dict[str, Any]]] = mapped_column(JSONB, nullable=True)
@@ -41,13 +47,20 @@ class Incident(Base, UUIDPrimaryKeyMixin, TimestampMixin):
     # Analytics and Auto-Triage Metadata
     occurrence_count: Mapped[int] = mapped_column(Integer, default=1)
     event_count: Mapped[int] = mapped_column(Integer, default=1)
-    last_seen_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
-    correlation_window: Mapped[int] = mapped_column(Integer, default=1800)  # Configurable deduplication expiry (seconds)
+    last_seen_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=datetime.utcnow
+    )
+    correlation_window: Mapped[int] = mapped_column(
+        Integer, default=1800
+    )  # Configurable deduplication expiry (seconds)
     escalation_level: Mapped[int] = mapped_column(Integer, default=0)
 
     # Relationship to immutable audit events
     events: Mapped[List["IncidentEvent"]] = relationship(
-        "IncidentEvent", back_populates="incident", cascade="all, delete-orphan", lazy="selectin"
+        "IncidentEvent",
+        back_populates="incident",
+        cascade="all, delete-orphan",
+        lazy="selectin",
     )
 
 
@@ -59,10 +72,16 @@ class IncidentEvent(Base, UUIDPrimaryKeyMixin):
 
     __tablename__ = "incident_events"
 
-    incident_id: Mapped[Any] = mapped_column(ForeignKey("incidents.id", ondelete="CASCADE"), index=True)
+    incident_id: Mapped[Any] = mapped_column(
+        ForeignKey("incidents.id", ondelete="CASCADE"), index=True
+    )
     event_type: Mapped[str] = mapped_column(String(50), nullable=False)
-    timestamp: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow, index=True)
+    timestamp: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=datetime.utcnow, index=True
+    )
     actor: Mapped[str] = mapped_column(String(100), default="System")
-    event_metadata: Mapped[Optional[Dict[str, Any]]] = mapped_column(JSONB, nullable=True)
+    event_metadata: Mapped[Optional[Dict[str, Any]]] = mapped_column(
+        JSONB, nullable=True
+    )
 
     incident: Mapped["Incident"] = relationship("Incident", back_populates="events")

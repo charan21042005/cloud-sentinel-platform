@@ -3,11 +3,12 @@ from typing import Any, Dict, List, Optional
 from uuid import UUID
 from pydantic import BaseModel, ConfigDict, Field
 
-
 # --- ALERTMANAGER INGESTION SCHEMAS ---
+
 
 class AlertmanagerAlertItem(BaseModel):
     """Represents an individual alert inside the webhook payload array."""
+
     status: str  # firing or resolved
     labels: Dict[str, Any] = Field(default_factory=dict)
     annotations: Dict[str, Any] = Field(default_factory=dict)
@@ -18,6 +19,7 @@ class AlertmanagerAlertItem(BaseModel):
 
 class AlertmanagerWebhookPayload(BaseModel):
     """The root payload schema POSTed by Alertmanager."""
+
     receiver: str
     status: str
     alerts: List[AlertmanagerAlertItem]
@@ -27,6 +29,7 @@ class AlertmanagerWebhookPayload(BaseModel):
 
 
 # --- INTERNAL & FRONTEND DTO CONTRACTS ---
+
 
 class IncidentBase(BaseModel):
     title: str = Field(..., min_length=3, max_length=255)
