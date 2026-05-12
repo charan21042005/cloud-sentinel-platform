@@ -1,44 +1,19 @@
-import { SystemMetrics, TimeSeriesDataPoint } from '../types';
-import { PrometheusClient } from '../../../services/telemetry/api/client';
-import { PROMQL_QUERIES } from '../../../services/telemetry/queries';
-import { TelemetryTransformer } from '../../../services/telemetry/transformers';
+import { SystemMetrics } from '../types';
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1';
 
 export const metricsApi = {
   getSystemMetrics: async (): Promise<SystemMetrics> => {
     try {
-      // 1. Calculate time ranges for history (last 5 minutes, 15-second resolution)
-      const end = Math.floor(Date.now() / 1000);
-      const start = end - (5 * 60); 
-      const step = '15s';
-
-      // 2. Execute PromQL Instant Queries (Parallelized for performance)
-      const [cpu, memory, requests, latency] = await Promise.all([
-        PrometheusClient.query(PROMQL_QUERIES.CPU_UTILIZATION),
-        PrometheusClient.query(PROMQL_QUERIES.MEMORY_UTILIZATION),
-        PrometheusClient.query(PROMQL_QUERIES.REQUEST_THROUGHPUT),
-        PrometheusClient.query(PROMQL_QUERIES.API_LATENCY)
-      ]);
-
-      // 3. Execute PromQL Range Queries (For Area Charts)
-      const [rawCpuHistory, rawMemoryHistory] = await Promise.all([
-        PrometheusClient.queryRange(PROMQL_QUERIES.CPU_HISTORY, start, end, step),
-        PrometheusClient.queryRange(PROMQL_QUERIES.MEMORY_HISTORY, start, end, step)
-      ]);
-
-      // 4. Normalize and Transform
-      const historyCpu = TelemetryTransformer.normalizeTimeSeries(rawCpuHistory);
-      const historyMemory = TelemetryTransformer.normalizeTimeSeries(rawMemoryHistory);
-
-      return {
-        cpu_usage: Number(cpu.toFixed(1)),
-        memory_usage: Number(memory.toFixed(1)),
-        active_requests: Math.floor(requests), // Requests per second
-        latency_ms: Number(latency.toFixed(1)),
-        history: {
-          cpu: historyCpu,
-          memory: historyMemory,
-        }
-      };
+      const response = await fetch(`${API_URL}/telemetry/system/live`);
+      
+      if (!response.ok) {
+        throw new Error(`Failed to fetch telemetry DTO: ${response.statusText}`);
+      }
+      
+      // The backend now provides the exact SystemMetrics shape. 
+      // The frontend is completely agnostic to PromQL or TSDB logic.
+      return await response.json();
     } catch (error) {
       console.error("[Metrics API] Complete telemetry failure, degrading to fallback state:", error);
       
