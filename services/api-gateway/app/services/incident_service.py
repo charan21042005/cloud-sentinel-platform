@@ -109,7 +109,7 @@ class IncidentService:
                         continue
                     else:
                         logger.info(
-                            f"[Correlation Engine] Chain expired. Creating fresh incident chain."
+                            "[Correlation Engine] Chain expired. Creating fresh incident chain."
                         )
                         # Active chain exists but outside correlation window. Resolve old chain.
                         await self.resolve_incident(
