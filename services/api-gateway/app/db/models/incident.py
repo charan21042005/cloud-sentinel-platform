@@ -1,8 +1,11 @@
 from datetime import datetime
 from typing import Any, Dict, List, Optional
-from sqlalchemy import String, Text, Integer, ForeignKey, DateTime
+from sqlalchemy import JSON, String, Text, Integer, ForeignKey, DateTime
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+# Engine-agnostic JSON definition: utilizes high-performance JSONB on PostgreSQL, falls back to standard JSON on SQLite test suite
+JSONVariant = JSON().with_variant(JSONB, "postgresql")
 
 from app.db.base import Base
 from app.db.mixins import TimestampMixin, UUIDPrimaryKeyMixin
@@ -40,9 +43,9 @@ class Incident(Base, UUIDPrimaryKeyMixin, TimestampMixin):
     )
 
     # Preserved JSON payloads for downstream AI Analysis
-    labels: Mapped[Optional[Dict[str, Any]]] = mapped_column(JSONB, nullable=True)
-    annotations: Mapped[Optional[Dict[str, Any]]] = mapped_column(JSONB, nullable=True)
-    raw_payload: Mapped[Optional[Dict[str, Any]]] = mapped_column(JSONB, nullable=True)
+    labels: Mapped[Optional[Dict[str, Any]]] = mapped_column(JSONVariant, nullable=True)
+    annotations: Mapped[Optional[Dict[str, Any]]] = mapped_column(JSONVariant, nullable=True)
+    raw_payload: Mapped[Optional[Dict[str, Any]]] = mapped_column(JSONVariant, nullable=True)
 
     # Analytics and Auto-Triage Metadata
     occurrence_count: Mapped[int] = mapped_column(Integer, default=1)
@@ -81,7 +84,7 @@ class IncidentEvent(Base, UUIDPrimaryKeyMixin):
     )
     actor: Mapped[str] = mapped_column(String(100), default="System")
     event_metadata: Mapped[Optional[Dict[str, Any]]] = mapped_column(
-        JSONB, nullable=True
+        JSONVariant, nullable=True
     )
 
     incident: Mapped["Incident"] = relationship("Incident", back_populates="events")

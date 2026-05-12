@@ -4,28 +4,40 @@ from httpx import AsyncClient
 
 
 @pytest.mark.asyncio
-async def test_create_incident_authenticated(auth_client: AsyncClient):
+async def test_alertmanager_webhook(client: AsyncClient):
     """
-    Validate that an authenticated sentinel can log a new incident.
+    Validate that the internal webhook sink ingests Alertmanager arrays correctly.
     """
-    incident_data = {
-        "title": "Critical System Failure",
-        "description": "Kernel panic detected on production node 01",
-        "severity": "critical",
-        "service_name": "compute-engine",
+    webhook_payload = {
+        "receiver": "webhook",
+        "status": "firing",
+        "alerts": [
+            {
+                "status": "firing",
+                "labels": {
+                    "alertname": "TestAnomaly",
+                    "severity": "critical",
+                    "instance": "localhost",
+                },
+                "annotations": {"summary": "System anomaly triggered in test suite"},
+            }
+        ],
+        "groupLabels": {},
+        "commonLabels": {},
+        "commonAnnotations": {},
     }
 
-    response = await auth_client.post("/api/v1/incidents/", json=incident_data)
-    assert response.status_code == status.HTTP_201_CREATED
+    response = await client.post("/api/v1/incidents/webhook", json=webhook_payload)
+    assert response.status_code == status.HTTP_200_OK
     data = response.json()
-    assert data["title"] == incident_data["title"]
-    assert data["status"] == "open"
+    assert data["status"] == "success"
+    assert data["correlated_chains"] == 1
 
 
 @pytest.mark.asyncio
 async def test_list_incidents_authenticated(auth_client: AsyncClient):
     """
-    Validate that incidents can be retrieved by authenticated users.
+    Validate that incidents can be retrieved by authenticated SRE operators.
     """
     response = await auth_client.get("/api/v1/incidents/")
     assert response.status_code == status.HTTP_200_OK
@@ -35,7 +47,7 @@ async def test_list_incidents_authenticated(auth_client: AsyncClient):
 @pytest.mark.asyncio
 async def test_incident_access_unauthorized(client: AsyncClient):
     """
-    Ensure incident creation is blocked for unauthenticated users.
+    Ensure operational views are strictly blocked for unauthenticated packets.
     """
-    response = await client.post("/api/v1/incidents/", json={})
+    response = await client.get("/api/v1/incidents/")
     assert response.status_code == status.HTTP_401_UNAUTHORIZED
