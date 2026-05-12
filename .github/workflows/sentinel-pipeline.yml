@@ -77,31 +77,31 @@ jobs:
           cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:buildcache
           cache-to: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:buildcache,mode=max
 
-  deploy-to-kubernetes:
-    needs: build-and-push
-    runs-on: ubuntu-latest
-    environment: production
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up Kubectl
-        uses: azure/setup-kubectl@v3
-
-      - name: Configure Kubernetes Context
-        uses: azure/k8s-set-context@v3
-        with:
-          method: kubeconfig
-          kubeconfig: ${{ secrets.KUBECONFIG_DATA }}
-
-      - name: Deploy to K8s Cluster
-        run: |
-          # Update the image tag in the deployment manifest
-          sed -i "s|image: cloud-sentinel/frontend:latest|image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:sha-${GITHUB_SHA::7}|g" infrastructure/kubernetes/frontend/deployment.yaml
-          
-          kubectl apply -f infrastructure/kubernetes/shared/
-          kubectl apply -f infrastructure/kubernetes/frontend/
-          
-      - name: Verify Deployment Rollout
-        run: |
-          kubectl rollout status deployment/sentinel-frontend -n platform-ops --timeout=120s
+#   deploy-to-kubernetes:
+#     needs: build-and-push
+#     runs-on: ubuntu-latest
+#     environment: production
+#     steps:
+#       - name: Checkout repository
+#         uses: actions/checkout@v4
+# 
+#       - name: Set up Kubectl
+#         uses: azure/setup-kubectl@v3
+# 
+#       - name: Configure Kubernetes Context
+#         uses: azure/k8s-set-context@v3
+#         with:
+#           method: kubeconfig
+#           kubeconfig: ${{ secrets.KUBECONFIG_DATA }}
+# 
+#       - name: Deploy to K8s Cluster
+#         run: |
+#           # Update the image tag in the deployment manifest
+#           sed -i "s|image: cloud-sentinel/frontend:latest|image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:sha-${GITHUB_SHA::7}|g" infrastructure/kubernetes/frontend/deployment.yaml
+#           
+#           kubectl apply -f infrastructure/kubernetes/shared/
+#           kubectl apply -f infrastructure/kubernetes/frontend/
+#           
+#       - name: Verify Deployment Rollout
+#         run: |
+#           kubectl rollout status deployment/sentinel-frontend -n platform-ops --timeout=120s
