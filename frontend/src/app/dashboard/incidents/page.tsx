@@ -28,17 +28,17 @@ export default function IncidentsPage() {
       <div className="flex flex-col space-y-4 md:flex-row md:items-center md:justify-between md:space-y-0">
         <div>
           <h1 className="text-3xl font-bold text-white flex items-center space-x-3">
-            <span>Incident Feed</span>
-            <div className="flex h-6 w-6 items-center justify-center rounded-full bg-red-500/10 text-[10px] text-red-500 border border-red-500/20">
-              {data?.total || 0}
+            <span>Incident Center</span>
+            <div className="flex h-6 w-6 items-center justify-center rounded-full bg-red-500/10 text-[10px] text-red-500 border border-red-500/20 font-mono">
+              {Array.isArray(data) ? data.length : 0}
             </div>
           </h1>
-          <p className="mt-2 text-zinc-400">Manage and respond to active threats across your cloud ecosystem.</p>
+          <p className="mt-2 text-zinc-400">Real-time SRE telemetry orchestration, threat correlation loops, and forensic event intelligence.</p>
         </div>
 
         <button className="flex items-center space-x-2 rounded-xl bg-zinc-100 px-5 py-3 text-sm font-bold text-zinc-950 transition-all hover:bg-zinc-200">
           <Plus className="h-5 w-5" />
-          <span>Report Incident</span>
+          <span>Manual Alert Injector</span>
         </button>
       </div>
 
@@ -50,7 +50,7 @@ export default function IncidentsPage() {
 
       <div className="mt-8">
         <IncidentTable 
-          incidents={data?.items} 
+          incidents={Array.isArray(data) ? data : undefined} 
           isLoading={isLoading} 
           onRowClick={(incident) => setSelectedIncident(incident)}
         />

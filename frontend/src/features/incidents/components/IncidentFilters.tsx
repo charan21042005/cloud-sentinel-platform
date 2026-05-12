@@ -45,9 +45,8 @@ export default function IncidentFilters({
           className="h-11 rounded-xl border border-zinc-800 bg-zinc-900/50 px-4 text-xs font-medium text-zinc-400 focus:border-zinc-600 focus:outline-none"
         >
           <option value="all">All Statuses</option>
-          <option value="open">Open</option>
-          <option value="investigating">Investigating</option>
-          <option value="mitigated">Mitigated</option>
+          <option value="firing">Firing</option>
+          <option value="acknowledged">Acknowledged</option>
           <option value="resolved">Resolved</option>
         </select>
 
