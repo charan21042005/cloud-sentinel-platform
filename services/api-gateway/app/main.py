@@ -2,6 +2,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from prometheus_fastapi_instrumentator import Instrumentator
 
 from app.api.router import api_router
 from app.core.config import settings
@@ -74,6 +75,9 @@ def create_application() -> FastAPI:
 
     # Mount the central router
     application.include_router(api_router)
+
+    # Instrument FastAPI for Prometheus telemetry
+    Instrumentator().instrument(application).expose(application, endpoint="/metrics")
 
     return application
 
