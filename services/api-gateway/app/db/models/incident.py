@@ -4,11 +4,11 @@ from sqlalchemy import JSON, String, Text, Integer, ForeignKey, DateTime
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-# Engine-agnostic JSON definition: utilizes high-performance JSONB on PostgreSQL, falls back to standard JSON on SQLite test suite
-JSONVariant = JSON().with_variant(JSONB, "postgresql")
-
 from app.db.base import Base
 from app.db.mixins import TimestampMixin, UUIDPrimaryKeyMixin
+
+# Engine-agnostic JSON definition: utilizes high-performance JSONB on PostgreSQL, falls back to standard JSON on SQLite test suite
+JSONVariant = JSON().with_variant(JSONB, "postgresql")
 
 
 class Incident(Base, UUIDPrimaryKeyMixin, TimestampMixin):
