@@ -55,7 +55,7 @@ This repository is more than just a code dump; it is a **Structured Engineering 
 *   **06 Orchestration:** [Kubernetes (EKS) Deep Dive](06_kubernetes/Kubernetes_Deep_Dive.md)
 *   **07 Cloud Infra:** [AWS Global Infrastructure](07_cloud_infrastructure/AWS_Cloud_Infrastructure.md)
 *   **08 IaC:** [Terraform Infrastructure-as-Code](08_iac/Terraform_IaC.md)
-*   **09 CI/CD:** [Jenkins Automation Pipelines](09_cicd/CICD_Engineering.md)
+*   **09 CI/CD:** [GitHub Actions Automation Pipelines](09_cicd/CICD_Engineering.md)
 
 ### 📊 [Phase 04] — Operations & Security
 *Hardening the platform and implementing SRE observability.*
