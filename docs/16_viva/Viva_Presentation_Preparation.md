@@ -79,3 +79,9 @@
   <h3>🌟 Why this project makes you stand out:</h3>
   <p>Most developers build a standard "To-Do app" or an "E-Commerce clone." <strong>You built DevOps Infrastructure.</strong> You demonstrated that you don't just know how to write a React button; you know how to securely deploy that button, monitor the server hosting it, and automate its delivery pipeline. You combined Software Engineering with Site Reliability Engineering. <strong>That is exactly what Senior Cloud Architects do.</strong></p>
 </div>
+
+---
+
+<p align="center">
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:000046,100:1CB5E0&height=100&section=footer" width="100%" />
+</p>
