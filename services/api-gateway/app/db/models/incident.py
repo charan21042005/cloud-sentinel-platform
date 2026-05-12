@@ -44,8 +44,12 @@ class Incident(Base, UUIDPrimaryKeyMixin, TimestampMixin):
 
     # Preserved JSON payloads for downstream AI Analysis
     labels: Mapped[Optional[Dict[str, Any]]] = mapped_column(JSONVariant, nullable=True)
-    annotations: Mapped[Optional[Dict[str, Any]]] = mapped_column(JSONVariant, nullable=True)
-    raw_payload: Mapped[Optional[Dict[str, Any]]] = mapped_column(JSONVariant, nullable=True)
+    annotations: Mapped[Optional[Dict[str, Any]]] = mapped_column(
+        JSONVariant, nullable=True
+    )
+    raw_payload: Mapped[Optional[Dict[str, Any]]] = mapped_column(
+        JSONVariant, nullable=True
+    )
 
     # Analytics and Auto-Triage Metadata
     occurrence_count: Mapped[int] = mapped_column(Integer, default=1)
