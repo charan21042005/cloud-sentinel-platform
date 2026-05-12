@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 from app.api.routes import health, database_health
-from app.api.v1.routes import auth, users, incidents
+from app.api.v1.routes import auth, users, incidents, telemetry
 
 api_router = APIRouter()
 
@@ -13,4 +13,7 @@ api_router.include_router(auth.router, prefix="/api/v1/auth", tags=["Authenticat
 api_router.include_router(users.router, prefix="/api/v1/users", tags=["Users"])
 api_router.include_router(
     incidents.router, prefix="/api/v1/incidents", tags=["Incidents"]
+)
+api_router.include_router(
+    telemetry.router, prefix="/api/v1/telemetry", tags=["Telemetry & Observability"]
 )
