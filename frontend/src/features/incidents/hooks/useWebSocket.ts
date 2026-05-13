@@ -15,6 +15,7 @@ interface WebSocketMessage {
 export function useWebSocket(channel: 'incidents' | 'telemetry' | 'system-events') {
   const [isConnected, setIsConnected] = useState(false);
   const [isReconnecting, setIsReconnecting] = useState(false);
+  const [hasFailed, setHasFailed] = useState(false);
   const wsRef = useRef<WebSocket | null>(null);
   const reconnectTimeoutRef = useRef<NodeJS.Timeout>();
   const pingIntervalRef = useRef<NodeJS.Timeout>();
@@ -33,6 +34,7 @@ export function useWebSocket(channel: 'incidents' | 'telemetry' | 'system-events
       ws.onopen = () => {
         setIsConnected(true);
         setIsReconnecting(false);
+        setHasFailed(false);
         reconnectAttempts.current = 0;
         
         // Initialize presence tracking heartbeat loop
@@ -90,6 +92,7 @@ export function useWebSocket(channel: 'incidents' | 'telemetry' | 'system-events
           }, timeout);
         } else {
           setIsReconnecting(false);
+          setHasFailed(true);
           toast.warning('🔌 Real-Time SOC Fabric Disconnected', {
             description: `Channel '${channel}' stream dropped. Max reconnect attempts reached.`,
           });
@@ -101,6 +104,7 @@ export function useWebSocket(channel: 'incidents' | 'telemetry' | 'system-events
       };
     } catch (err) {
       setIsConnected(false);
+      setHasFailed(true);
     }
   }, [channel, queryClient]);
 
@@ -116,5 +120,5 @@ export function useWebSocket(channel: 'incidents' | 'telemetry' | 'system-events
     };
   }, [connect]);
 
-  return { isConnected, isReconnecting };
+  return { isConnected, isReconnecting, hasFailed };
 }

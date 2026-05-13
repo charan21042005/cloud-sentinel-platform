@@ -19,14 +19,18 @@ export default function IncidentsPage() {
   const [selectedIncident, setSelectedIncident] = useState<Incident | null>(null);
 
   // Initialize dual-channel real-time SOC transport streaming with zero manual polling
-  const { isConnected: isIncidentsConnected, isReconnecting: isIncidentsReconnecting } = useWebSocket('incidents');
+  const { isConnected: isIncidentsConnected, isReconnecting: isIncidentsReconnecting, hasFailed: isIncidentsFailed } = useWebSocket('incidents');
   useWebSocket('system-events');
+
+  // Phase 9B Graceful Degradation Architecture: If streaming dropouts exhaust retry pipelines,
+  // automatically downgrade transport mode to continuous REST API polling loops to guarantee UX continuity.
+  const shouldPoll = isIncidentsFailed || !isIncidentsConnected ? 5000 : false;
 
   const { data, isLoading } = useIncidents({
     search: filters.search,
     severity: filters.severity === 'all' ? undefined : filters.severity,
     status: filters.status === 'all' ? undefined : filters.status,
-  });
+  }, shouldPoll);
 
   return (
     <div className="relative space-y-8">
@@ -42,12 +46,14 @@ export default function IncidentsPage() {
             
             {/* Live Operations Fabric Streaming Indicators */}
             <div className="flex items-center space-x-2 rounded-full bg-zinc-900/80 px-3 py-1 border border-zinc-800 backdrop-blur-sm">
-              <Radio className={`h-3.5 w-3.5 ${isIncidentsConnected ? 'text-emerald-400 animate-pulse' : isIncidentsReconnecting ? 'text-amber-400 animate-spin' : 'text-zinc-600'}`} />
+              <Radio className={`h-3.5 w-3.5 ${isIncidentsConnected ? 'text-emerald-400 animate-pulse' : isIncidentsReconnecting ? 'text-amber-400 animate-spin' : isIncidentsFailed ? 'text-cyan-400 animate-pulse' : 'text-zinc-600'}`} />
               <span className="text-xs font-mono font-medium tracking-wider">
                 {isIncidentsConnected ? (
                   <span className="text-emerald-400">LIVE STREAMING</span>
                 ) : isIncidentsReconnecting ? (
                   <span className="text-amber-400">RECONNECTING...</span>
+                ) : isIncidentsFailed ? (
+                  <span className="text-cyan-400">FALLBACK POLLING</span>
                 ) : (
                   <span className="text-zinc-500">STANDBY</span>
                 )}

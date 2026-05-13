@@ -2,10 +2,11 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { incidentApi } from '../api';
 import { IncidentFilters } from '../types';
 
-export function useIncidents(filters: IncidentFilters = {}) {
+export function useIncidents(filters: IncidentFilters = {}, pollingInterval?: number | false) {
   return useQuery({
     queryKey: ['incidents', filters],
     queryFn: () => incidentApi.getIncidents(filters),
+    refetchInterval: pollingInterval === false ? undefined : (pollingInterval || undefined),
     placeholderData: (previousData) => previousData,
   });
 }
