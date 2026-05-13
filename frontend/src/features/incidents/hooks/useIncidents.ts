@@ -6,7 +6,6 @@ export function useIncidents(filters: IncidentFilters = {}) {
   return useQuery({
     queryKey: ['incidents', filters],
     queryFn: () => incidentApi.getIncidents(filters),
-    refetchInterval: 5000, // Highly-responsive live stream polling loops
     placeholderData: (previousData) => previousData,
   });
 }

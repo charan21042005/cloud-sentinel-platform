@@ -10,7 +10,9 @@ from app.schemas.incident import (
     AlertmanagerWebhookPayload,
     IncidentCreate,
     IncidentUpdate,
+    IncidentResponse,
 )
+from app.services.websocket.manager import websocket_manager
 
 
 class IncidentService:
@@ -106,6 +108,29 @@ class IncidentService:
                             "Alertmanager",
                             {"fingerprint": fingerprint},
                         )
+
+                        # Fanout WebSocket broadcast notifying real-time SOC fabric
+                        try:
+                            fresh_incident = await self.incident_repo.get_with_events(
+                                active_incident.id
+                            )
+                            if fresh_incident:
+                                dto = IncidentResponse.model_validate(
+                                    fresh_incident
+                                ).model_dump(mode="json")
+                                await websocket_manager.broadcast(
+                                    "incidents",
+                                    {
+                                        "event": "incident_updated",
+                                        "mutation": "correlation",
+                                        "data": dto,
+                                    },
+                                )
+                        except Exception as e:
+                            logger.warning(
+                                f"[WebSocket Broadcaster] Error fanning out correlation: {e}"
+                            )
+
                         continue
                     else:
                         logger.info(
@@ -141,6 +166,28 @@ class IncidentService:
                     {"initial_severity": severity},
                 )
                 processed_incidents.append(persisted)
+
+                # Fanout WebSocket broadcast notifying real-time SOC fabric of newly spawned anomalies
+                try:
+                    fresh_persisted = await self.incident_repo.get_with_events(
+                        persisted.id
+                    )
+                    if fresh_persisted:
+                        dto = IncidentResponse.model_validate(
+                            fresh_persisted
+                        ).model_dump(mode="json")
+                        await websocket_manager.broadcast(
+                            "incidents",
+                            {
+                                "event": "incident_created",
+                                "mutation": "triggered",
+                                "data": dto,
+                            },
+                        )
+                except Exception as e:
+                    logger.warning(
+                        f"[WebSocket Broadcaster] Error fanning out incident creation: {e}"
+                    )
 
             elif alert.status == "resolved" and active_incident:
                 logger.info(
@@ -193,6 +240,34 @@ class IncidentService:
         )
         await self.incident_repo.db.commit()
         await self.incident_repo.db.refresh(incident)
+
+        # Broadcast live operational mutations to synchronize SOC teams
+        try:
+            fresh_ack = await self.incident_repo.get_with_events(incident.id)
+            if fresh_ack:
+                dto = IncidentResponse.model_validate(fresh_ack).model_dump(mode="json")
+                await websocket_manager.broadcast(
+                    "incidents",
+                    {
+                        "event": "incident_updated",
+                        "mutation": "acknowledged",
+                        "data": dto,
+                    },
+                )
+                await websocket_manager.broadcast(
+                    "system-events",
+                    {
+                        "event": "operator_action",
+                        "actor": actor,
+                        "action": f"Acknowledged incident chain '{fresh_ack.title}'",
+                        "timestamp": datetime.now(timezone.utc).isoformat(),
+                    },
+                )
+        except Exception as e:
+            logger.warning(
+                f"[WebSocket Broadcaster] Error fanning out acknowledgment: {e}"
+            )
+
         return incident
 
     async def resolve_incident(
@@ -210,4 +285,30 @@ class IncidentService:
         )
         await self.incident_repo.db.commit()
         await self.incident_repo.db.refresh(incident)
+
+        # Broadcast live resolution closure across the operational fabric
+        try:
+            fresh_res = await self.incident_repo.get_with_events(incident.id)
+            if fresh_res:
+                dto = IncidentResponse.model_validate(fresh_res).model_dump(mode="json")
+                await websocket_manager.broadcast(
+                    "incidents",
+                    {
+                        "event": "incident_updated",
+                        "mutation": "resolved",
+                        "data": dto,
+                    },
+                )
+                await websocket_manager.broadcast(
+                    "system-events",
+                    {
+                        "event": "operator_action",
+                        "actor": actor,
+                        "action": f"Resolved incident chain '{fresh_res.title}'",
+                        "timestamp": datetime.now(timezone.utc).isoformat(),
+                    },
+                )
+        except Exception as e:
+            logger.warning(f"[WebSocket Broadcaster] Error fanning out resolution: {e}")
+
         return incident

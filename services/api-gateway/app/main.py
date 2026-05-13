@@ -5,6 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from prometheus_fastapi_instrumentator import Instrumentator
 
 from app.api.router import api_router
+from app.api.ws.routes import ws_router
 from app.core.config import settings
 from app.core.logging import logger, setup_logging
 from app.db.redis import redis_manager
@@ -73,8 +74,11 @@ def create_application() -> FastAPI:
         allow_headers=["*"],
     )
 
-    # Mount the central router
+    # Mount the central REST router
     application.include_router(api_router)
+
+    # Mount the Real-Time Event Fabric WebSocket Gateway
+    application.include_router(ws_router, prefix="/ws")
 
     # Instrument FastAPI for Prometheus telemetry
     Instrumentator().instrument(application).expose(application, endpoint="/metrics")
