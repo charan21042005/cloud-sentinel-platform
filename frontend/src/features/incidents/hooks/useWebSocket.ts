@@ -17,8 +17,8 @@ export function useWebSocket(channel: 'incidents' | 'telemetry' | 'system-events
   const [isReconnecting, setIsReconnecting] = useState(false);
   const [hasFailed, setHasFailed] = useState(false);
   const wsRef = useRef<WebSocket | null>(null);
-  const reconnectTimeoutRef = useRef<NodeJS.Timeout>();
-  const pingIntervalRef = useRef<NodeJS.Timeout>();
+  const reconnectTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
+  const pingIntervalRef = useRef<NodeJS.Timeout | undefined>(undefined);
   const queryClient = useQueryClient();
   const reconnectAttempts = useRef(0);
   const maxReconnectAttempts = 5;
