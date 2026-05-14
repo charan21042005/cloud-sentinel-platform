@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 from app.api.routes import health, database_health
-from app.api.v1.routes import auth, users, incidents, telemetry
+from app.api.v1.routes import auth, users, incidents, telemetry, chaos
 
 api_router = APIRouter()
 
@@ -16,4 +16,7 @@ api_router.include_router(
 )
 api_router.include_router(
     telemetry.router, prefix="/api/v1/telemetry", tags=["Telemetry & Observability"]
+)
+api_router.include_router(
+    chaos.router, prefix="/api/v1/chaos", tags=["Chaos Engineering"]
 )

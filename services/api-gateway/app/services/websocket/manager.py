@@ -4,7 +4,7 @@ from typing import Dict, Set, Optional, Any
 from fastapi import WebSocket, WebSocketDisconnect, status
 from jose import JWTError, jwt
 from pydantic import ValidationError
-from prometheus_client import Gauge, Counter
+from prometheus_client import Gauge, Counter, Histogram
 
 from app.core.config import settings
 from app.core.logging import logger
@@ -33,6 +33,13 @@ ws_broadcast_errors = Counter(
     "websocket_broadcast_errors_total",
     "Continuous counting metric tracking failures encountered during fanout strings",
     ["channel"],
+)
+
+ws_broadcast_latency = Histogram(
+    "websocket_broadcast_latency_seconds",
+    "Histogram profiling the execution duration of real-time multi-socket fanout sequences",
+    ["channel"],
+    buckets=[0.001, 0.005, 0.01, 0.05, 0.1, 0.5, 1.0],
 )
 
 
@@ -164,21 +171,23 @@ class ConnectionManager:
         ):
             return
 
-        # Cleanly stringify payloads with native support for nested UUID/datetime elements
-        payload_str = json.dumps(message, default=str)
-        ws_broadcast_messages.labels(channel=channel).inc()
+        # Profile execution latency using native Prometheus Histograms
+        with ws_broadcast_latency.labels(channel=channel).time():
+            # Cleanly stringify payloads with native support for nested UUID/datetime elements
+            payload_str = json.dumps(message, default=str)
+            ws_broadcast_messages.labels(channel=channel).inc()
 
-        # Concurrently blast messages out to prevent slow-client thread locking
-        sockets = list(self.active_connections[channel])
-        results = await asyncio.gather(
-            *[self._send_safe(ws, payload_str, channel) for ws in sockets],
-            return_exceptions=True,
-        )
+            # Concurrently blast messages out to prevent slow-client thread locking
+            sockets = list(self.active_connections[channel])
+            results = await asyncio.gather(
+                *[self._send_safe(ws, payload_str, channel) for ws in sockets],
+                return_exceptions=True,
+            )
 
-        # Extract failed execution sockets for unrecoverable state purging
-        for ws, success in zip(sockets, results):
-            if success is not True:
-                self.disconnect(ws, channel)
+            # Extract failed execution sockets for unrecoverable state purging
+            for ws, success in zip(sockets, results):
+                if success is not True:
+                    self.disconnect(ws, channel)
 
 
 websocket_manager = ConnectionManager()
