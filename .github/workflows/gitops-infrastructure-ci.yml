@@ -1,0 +1,66 @@
+name: GitOps Infrastructure Validation CI
+
+on:
+  push:
+    paths:
+      - 'infrastructure/kubernetes/**'
+    branches: [ main, master ]
+  pull_request:
+    paths:
+      - 'infrastructure/kubernetes/**'
+    branches: [ main, master ]
+
+jobs:
+  validate-manifests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Helm
+        uses: azure/setup-helm@v4
+        with:
+          version: 'v3.14.3'
+
+      - name: Install Kubeconform
+        run: |
+          curl -sL https://github.com/yannh/kubeconform/releases/download/v0.6.4/kubeconform-linux-amd64.tar.gz | tar -xz -C /usr/local/bin kubeconform
+          kubeconform -v
+
+      - name: Validate Universal Helm Overlays (Phase 5C)
+        run: |
+          echo "Linting Core Platform Chart Layouts..."
+          helm lint infrastructure/kubernetes/helm/cloud-sentinel-stack
+
+      - name: Dry-Run Kustomize Overlays (Phase 5C)
+        run: |
+          echo "Compiling Universal GitOps Infrastructure Bundles..."
+          kubectl kustomize infrastructure/kubernetes/base > /tmp/base-render.yaml
+          kubectl kustomize infrastructure/kubernetes/gitops/apps > /tmp/apps-render.yaml
+          kubectl kustomize infrastructure/kubernetes/gitops/governance > /tmp/gov-render.yaml
+          
+          echo "Manifest dry-runs compiled successfully!"
+
+      - name: Strict Kubernetes API Schema Conformance Checks
+        run: |
+          echo "Enforcing Kubernetes 1.30 Native Schema Conformance across generated objects..."
+          # Ignore CustomResourceDefinitions generated dynamically by remote third party controllers during runtime sync loops
+          kubeconform -strict -summary -ignore-missing-schemas /tmp/base-render.yaml
+          kubeconform -strict -summary -ignore-missing-schemas /tmp/apps-render.yaml
+          kubeconform -strict -summary -ignore-missing-schemas /tmp/gov-render.yaml
+
+  simulate-sync-wave:
+    needs: validate-manifests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Assert Deterministic Sync-Wave Sequences (Phase 5A)
+        run: |
+          echo "Verifying App of Apps Sync-Wave Deployment Matrix Boundaries..."
+          grep -q 'argocd.argoproj.io/sync-wave: "-10"' infrastructure/kubernetes/gitops/apps/infra-core-app.yaml || exit 1
+          grep -q 'argocd.argoproj.io/sync-wave: "-5"' infrastructure/kubernetes/gitops/apps/ingress-controller-app.yaml || exit 1
+          grep -q 'argocd.argoproj.io/sync-wave: "0"' infrastructure/kubernetes/gitops/apps/monitoring-platform-app.yaml || exit 1
+          grep -q 'argocd.argoproj.io/sync-wave: "5"' infrastructure/kubernetes/gitops/apps/sentinel-workloads-app.yaml || exit 1
+          echo "Cascading wave logic perfectly ordered!"

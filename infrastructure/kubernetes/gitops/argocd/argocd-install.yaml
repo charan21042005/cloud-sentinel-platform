@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argocd-cm
+  labels:
+    app.kubernetes.io/name: argocd-cm
+    app.kubernetes.io/part-of: argocd
+data:
+  # UI/UX Configurations
+  url: https://argocd.sentinel.ops.internal
+  admin.enabled: "true"
+  
+  # Resource Tracking Customizations
+  resource.exclusions: |
+    - apiGroups:
+      - cilium.io
+      kinds:
+      - CiliumIdentity
+  
+  # Health Checks & Sync Tuning
+  timeout.reconciliation: 180s
+  statusbadge.enabled: "true"

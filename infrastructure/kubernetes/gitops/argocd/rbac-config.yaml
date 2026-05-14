@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argocd-rbac-cm
+  labels:
+    app.kubernetes.io/name: argocd-rbac-cm
+    app.kubernetes.io/part-of: argocd
+data:
+  policy.default: role:readonly
+  policy.csv: |
+    p, role:soc-admin, applications, *, */*, allow
+    p, role:soc-admin, clusters, get, *, allow
+    p, role:soc-admin, repositories, *, *, allow
+    p, role:soc-admin, logs, get, *, allow
+    p, role:soc-admin, exec, create, */*, allow
+    
+    g, soc-security@sentinel.ops.internal, role:soc-admin

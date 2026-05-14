@@ -1,0 +1,12 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - root-app-of-apps.yaml
+  - infra-core-app.yaml
+  - ingress-controller-app.yaml
+  - monitoring-platform-app.yaml
+  - sentinel-workloads-app.yaml
+
+commonLabels:
+  platform.sentinel.io/component: gitops-orchestrator

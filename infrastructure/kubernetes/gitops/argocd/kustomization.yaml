@@ -1,0 +1,25 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: argocd
+
+resources:
+  - namespace.yaml
+  # Master enterprise declarative installation foundation source base
+  - https://raw.githubusercontent.com/argoproj/argo-cd/v2.10.4/manifests/install.yaml
+  - ingress.yaml
+
+patchesStrategicMerge:
+  # Seamlessly merge operational UI/UX configurations into the default upstream argocd-cm ConfigMap
+  - argocd-install.yaml
+  # Seamlessly merge access matrix configurations into the default upstream argocd-rbac-cm ConfigMap
+  - rbac-config.yaml
+
+patches:
+  - target:
+      kind: Deployment
+      name: argocd-server
+    patch: |
+      - op: add
+        path: /spec/template/spec/containers/0/args/-
+        value: --insecure
