@@ -1,0 +1,48 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: sentinel-apps-ingress
+  namespace: sentinel-apps
+  labels:
+    app.kubernetes.io/part-of: cloud-sentinel
+  annotations:
+    kubernetes.io/ingress.class: "sentinel-nginx"
+    nginx.ingress.kubernetes.io/proxy-body-size: "16m"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+    # Ensure client browsers pass standard upgrading keys to access continuous WebSocket streams
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      proxy_set_header Upgrade $http_upgrade;
+      proxy_set_header Connection "upgrade";
+      proxy_set_header X-Request-ID $req_id;
+spec:
+  rules:
+    - host: sentinel.ops.internal
+      http:
+        paths:
+          # Real-Time WebSocket Transport Tier
+          - path: /ws
+            pathType: Prefix
+            backend:
+              service:
+                name: api-gateway-svc
+                port:
+                  number: 8000
+                  
+          # RESTful Operational Endpoints
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: api-gateway-svc
+                port:
+                  number: 8000
+                  
+          # Frontend UI Dashboard Operations Console
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend-svc
+                port:
+                  number: 80
