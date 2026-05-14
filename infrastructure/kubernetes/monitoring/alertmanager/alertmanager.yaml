@@ -1,0 +1,21 @@
+apiVersion: monitoring.coreos.com/v1
+kind: Alertmanager
+metadata:
+  name: sentinel-alertmanager
+  namespace: sentinel-monitoring
+  labels:
+    alertmanager: sentinel-alertmanager
+spec:
+  replicas: 2
+  configSecret: alertmanager-routing-tree
+  resources:
+    requests:
+      memory: 128Mi
+      cpu: 100m
+    limits:
+      memory: 512Mi
+      cpu: 500m
+  securityContext:
+    fsGroup: 2000
+    runAsNonRoot: true
+    runAsUser: 1000

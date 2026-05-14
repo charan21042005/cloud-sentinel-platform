@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: alertmanager-routing-tree
+  namespace: sentinel-monitoring
+type: Opaque
+stringData:
+  alertmanager.yaml: |
+    global:
+      resolve_timeout: 5m
+      slack_api_url: "https://hooks.slack.com/services/T000/B000/XXXXXX"
+    route:
+      group_by: ['alertname', 'cluster', 'service']
+      group_wait: 30s
+      group_interval: 5m
+      repeat_interval: 12h
+      receiver: 'soc-paging-fabric'
+      routes:
+        - match:
+            severity: critical
+          receiver: 'soc-paging-fabric'
+          continue: true
+    inhibit_rules:
+      - source_match:
+          alertname: 'NodeDown'
+        target_match:
+          alertname: 'TargetDown'
+        equal: ['node', 'instance']
+    receivers:
+      - name: 'soc-paging-fabric'
+        webhook_configs:
+          - url: 'http://api-gateway-svc.sentinel-apps.svc:8000/api/v1/alerts/webhook'
+            send_resolved: true

@@ -1,0 +1,40 @@
+apiVersion: monitoring.coreos.com/v1
+kind: Prometheus
+metadata:
+  name: sentinel-prometheus
+  namespace: sentinel-monitoring
+  labels:
+    prometheus: sentinel-prometheus
+spec:
+  replicas: 2
+  serviceAccountName: prometheus-k8s
+  serviceMonitorSelector:
+    matchLabels:
+      platform.sentinel.io/scrape: "true"
+  podMonitorSelector:
+    matchLabels:
+      platform.sentinel.io/scrape: "true"
+  ruleSelector:
+    matchLabels:
+      platform.sentinel.io/rule: "true"
+  retention: 15d
+  retentionSize: "45GB"
+  storage:
+    volumeClaimTemplate:
+      spec:
+        storageClassName: sentinel-gp3-sc
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 50Gi
+  resources:
+    requests:
+      memory: 1024Mi
+      cpu: 500m
+    limits:
+      memory: 4096Mi
+      cpu: 2000m
+  securityContext:
+    fsGroup: 2000
+    runAsNonRoot: true
+    runAsUser: 1000
