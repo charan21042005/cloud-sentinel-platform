@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: sentinel-system
+  labels:
+    name: sentinel-system
+    platform.sentinel.io/tier: system
+    pod-security.kubernetes.io/enforce: baseline
+  annotations:
+    description: "Core platform controllers, ingress controllers, and secret managers"
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: sentinel-monitoring
+  labels:
+    name: sentinel-monitoring
+    platform.sentinel.io/tier: observability
+    pod-security.kubernetes.io/enforce: baseline
+  annotations:
+    description: "Prometheus, Grafana, and Alertmanager metric ingestion engines"
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: sentinel-apps
+  labels:
+    name: sentinel-apps
+    platform.sentinel.io/tier: workloads
+    pod-security.kubernetes.io/enforce: restricted
+  annotations:
+    description: "Application microservices, API gateways, and real-time streaming fabric"

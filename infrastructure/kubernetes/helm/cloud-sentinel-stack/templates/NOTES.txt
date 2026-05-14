@@ -1,0 +1,16 @@
+=======================================================================
+✨ Cloud Sentinel Platform Umbrella Stack Successfully Initialized ✨
+=======================================================================
+
+Release Name: {{ .Release.Name }}
+Target Namespace: {{ .Release.Namespace }}
+Chart Version: {{ .Chart.Version }}
+
+1. Retrieve pod provisioning capacity parameters:
+   kubectl get pods -n {{ .Release.Namespace }} -l "app.kubernetes.io/instance={{ .Release.Name }}"
+
+2. Access Real-Time Transport API Metrics:
+   kubectl port-forward svc/{{ include "cloud-sentinel-stack.fullname" . }} 8000:8000 -n {{ .Release.Namespace }}
+
+   Verify dynamic metrics exposure directly:
+   http://127.0.0.1:8000/metrics

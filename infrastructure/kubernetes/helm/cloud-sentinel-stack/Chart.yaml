@@ -1,0 +1,14 @@
+apiVersion: v2
+name: cloud-sentinel-stack
+description: Universal production-grade Umbrella Helm Chart template for Cloud Sentinel SRE Workloads
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+keywords:
+  - monitoring
+  - security
+  - kubernetes
+  - realtime
+maintainers:
+  - name: Principal Platform Engineering Team
+    email: sre-core@sentinel.io
