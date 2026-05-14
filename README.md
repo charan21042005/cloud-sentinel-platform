@@ -49,6 +49,8 @@ In the era of distributed microservices, infrastructure is no longer static—it
 | **Pipeline** | `Automated` | GitHub Actions | Velocity |
 | **Observability** | `Live` | LGTM Stack | Visibility |
 | **Security** | `Hardened` | DevSecOps | Zero-Trust |
+| **Streaming** | `Real-Time` | WebSockets / JWT | Low-Latency |
+| **Chaos Plane** | `Controllable` | Deterministic Sim | Fault-Tolerant |
 
 ---
 
@@ -83,6 +85,12 @@ Explore the project through a structured, domain-driven learning path. Each modu
 *   **15 Repository:** [GitHub Engineering](docs/15_documentation/Documentation_GitHub_Engineering.md)
 *   **16 Defense:** [Viva Mastery](docs/16_viva/Viva_Presentation_Preparation.md)
 *   **17 Horizon:** [Future AIOps](docs/17_advanced_features/Advanced_Features_Future_Scope.md)
+
+### 🌐 Phase 6: Advanced SRE Fabric
+*   **18 Streaming:** [Real-Time SOC Fabric](services/api-gateway/app/services/websocket/manager.py)
+*   **19 Reliability:** [Graceful Fallbacks](frontend/src/features/incidents/hooks/useIncidents.ts)
+*   **20 Chaos Plane:** [Disruption Injection](services/api-gateway/app/api/v1/routes/chaos.py)
+*   **21 Platform:** [Enterprise K8s Layout](infrastructure/kubernetes/README.md)
 
 ---
 
