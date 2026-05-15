@@ -1,0 +1,26 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: workload-operator-binding
+  namespace: sentinel-apps
+subjects:
+  - kind: Group
+    name: sentinel-soc-engineers
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: workload-operator
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: platform-auditor-binding
+subjects:
+  - kind: Group
+    name: sentinel-security-auditors
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: platform-auditor
+  apiGroup: rbac.authorization.k8s.io
