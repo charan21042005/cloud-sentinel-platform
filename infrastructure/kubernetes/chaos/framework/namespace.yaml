@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: sentinel-chaos
+  labels:
+    platform.sentinel.io/component: chaos-framework
+    # Strict pod security to prevent chaos agents from breaking container isolation bounds
+    pod-security.kubernetes.io/enforce: baseline

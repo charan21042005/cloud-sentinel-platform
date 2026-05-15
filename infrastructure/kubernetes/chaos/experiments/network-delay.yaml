@@ -1,0 +1,21 @@
+# Chaos Mesh API Template: Network Delay Resilience
+apiVersion: chaos-mesh.org/v1alpha1
+kind: NetworkChaos
+metadata:
+  name: api-latency-injection
+  namespace: sentinel-chaos
+spec:
+  action: delay
+  mode: all
+  selector:
+    namespaces:
+      - sentinel-apps
+    labelSelectors:
+      "app.kubernetes.io/name": "api-gateway"
+  delay:
+    latency: "200ms"
+    correlation: "100"
+    jitter: "50ms"
+  duration: "60s"
+  scheduler:
+    cron: "@every 10m"
