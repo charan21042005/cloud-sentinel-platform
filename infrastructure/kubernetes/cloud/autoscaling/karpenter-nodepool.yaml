@@ -1,0 +1,42 @@
+apiVersion: karpenter.sh/v1beta1
+kind: NodePool
+metadata:
+  name: sentinel-compute-pool
+spec:
+  template:
+    spec:
+      requirements:
+        - key: kubernetes.io/arch
+          operator: In
+          values: ["amd64", "arm64"]
+        - key: "karpenter.k8s.aws/instance-category"
+          operator: In
+          values: ["c", "m", "r"]
+        - key: "karpenter.sh/capacity-type"
+          operator: In
+          values: ["on-demand", "spot"]
+      nodeClassRef:
+        name: sentinel-eks-node-class
+  limits:
+    cpu: 1000
+    memory: 1000Gi
+  disruption:
+    consolidationPolicy: WhenUnderutilized
+    expireAfter: 720h # 30 Days
+---
+apiVersion: karpenter.k8s.aws/v1beta1
+kind: EC2NodeClass
+metadata:
+  name: sentinel-eks-node-class
+spec:
+  amiFamily: AL2023
+  subnetSelectorTerms:
+    - tags:
+        karpenter.sh/discovery: sentinel-production-cluster
+  securityGroupSelectorTerms:
+    - tags:
+        karpenter.sh/discovery: sentinel-production-cluster
+  role: "SentinelKarpenterNodeRole"
+  tags:
+    Environment: Production
+    Project: CloudSentinel

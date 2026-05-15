@@ -1,0 +1,15 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - external-dns.yaml
+
+patches:
+  - path: ingress-cloud-lb-patch.yaml
+    target:
+      kind: Service
+      name: ingress-nginx-controller
+      namespace: sentinel-ingress
+
+commonLabels:
+  platform.sentinel.io/component: cloud-networking
