@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sentinel-api-gateway
+  namespace: sentinel-apps
+  labels:
+    # FinOps standard tagging for Kubecost/AWS Cost Explorer allocation
+    finops.sentinel.io/cost-center: "engineering-core"
+    finops.sentinel.io/application-id: "app-3992"
+    finops.sentinel.io/environment: "production"
+    finops.sentinel.io/criticality: "tier-1"
+spec:
+  template:
+    metadata:
+      labels:
+        finops.sentinel.io/cost-center: "engineering-core"
+        finops.sentinel.io/application-id: "app-3992"
+        finops.sentinel.io/environment: "production"
+        finops.sentinel.io/criticality: "tier-1"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-dashboard
+  namespace: sentinel-apps
+  labels:
+    finops.sentinel.io/cost-center: "product-ops"
+    finops.sentinel.io/application-id: "app-1044"
+    finops.sentinel.io/environment: "production"
+    finops.sentinel.io/criticality: "tier-2"
+spec:
+  template:
+    metadata:
+      labels:
+        finops.sentinel.io/cost-center: "product-ops"
+        finops.sentinel.io/application-id: "app-1044"
+        finops.sentinel.io/environment: "production"
+        finops.sentinel.io/criticality: "tier-2"

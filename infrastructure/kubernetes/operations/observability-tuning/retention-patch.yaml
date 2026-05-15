@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: prometheus-sentinel-prometheus
+  namespace: sentinel-monitoring
+spec:
+  template:
+    spec:
+      containers:
+        - name: prometheus
+          args:
+            - --storage.tsdb.retention.time=15d
+            - --storage.tsdb.retention.size=400GB
+            # Enables strict cardinality limits to prevent expensive memory bloat from rogue metrics
+            - --storage.tsdb.wal-compression
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: loki-config
+  namespace: sentinel-monitoring
+data:
+  loki.yaml: |
+    limits_config:
+      retention_period: 30d
+      reject_old_samples: true
+      reject_old_samples_max_age: 168h
+    compactor:
+      working_directory: /data/loki/boltdb-shipper-compactor
+      shared_store: filesystem
+      retention_enabled: true
