@@ -1,14 +1,14 @@
 <p align="center">
-  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:b91d73,100:f953c6&height=300&section=header&text=Security%20%26%20Governance&fontSize=70&animation=fadeIn&fontAlignY=38&fontColor=ffffff" width="100%" />
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:cb2d3e,100:ef473a&height=300&section=header&text=Platform%20Security&fontSize=80&animation=fadeIn&fontAlignY=38&fontColor=ffffff" width="100%" />
 </p>
 
 <h3 align="center">🛡️ Enterprise Production Runtime Hardening</h3>
 <p align="center"><strong>"Zero-Trust Networks • Immutable Execution • Disaster Recovery Preparedness"</strong></p>
 
 <p align="center">
-  <a href="https://kubernetes.io/docs/concepts/security/pod-security-standards/"><img src="https://img.shields.io/badge/Pod_Security-Restricted-B91D73?style=for-the-badge&logo=springsecurity&logoColor=white" alt="Pod Security" /></a>
-  <a href="https://kubernetes.io/docs/reference/access-authn-authz/rbac/"><img src="https://img.shields.io/badge/RBAC-Least_Privilege-F953C6?style=for-the-badge&logo=springsecurity&logoColor=white" alt="RBAC" /></a>
-  <a href="https://kubernetes.io/docs/concepts/services-networking/network-policies/"><img src="https://img.shields.io/badge/Network-Zero_Trust-B91D73?style=for-the-badge&logo=springsecurity&logoColor=white" alt="Network" /></a>
+  <a href="https://kubernetes.io/docs/concepts/security/pod-security-standards/"><img src="https://img.shields.io/badge/Pod_Security-Restricted-CB2D3E?style=for-the-badge&logo=springsecurity&logoColor=white" alt="Pod Security" /></a>
+  <a href="https://kubernetes.io/docs/reference/access-authn-authz/rbac/"><img src="https://img.shields.io/badge/RBAC-Least_Privilege-EF473A?style=for-the-badge&logo=springsecurity&logoColor=white" alt="RBAC" /></a>
+  <a href="https://kubernetes.io/docs/concepts/services-networking/network-policies/"><img src="https://img.shields.io/badge/Network-Zero_Trust-CB2D3E?style=for-the-badge&logo=springsecurity&logoColor=white" alt="Network" /></a>
   <a href="https://velero.io/"><img src="https://img.shields.io/badge/Disaster_Recovery-Velero_Ready-326CE5?style=for-the-badge&logo=kubernetes&logoColor=white" alt="Velero" /></a>
 </p>
 
@@ -61,5 +61,5 @@ To ensure complete state recovery following catastrophic cluster failure, the pl
 ---
 
 <p align="center">
-  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:b91d73,100:f953c6&height=100&section=footer" width="100%" />
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:cb2d3e,100:ef473a&height=100&section=footer" width="100%" />
 </p>
