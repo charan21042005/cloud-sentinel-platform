@@ -1,18 +1,17 @@
 # -----------------------------------------------------------------------------
-# Cloud Sentinel Production Environment
+# Cloud Sentinel Production Infrastructure
 # -----------------------------------------------------------------------------
-# This file serves as the root module for the Production environment.
-# Future phases will instantiate shared modules (VPC, EKS, IAM) here.
 
-# Example structure for Phase 2:
-# module "networking" {
-#   source   = "../../modules/networking"
-#   vpc_cidr = var.vpc_cidr
-# }
+module "networking" {
+  source = "../../modules/networking"
 
-# module "eks" {
-#   source       = "../../modules/eks"
-#   cluster_name = var.cluster_name
-#   vpc_id       = module.networking.vpc_id
-#   subnet_ids   = module.networking.private_subnets
-# }
+  environment        = local.environment
+  cluster_name       = var.cluster_name
+  vpc_cidr           = var.vpc_cidr
+  availability_zones = var.availability_zones
+
+  # Subnet Calculations (Designed for 3 AZs)
+  public_subnets      = var.public_subnets
+  private_app_subnets = var.private_app_subnets
+  private_data_subnets = var.private_data_subnets
+}
