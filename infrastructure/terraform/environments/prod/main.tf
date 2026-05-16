@@ -21,3 +21,15 @@ module "iam" {
   environment  = local.environment
   cluster_name = var.cluster_name
 }
+
+module "eks" {
+  source = "../../modules/eks"
+
+  environment      = local.environment
+  cluster_name     = var.cluster_name
+  cluster_role_arn = module.iam.cluster_role_arn
+  kms_key_arn      = module.iam.kms_key_arn
+
+  # EKS ENIs are explicitly placed in the Private App subnets
+  subnet_ids = module.networking.private_app_subnet_ids
+}

@@ -32,3 +32,18 @@ output "kms_key_arn" {
   description = "The ARN of the KMS key for EKS secret encryption"
   value       = module.iam.kms_key_arn
 }
+
+output "eks_cluster_id" {
+  description = "The ID of the EKS Cluster"
+  value       = module.eks.cluster_id
+}
+
+output "eks_cluster_endpoint" {
+  description = "The Endpoint URL for the Kubernetes API Server"
+  value       = module.eks.cluster_endpoint
+}
+
+output "eks_oidc_provider_arn" {
+  description = "The OIDC Provider ARN utilized for Service Account Identity Federation"
+  value       = module.eks.oidc_provider_arn
+}
