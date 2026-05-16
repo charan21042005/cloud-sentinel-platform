@@ -89,6 +89,17 @@ As projects grow, we avoid "spaghetti code" by using **Modules**.
 
 ---
 
+## 🏗️ 12.8 Real-World Implementation (Our Project)
+
+In this project, we have fully transitioned from theoretical IaC to a **Production-Grade Implementation**. You can explore our physical Terraform architecture here:
+
+*   **[Core Architecture & Bootstrap](../../infrastructure/terraform/README.md)**: Details our S3 remote state and DynamoDB locking.
+*   **[Multi-AZ Networking](../../infrastructure/terraform/modules/networking/README.md)**: The VPC, Subnets, and NAT Gateway implementation.
+*   **[IAM & Security Governance](../../infrastructure/terraform/modules/iam/README.md)**: Least-privilege roles and KMS encryption.
+*   **[Amazon EKS Control Plane](../../infrastructure/terraform/modules/eks/README.md)**: The Kubernetes orchestration engine.
+
+---
+
 ## 🧩 12.8 Mental Models for Terraform
 1.  **Blueprint:** The code defines the building; Terraform is the builder.
 2.  **Wishlist:** You list what you want, and Terraform goes shopping for it.

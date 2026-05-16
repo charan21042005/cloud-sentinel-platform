@@ -91,6 +91,10 @@ Explore the project through a structured, domain-driven learning path. Each modu
 *   **19 Reliability:** [Graceful Fallbacks](frontend/src/features/incidents/hooks/useIncidents.ts)
 *   **20 Chaos Plane:** [Disruption Injection](services/api-gateway/app/api/v1/routes/chaos.py)
 *   **21 Platform:** [Enterprise K8s Layout](infrastructure/kubernetes/README.md)
+*   **22 Infrastructure:** [Terraform IaC Architecture](infrastructure/terraform/README.md)
+*   **23 Networking:** [Multi-AZ VPC Foundation](infrastructure/terraform/modules/networking/README.md)
+*   **24 Security:** [AWS IAM & Cryptography](infrastructure/terraform/modules/iam/README.md)
+*   **25 Control Plane:** [Amazon EKS Orchestration](infrastructure/terraform/modules/eks/README.md)
 
 ---
 
