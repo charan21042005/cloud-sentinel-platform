@@ -47,3 +47,13 @@ output "eks_oidc_provider_arn" {
   description = "The OIDC Provider ARN utilized for Service Account Identity Federation"
   value       = module.eks.oidc_provider_arn
 }
+
+output "eks_node_group_arn" {
+  description = "The ARN of the managed compute node group"
+  value       = module.nodes.node_group_arn
+}
+
+output "eks_node_group_status" {
+  description = "The deployment status of the compute layer"
+  value       = module.nodes.node_group_status
+}

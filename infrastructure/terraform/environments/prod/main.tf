@@ -33,3 +33,19 @@ module "eks" {
   # EKS ENIs are explicitly placed in the Private App subnets
   subnet_ids = module.networking.private_app_subnet_ids
 }
+
+module "nodes" {
+  source = "../../modules/nodes"
+
+  environment               = local.environment
+  cluster_name              = var.cluster_name
+  node_role_arn             = module.iam.node_role_arn
+  subnet_ids                = module.networking.private_app_subnet_ids
+  cluster_security_group_id = module.eks.cluster_security_group_id
+
+  # FinOps Constraints: Minimal Compute Sizing
+  desired_size   = 1
+  min_size       = 1
+  max_size       = 2
+  instance_types = ["t3.small"]
+}
