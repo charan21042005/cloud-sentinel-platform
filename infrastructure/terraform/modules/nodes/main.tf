@@ -47,10 +47,10 @@ resource "aws_eks_node_group" "main" {
   node_role_arn   = var.node_role_arn
   subnet_ids      = var.subnet_ids
 
-  launch_template {
-    id      = aws_launch_template.eks_nodes.id
-    version = aws_launch_template.eks_nodes.latest_version
-  }
+#  launch_template {
+#    id      = aws_launch_template.eks_nodes.id
+#    version = aws_launch_template.eks_nodes.latest_version
+#  }
 
   # Cost-optimized sizing boundary
   scaling_config {
