@@ -61,6 +61,7 @@ resource "aws_eks_node_group" "main" {
 
   # Default capacity type (Switch to SPOT in future phases for 70% cost reduction)
   capacity_type  = "ON_DEMAND"
+  ami_type = "AL2023_x86_64_STANDARD"
   instance_types = var.instance_types
 
   # Initial Labeling Strategy for Workload Segregation
