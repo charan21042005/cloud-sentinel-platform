@@ -9,7 +9,7 @@ spec:
   project: default
   source:
     repoURL: 'https://github.com/charan21042005/cloud-sentinel-platform.git'
-    targetRevision: HEAD
+    targetRevision: main
     path: infrastructure/kubernetes/networking/ingress-nginx
   destination:
     server: 'https://kubernetes.default.svc'
