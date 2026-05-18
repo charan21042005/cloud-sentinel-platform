@@ -96,6 +96,8 @@ Explore the project through a structured, domain-driven learning path. Each modu
 *   **24 Security:** [AWS IAM & Cryptography](infrastructure/terraform/modules/iam/README.md)
 *   **25 Control Plane:** [Amazon EKS Orchestration](infrastructure/terraform/modules/eks/README.md)
 *   **26 Compute Nodes:** [Managed EKS Node Groups](infrastructure/terraform/modules/nodes/README.md)
+*   **27 GitOps Controller:** [ArgoCD Deployment Architecture](infrastructure/kubernetes/gitops/README.md)
+*   **28 Observability Stack:** [Prometheus & Grafana Telemetry](infrastructure/kubernetes/monitoring/README.md)
 
 ---
 
