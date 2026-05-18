@@ -1,0 +1,18 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ingress-nginx-controller
+  namespace: ingress-nginx
+spec:
+  replicas: 1
+  template:
+    spec:
+      containers:
+        - name: controller
+          resources:
+            requests:
+              cpu: 50m
+              memory: 90Mi
+            limits:
+              cpu: 250m
+              memory: 250Mi

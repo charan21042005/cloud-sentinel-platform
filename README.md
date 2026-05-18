@@ -98,6 +98,7 @@ Explore the project through a structured, domain-driven learning path. Each modu
 *   **26 Compute Nodes:** [Managed EKS Node Groups](infrastructure/terraform/modules/nodes/README.md)
 *   **27 GitOps Controller:** [ArgoCD Deployment Architecture](infrastructure/kubernetes/gitops/README.md)
 *   **28 Observability Stack:** [Prometheus & Grafana Telemetry](infrastructure/kubernetes/monitoring/README.md)
+*   **29 Edge Routing:** [NGINX Ingress & AWS NLB Integration](infrastructure/kubernetes/networking/ingress-nginx/README.md)
 
 ---
 
