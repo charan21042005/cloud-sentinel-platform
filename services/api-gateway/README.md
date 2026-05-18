@@ -50,10 +50,15 @@ graph LR
 
 | Method | Endpoint | Logic Domain | Action |
 | :--- | :--- | :--- | :--- |
+| `POST` | `/api/v1/auth/login` | Security | Authenticate & generate JWT |
 | `POST` | `/api/v1/users/` | Identity | Register new platform sentinel |
 | `POST` | `/api/v1/incidents/` | Observability | Ingest real-time platform incident |
 | `GET` | `/api/v1/incidents/` | Observability | Stream historical incident logs |
+| `POST` | `/api/v1/chaos/` | Reliability | Inject deterministic faults (Chaos Plane) |
+| `GET` | `/api/v1/telemetry/` | Observability | Retrieve live cluster metrics |
+| `WS` | `/ws/incidents` | Streaming | Real-Time SOC Fabric (WebSockets) |
 | `GET` | `/health` | Liveness | Core platform heartbeat |
+| `GET` | `/metrics` | Telemetry | Prometheus instrumentator export |
 
 ---
 
