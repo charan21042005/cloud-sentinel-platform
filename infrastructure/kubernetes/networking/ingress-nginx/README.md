@@ -28,25 +28,25 @@ graph TD
     classDef k8s fill:#326ce5,stroke:#000000,stroke-width:1px,color:#ffffff,rx:5px,ry:5px;
     classDef pod fill:#009639,stroke:#000000,stroke-width:1px,color:#ffffff,rx:5px,ry:5px;
     
-    subgraph AWSEdge["AWS Public Cloud Boundary"]
-        NLB["AWS Network Load Balancer (L4)<br/>Public Subnets"]:::aws
+    subgraph AWSEdge
+        NLB["AWS Network Load Balancer"]:::aws
     end
 
-    subgraph EKSMesh["Amazon EKS Worker Nodes (t3.small)"]
-        IGW["ingress-nginx-controller<br/>Namespace: ingress-nginx"]:::pod
+    subgraph EKSMesh
+        IGW["ingress-nginx-controller"]:::pod
         
-        subgraph FutureRouting["Future Service Destinations"]
+        subgraph FutureRouting
             App1["FastAPI Backend"]:::k8s
             App2["Next.js Frontend"]:::k8s
             App3["Grafana Operations"]:::k8s
         end
     end
 
-    Internet(("Public Internet")) -->|TCP 80/443| NLB
+    Internet((Public Internet)) -->|TCP 80/443| NLB
     NLB -->|NodePort Routing| IGW
-    IGW -.->|Path/Host Routing (Future)| App1
-    IGW -.->|Path/Host Routing (Future)| App2
-    IGW -.->|Path/Host Routing (Future)| App3
+    IGW -.->|Path Routing| App1
+    IGW -.->|Path Routing| App2
+    IGW -.->|Path Routing| App3
 ```
 
 ---
