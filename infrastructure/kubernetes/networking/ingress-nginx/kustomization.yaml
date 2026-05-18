@@ -5,7 +5,20 @@ namespace: ingress-nginx
 
 resources:
   - namespace.yaml
-  - https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.10.0/deploy/static/provider/aws/deploy.yaml
 
-patchesStrategicMerge:
-  - patch-resources.yaml
+helmCharts:
+  - name: ingress-nginx
+    repo: https://kubernetes.github.io/ingress-nginx
+    version: 4.10.0
+    releaseName: ingress-nginx
+    namespace: ingress-nginx
+    valuesInline:
+      controller:
+        replicaCount: 1
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 250m
+            memory: 250Mi
