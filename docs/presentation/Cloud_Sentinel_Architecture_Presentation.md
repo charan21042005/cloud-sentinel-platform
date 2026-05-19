@@ -20,12 +20,13 @@ Before we dive into the chronological journey of how this platform evolved from 
 
 ### 🗺️ The Final Cloud System Architecture
 ```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'lineColor': '#0dfaf0', 'textColor': '#ffffff', 'clusterBkg': '#1a1a1a', 'clusterBorder': '#7b2ff7' }}}%%
 graph TD
-    classDef aws fill:#ff9900,color:#232f3e,stroke:#232f3e;
-    classDef web fill:#000000,color:#fff,stroke:#fff;
-    classDef api fill:#009688,color:#fff,stroke:#fff;
-    classDef ops fill:#EF7B4D,color:#fff,stroke:#fff;
-    classDef db fill:#336791,color:#fff,stroke:#fff;
+    classDef aws fill:#ff9900,color:#232f3e,stroke:#ff9900,stroke-width:2px,rx:8px;
+    classDef web fill:#1a1a1a,color:#0dfaf0,stroke:#0dfaf0,stroke-width:2px,rx:8px;
+    classDef api fill:#7b2ff7,color:#ffffff,stroke:#0dfaf0,stroke-width:2px,rx:8px;
+    classDef ops fill:#2d1b4e,color:#0dfaf0,stroke:#7b2ff7,stroke-width:2px,rx:8px;
+    classDef db fill:#1a1a1a,color:#7b2ff7,stroke:#0dfaf0,stroke-width:2px,rx:8px;
 
     User((SRE Operator)) -->|"HTTPS / WSS"| Route53["DNS Routing"]
     Route53 --> NLB["AWS Network Load Balancer"]:::aws
@@ -143,6 +144,7 @@ Traditional frameworks like Django are *synchronous*. If 1,000 users open a WebS
 
 ### 🔄 The WebSocket Lifecycle Flow
 ```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'actorBkg': '#7b2ff7', 'actorBorder': '#0dfaf0', 'actorTextColor': '#ffffff', 'signalColor': '#0dfaf0', 'signalTextColor': '#ffffff', 'loopTextColor': '#0dfaf0' }}}%%
 sequenceDiagram
     participant UI as React Frontend
     participant API as FastAPI
@@ -203,6 +205,7 @@ We needed GitHub to push Docker images to AWS. Traditionally, you put an AWS Sec
 Instead, we used OIDC. GitHub mathematically proves its identity to AWS. AWS issues a temporary (1-hour) STS token. The pipeline deploys and the token evaporates.
 
 ```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'actorBkg': '#1a1a1a', 'actorBorder': '#7b2ff7', 'actorTextColor': '#0dfaf0', 'signalColor': '#7b2ff7', 'signalTextColor': '#ffffff' }}}%%
 sequenceDiagram
     participant Dev as Developer
     participant GH as GitHub Actions
@@ -288,6 +291,7 @@ During deployment, ArgoCD was failing to sync the monitoring platform.
 Now, let's trace a **Complete User Request Flow** through the mature system:
 
 ```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'actorBkg': '#7b2ff7', 'actorBorder': '#0dfaf0', 'actorTextColor': '#ffffff', 'signalColor': '#0dfaf0', 'signalTextColor': '#ffffff', 'loopTextColor': '#0dfaf0' }}}%%
 sequenceDiagram
     participant User as User Browser
     participant AWS as AWS Route53 & NLB
