@@ -332,6 +332,24 @@ make dev  # Wraps 'docker-compose up --build'
 ```
 
 <br>
+<p align="center">
+  <img src="images/6.png" width="85%" />
+</p>
+
+> *Figure: Docker Desktop orchestrating the complete Cloud Sentinel local observability ecosystem, including the API gateway, Prometheus monitoring stack, Grafana dashboards, exporters, Redis telemetry services, and synthetic traffic generators.*
+
+This multi-container orchestration creates isolated runtime environments with seamless service networking. By executing the Prometheus and Grafana monitoring stack alongside the API Gateway, Redis services, Alertmanager, and synthetic telemetry generators locally, we enabled complete end-to-end local observability testing before cloud deployment.
+
+<br>
+<p align="center">
+  <img src="images/7.png" width="85%" />
+</p>
+
+> *Figure: Docker Compose declarative orchestration configuration defining service dependencies, health checks, networking policies, volume mappings, and automated backend infrastructure initialization.*
+
+This declarative service orchestration enforces infrastructure reproducibility. Through health-check driven startup sequencing and shared Docker container networking, the Compose file actively coordinates all backend service dependencies, volume persistence, and environment configuration automatically.
+
+<br>
 
 > *"Once our local environments became consistent via Docker, manual deployments became the next bottleneck. We needed CI/CD automation."*
 
