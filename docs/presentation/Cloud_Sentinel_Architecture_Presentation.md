@@ -189,6 +189,15 @@ Here is a simple breakdown of the complete end-to-end request lifecycle:
 
 > *"With a rock-solid codebase foundation established, we shifted our focus to building the intelligence of the platform: the backend."*
 
+<br>
+<p align="center">
+  <img src="images/1.png" width="90%" />
+</p>
+
+> *Figure: The foundational monorepo structure of Cloud Sentinel, separating frontend, backend services, infrastructure, automation scripts, and documentation into modular engineering domains.*
+
+This modular architecture enabled our frontend, backend, and infrastructure deployments to evolve independently while remaining tightly integrated inside a single, version-controlled cloud-native platform.
+
 ---
 
 # 3. 🧠 Phase 2 — Backend Engineering Begins
