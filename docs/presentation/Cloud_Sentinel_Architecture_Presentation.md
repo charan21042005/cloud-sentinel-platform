@@ -568,6 +568,24 @@ During deployment, ArgoCD was failing to sync the monitoring platform.
 3. **Grafana** sends PromQL queries to Prometheus and draws visual dashboards.
 4. **Promtail (DaemonSet)** runs on every node, capturing terminal logs and shipping them to **Loki**.
 
+<br>
+<p align="center">
+  <img src="images/17.png" width="85%" />
+</p>
+
+> *Figure: Kubernetes-native ServiceMonitor configuration declaratively enabling automated Prometheus telemetry discovery, metric scraping, namespace monitoring, and cloud-native observability orchestration across platform services.*
+
+Through Prometheus Operator integration, we leverage ServiceMonitor CRDs to build declarative telemetry pipelines. This Kubernetes-native monitoring approach guarantees automatic service discovery, ensuring metric scraping and endpoint discovery scale seamlessly across all namespace monitoring boundaries as our infrastructure grows.
+
+<br>
+<p align="center">
+  <img src="images/16.png" width="85%" />
+</p>
+
+> *Figure: Live Prometheus telemetry target dashboard validating active exporter integrations, real-time metric scraping pipelines, infrastructure health visibility, and operational observability monitoring across distributed platform services.*
+
+This active telemetry ingestion validates our operational observability monitoring. The dashboard proves our exporter-based monitoring is actively pulling metrics from the node exporter, Redis exporter, PostgreSQL exporter, and API telemetry endpoints, providing real-time infrastructure visibility and guaranteeing scrape health status across the cluster.
+
 ---
 
 # 11. 🔄 Phase 10 — Complete System Design (End-to-End)
