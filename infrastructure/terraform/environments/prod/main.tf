@@ -44,7 +44,7 @@ module "nodes" {
   cluster_security_group_id = module.eks.cluster_security_group_id
 
   # FinOps Constraints: Minimal Compute Sizing
-  desired_size   = 1
+  desired_size   = 2
   min_size       = 1
   max_size       = 2
   instance_types = ["t3.small"]
