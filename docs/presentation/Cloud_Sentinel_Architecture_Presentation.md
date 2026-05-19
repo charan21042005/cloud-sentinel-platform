@@ -172,6 +172,31 @@ React is built for state-driven UI. As WebSocket data streams in, React updates 
 3.  As JSON payloads arrive, React updates state (`setMetrics`).
 4.  **Recharts** (a charting library) detects the state change and dynamically redraws the SVG graphs on the screen at 60fps.
 
+### 🔬 Deep Dive: The Telemetry Engine (How Dashboard Values are Generated)
+
+A common question is: *“Where exactly do those moving lines on the dashboard come from?”* 
+
+The metrics on the dashboard are not random; they are real-time, hardware-level measurements of the physical server (or Kubernetes Pod) executing the backend code. Here is exactly how they are generated:
+
+#### 1. Hardware Polling (The Python `psutil` Layer)
+Inside the FastAPI backend, we run an asynchronous background task. Every 1 second, this task uses the Python `psutil` (Process and System Utilities) library to interrogate the Linux kernel. 
+*   **CPU Usage:** It reads the OS-level `/proc/stat` to calculate the percentage of time the CPU spent actively processing vs idling over the last second.
+*   **Memory Usage:** It reads `/proc/meminfo` to calculate total RAM minus available RAM.
+
+#### 2. JSON Packaging & Pub/Sub
+The backend takes these raw float values (e.g., `CPU: 45.2%`) and packages them into a structured JSON payload. Instead of sending this directly to users, the backend publishes this JSON to a **Redis Channel** (e.g., `channel:telemetry`).
+
+#### 3. WebSocket Fan-Out
+When 100 SRE operators open the dashboard, they don't query the hardware directly (which would crash the server). Instead, their browsers open 100 WebSocket connections. The FastAPI WebSocket manager subscribes to the Redis channel. When Redis broadcasts the single JSON payload, FastAPI acts as a high-speed router, instantly fanning out that exact same JSON payload to all 100 open WebSocket connections.
+
+#### 4. React & Recharts Rendering
+The JSON payload arrives at the Next.js frontend via the browser's native WebSocket API. 
+*   React intercepts the JSON and calls a state updater hook (e.g., `setMetrics([...oldData, newData])`).
+*   Because React is reactive, this state change triggers an immediate re-render of the specific Dashboard components.
+*   The **Recharts** graphing library accepts the new array of data points and mathematically redraws the SVG path (the line on the graph) to include the new spike, creating a smooth, real-time animation.
+
+*This entire 4-step process happens in less than 50 milliseconds!*
+
 ---
 
 # 5. 🐳 Phase 4 — Dockerization & Local Orchestration
