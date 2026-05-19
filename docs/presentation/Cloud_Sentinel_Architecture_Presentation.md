@@ -277,6 +277,26 @@ To save startup budget, we chose `t3.small` EC2 instances.
 *   *The Crisis:* AWS limits Elastic Network Interfaces (ENIs). A `t3.small` maxes out at 11 pods. The cluster stalled.
 *   *The Fix:* We enabled VPC CNI Prefix Delegation in Terraform and scaled node counts to ensure adequate pod density without overspending on massive EC2 instances.
 
+### 🏗️ Terraform Resource Mapping
+By analyzing the `infrastructure/terraform/modules/` directory in our repository, here is the exact mapping of AWS resources provisioned entirely via Infrastructure as Code:
+
+| AWS Resource Category | Terraform Resource (`.tf`) | Project Usage / Purpose |
+| :--- | :--- | :--- |
+| **VPC & Networking** | `aws_vpc`, `aws_subnet` | Creates the isolated `10.0.0.0/16` network and divides it into Public/Private tiers. |
+| **Routing & Egress** | `aws_nat_gateway`, `aws_eip` | Allows private worker nodes to download Docker images securely from the internet without being exposed. |
+| **EKS Control Plane** | `aws_eks_cluster` | Provisions the highly-available Kubernetes control plane managed automatically by AWS. |
+| **Compute Nodes** | `aws_eks_node_group` | Deploys the actual `t3.small` EC2 worker nodes where our application Pods live. |
+| **Security & Firewalls** | `aws_security_group` | Controls strict ingress/egress rules for the nodes and cluster communications. |
+| **Identity & Access** | `aws_iam_role`, `aws_iam_policy` | Enforces Least Privilege (IRSA) for Pods and handles GitHub Actions CI/CD via OIDC. |
+| **Encryption** | `aws_kms_key` | Provides envelope encryption for all Kubernetes Secrets stored in the cluster's `etcd` database. |
+
+### 💰 Cost Analysis & AWS Billing Breakdown
+Based on our real-world AWS billing cycle (Cost Breakdown analysis), deploying this enterprise architecture incurs specific structural costs. Here is the breakdown:
+
+1. **Amazon EKS (Control Plane):** The largest baseline cost (approx. $73/month) to run the Kubernetes API and `etcd` reliably.
+2. **Amazon EC2 (Compute):** The cost of the underlying worker nodes executing our backend and frontend containers.
+3. **Amazon VPC (NAT Gateway & EIPs):** NAT Gateways charge an hourly rate plus data processing fees, representing the necessary "hidden cost" of keeping subnets private.
+4. **AWS KMS & Storage (Others):** Micro-charges for encrypting Kubernetes secrets and running Elastic Block Store (EBS) volumes attached to the nodes for persistent storage.
 ---
 
 # 8. ☸️ Phase 7 — Kubernetes Transformation
