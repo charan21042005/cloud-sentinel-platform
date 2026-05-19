@@ -493,6 +493,24 @@ aws eks update-kubeconfig --region us-east-1 --name cloud-sentinel-prod
 ```
 
 <br>
+<p align="center">
+  <img src="images/12.png" width="85%" />
+</p>
+
+> *Figure: Kubernetes deployment manifest defining declarative workload orchestration, rolling update strategies, Prometheus monitoring annotations, security contexts, namespaces, and production-ready container deployment policies.*
+
+This declarative Kubernetes orchestration ensures robust self-healing infrastructure. By defining specific labels/selectors, advanced security contexts, rolling updates, and Prometheus annotations directly in the YAML, we guarantee highly scalable workload orchestration while maintaining strict namespace isolation across the cluster.
+
+<br>
+<p align="center">
+  <img src="images/13.png" width="85%" />
+</p>
+
+> *Figure: Operational Kubernetes cluster displaying live ArgoCD control-plane pods executing inside the orchestration environment through kubectl-based cluster management workflows.*
+
+Through kubectl cluster operations, we have full visibility into live Kubernetes runtime operations. Monitoring these operational ArgoCD controllers, including the repo-server and application-controller within their designated Kubernetes namespaces, proves our control-plane orchestration is actively executing pod lifecycle management and confirms complete GitOps platform readiness.
+
+<br>
 
 > *"Kubernetes was running, but applying YAMLs manually via kubectl was dangerous. We needed an automated, declarative deployment model."*
 
