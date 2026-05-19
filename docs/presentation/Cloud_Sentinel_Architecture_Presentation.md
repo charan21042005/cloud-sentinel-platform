@@ -229,6 +229,24 @@ sequenceDiagram
     end
 ```
 
+<br>
+<p align="center">
+  <img src="images/2.png" width="90%" />
+</p>
+
+> *Figure: Auto-generated OpenAPI/Swagger interface produced by FastAPI, exposing infrastructure health checks, authentication endpoints, and backend observability APIs.*
+
+Because FastAPI automatically generates standardized OpenAPI documentation, it drastically improved our frontend-backend integration. This interface enables easier testing and debugging, supports enterprise API discoverability, and demonstrates true production-grade API engineering.
+
+<br>
+<p align="center">
+  <img src="images/3.png" width="75%" />
+</p>
+
+> *Figure: PostgreSQL relational schema visualized through Adminer, containing user authentication records, audit logs, incident tracking tables, and telemetry event persistence.*
+
+While Redis handles high-speed telemetry, a persistent relational layer is critical for backend state management. This database securely stores accounts in `users`, tracks operator actions via `audit_logs`, and preserves SRE workflows inside `incidents` and `incident_events`, establishing a reliable source of truth for the platform.
+
 ---
 
 # 4. 🖥️ Phase 3 — Frontend Dashboard System
