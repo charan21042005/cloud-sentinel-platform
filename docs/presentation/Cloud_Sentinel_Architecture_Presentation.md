@@ -231,7 +231,7 @@ sequenceDiagram
 
 <br>
 <p align="center">
-  <img src="images/2.png" width="90%" />
+  <img src="images/3.png" width="90%" />
 </p>
 
 > *Figure: Auto-generated OpenAPI/Swagger interface produced by FastAPI, exposing infrastructure health checks, authentication endpoints, and backend observability APIs.*
@@ -240,7 +240,7 @@ Because FastAPI automatically generates standardized OpenAPI documentation, it d
 
 <br>
 <p align="center">
-  <img src="images/3.png" width="75%" />
+  <img src="images/2.png" width="75%" />
 </p>
 
 > *Figure: PostgreSQL relational schema visualized through Adminer, containing user authentication records, audit logs, incident tracking tables, and telemetry event persistence.*
