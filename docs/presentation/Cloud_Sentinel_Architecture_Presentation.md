@@ -1,18 +1,3 @@
----
-marp: true
-theme: default
-class: invert
-paginate: true
-backgroundColor: #0d1117
-color: #c9d1d9
-style: |
-  h1 { color: #ff7b72; }
-  h2 { color: #ffa657; }
-  strong { color: #58a6ff; }
-  blockquote { border-left: 5px solid #ff7b72; padding-left: 15px; background: #161b22; border-radius: 4px; font-style: italic; font-size: 1.1em;}
-  code { background: #232f3e; color: #c9d1d9; padding: 2px 5px; border-radius: 3px; }
-  .analogy { color: #3fb950; font-weight: bold; }
----
 
 <!-- slide -->
 <p align="center">
