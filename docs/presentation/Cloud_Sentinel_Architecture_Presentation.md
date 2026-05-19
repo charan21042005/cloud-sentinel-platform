@@ -449,6 +449,15 @@ By analyzing the `infrastructure/terraform/modules/` directory in our repository
 | **Identity & Access**    | `aws_iam_role`, `aws_iam_policy` | Enforces Least Privilege (IRSA) for Pods and handles GitHub Actions CI/CD via OIDC.                     |
 | **Encryption**           | `aws_kms_key`                      | Provides envelope encryption for all Kubernetes Secrets stored in the cluster's `etcd` database.      |
 
+<br>
+<p align="center">
+  <img src="images/10.png" width="85%" />
+</p>
+
+> *Figure: Modular Terraform Infrastructure-as-Code configuration orchestrating AWS networking, IAM security, EKS cluster provisioning, subnet segmentation, and production-grade cloud resource deployment for Cloud Sentinel.*
+
+This modular Terraform architecture guarantees declarative cloud provisioning and environment reproducibility. By leveraging reusable infrastructure modules, we orchestrate the entire VPC network, execute EKS provisioning with strict subnet segmentation, and enforce least-privilege IAM integration programmatically across all deployment tiers.
+
 ### 💰 Cost Analysis & AWS Billing Breakdown
 
 Based on our real-world AWS billing cycle (Cost Breakdown analysis), deploying this enterprise architecture incurs specific structural costs. Here is the breakdown:
@@ -457,6 +466,15 @@ Based on our real-world AWS billing cycle (Cost Breakdown analysis), deploying t
 2. **Amazon EC2 (Compute):** The cost of the underlying worker nodes executing our backend and frontend containers.
 3. **Amazon VPC (NAT Gateway & EIPs):** NAT Gateways charge an hourly rate plus data processing fees, representing the necessary "hidden cost" of keeping subnets private.
 4. **AWS KMS & Storage (Others):** Micro-charges for encrypting Kubernetes secrets and running Elastic Block Store (EBS) volumes attached to the nodes for persistent storage.
+
+<br>
+<p align="center">
+  <img src="images/11.png" width="85%" />
+</p>
+
+> *Figure: AWS Cost and Usage dashboard reflecting real cloud infrastructure utilization across Amazon EKS, EC2 compute resources, VPC networking, and supporting cloud-native platform services.*
+
+This operational cloud visibility ensures strict FinOps awareness and real-time infrastructure cost monitoring. Tracking exact EKS resource consumption, EC2 compute scaling, VPC networking egress, and KMS services verifies our production infrastructure accountability and validates that our Terraform node density optimizations actively control cloud expenditures.
 
 <br>
 
