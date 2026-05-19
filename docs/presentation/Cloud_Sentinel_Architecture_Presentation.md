@@ -53,10 +53,10 @@ graph TD
     subgraph "Amazon EKS Cluster (Private Subnets)"
         Ingress -->|"/api/*"| APIGateway["FastAPI Backend"]:::api
         Ingress -->|"/*"| NextJS["Next.js Dashboard"]:::web
-      
+    
         APIGateway <-->|"SQLAlchemy"| PostgreSQL[(PostgreSQL)]:::db
         APIGateway <-->|"Pub/Sub"| Redis[(Redis Cache)]:::db
-      
+    
         Prometheus["Prometheus TSDB"]:::ops -->|"Scrape /metrics"| APIGateway
         Prometheus -->|"Scrape"| NodeExporter["Node Exporters"]
         Grafana["Grafana Dashboards"]:::ops -->|"Query"| Prometheus
