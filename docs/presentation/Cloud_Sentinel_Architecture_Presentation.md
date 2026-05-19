@@ -526,6 +526,24 @@ Through kubectl cluster operations, we have full visibility into live Kubernetes
 
 ArgoCD uses a "Reconciliation Loop." We point it to a single `root-app-of-apps.yaml`. ArgoCD reads this, discovers pointers to 4 other apps (Ingress, Monitoring, Web, API), and deploys the entire platform automatically.
 
+<br>
+<p align="center">
+  <img src="images/14.png" width="85%" />
+</p>
+
+> *Figure: ArgoCD App-of-Apps GitOps manifest declaratively orchestrating automated Kubernetes reconciliation, self-healing synchronization policies, infrastructure layering, retry strategies, and cluster-wide deployment automation.*
+
+This App-of-Apps GitOps architecture establishes Git as the single source of truth for the entire platform. By configuring automated synchronization, pruning, self-healing deployments, and retry logic directly in the YAML, we enable Git-driven infrastructure control and declarative cluster management without manual intervention.
+
+<br>
+<p align="center">
+  <img src="images/15.png" width="85%" />
+</p>
+
+> *Figure: Operational ArgoCD control dashboard visualizing synchronized GitOps applications, infrastructure reconciliation states, deployment health monitoring, and automated Kubernetes lifecycle management.*
+
+This dashboard provides real-time reconciliation visibility into our synchronized applications and Kubernetes lifecycle observability. Viewing the health monitoring and reconciliation status of all layered deployments proves our Git-driven operational control successfully automates large-scale infrastructure management.
+
 ### 🐛 The Debugging Journey: The Revision Issue
 
 During deployment, ArgoCD was failing to sync the monitoring platform.
