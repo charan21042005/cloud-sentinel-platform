@@ -288,6 +288,24 @@ The JSON payload arrives at the Next.js frontend via the browser's native WebSoc
 *This entire 4-step process happens in less than 50 milliseconds!*
 
 <br>
+<p align="center">
+  <img src="images/4.png" width="85%" />
+</p>
+
+> *Figure: The Cloud Sentinel real-time observability dashboard displaying live telemetry streams, infrastructure health metrics, latency monitoring, and active request analytics powered through WebSocket-driven updates.*
+
+Once telemetry metrics reach the frontend via the WebSocket live stream, React triggers immediate state updates. This enables Recharts to execute real-time chart rendering with zero-refresh latency, giving operators instant visibility into CPU metrics, memory tracking, latency monitoring, and active request visualization.
+
+<br>
+<p align="center">
+  <img src="images/5.png" width="85%" />
+</p>
+
+> *Figure: Incident Center interface visualizing live SRE telemetry alerts, infrastructure incidents, severity classification, and operational action queues powered through real-time event streaming.*
+
+Beyond basic metrics, the frontend architecture handles live incident ingestion. Through WebSocket event propagation, infrastructure anomaly detection triggers real-time alert rendering on the dashboard. This operational visibility includes automated severity prioritization and action queue orchestration, allowing engineers to execute rapid operational response workflows.
+
+<br>
 
 > *"The dashboard looked amazing on our laptops, but the classic 'It works on my machine' dilemma emerged. It was time to containerize."*
 
