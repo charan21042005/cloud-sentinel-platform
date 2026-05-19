@@ -55,25 +55,25 @@ graph TD
     classDef ops fill:#EF7B4D,color:#fff,stroke:#fff;
     classDef db fill:#336791,color:#fff,stroke:#fff;
 
-    User((SRE Operator)) -->|HTTPS / WSS| Route53["DNS Routing"]
+    User((SRE Operator)) -->|"HTTPS / WSS"| Route53["DNS Routing"]
     Route53 --> NLB["AWS Network Load Balancer"]:::aws
-    NLB -->|TCP| Ingress["NGINX Ingress Controller"]
+    NLB -->|"TCP"| Ingress["NGINX Ingress Controller"]
     
     subgraph "Amazon EKS Cluster (Private Subnets)"
-        Ingress -->|/api/*| APIGateway["FastAPI Backend (Async)"]:::api
-        Ingress -->|/*| NextJS["Next.js Frontend (SSR)"]:::web
+        Ingress -->|"/api/*"| APIGateway["FastAPI Backend (Async)"]:::api
+        Ingress -->|"/*"| NextJS["Next.js Frontend (SSR)"]:::web
         
-        APIGateway <-->|SQLAlchemy| PostgreSQL[(PostgreSQL)]:::db
-        APIGateway <-->|Pub/Sub| Redis[(Redis Cache)]:::db
+        APIGateway <-->|"SQLAlchemy"| PostgreSQL[(PostgreSQL)]:::db
+        APIGateway <-->|"Pub/Sub"| Redis[(Redis Cache)]:::db
         
-        Prometheus["Prometheus TSDB"]:::ops -->|Scrape /metrics| APIGateway
-        Prometheus -->|Scrape| NodeExporter["Node Exporters"]
-        Grafana["Grafana Dashboards"]:::ops -->|Query| Prometheus
-        Loki["Loki Log Aggregation"]:::ops <-- Promtail["Promtail DaemonSet"]
+        Prometheus["Prometheus TSDB"]:::ops -->|"Scrape /metrics"| APIGateway
+        Prometheus -->|"Scrape"| NodeExporter["Node Exporters"]
+        Grafana["Grafana Dashboards"]:::ops -->|"Query"| Prometheus
+        Promtail["Promtail DaemonSet"] -->|"Logs"| Loki["Loki Log Aggregation"]:::ops
     end
     
-    GitHub["GitHub Repository"] -->|Webhook Trigger| ArgoCD["ArgoCD (GitOps)"]:::ops
-    ArgoCD -->|Reconcile State| Ingress
+    GitHub["GitHub Repository"] -->|"Webhook Trigger"| ArgoCD["ArgoCD (GitOps)"]:::ops
+    ArgoCD -->|"Reconcile State"| Ingress
 ```
 
 ---
