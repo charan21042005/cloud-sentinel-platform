@@ -65,15 +65,15 @@ INFO:     Started reloader process [12345] using StatReload
 We are compiling a React application using Webpack. Once started, Next.js opens a WebSocket connection to the Python backend on port 8000. It uses the `recharts` library to instantly plot CPU/Memory telemetry streaming from the backend.
 
 ```bash
-cd apps/web-dashboard
-npm run dev
+cd frontend
+npm run dev -- -p 3001
 ```
 **Expected Output:**
 ```text
-ready - started server on 0.0.0.0:3000, url: http://localhost:3000
-event - compiled client and server successfully in 1250 ms
+▲ Next.js 16.2.6 (Turbopack)
+- Local:         http://localhost:3001
 ```
-*Live Demo Action:* Open `http://localhost:3000`. Click the "Inject Chaos" button. Explain how the frontend uses HTTP POST to tell the backend to spike, and the WebSocket instantly graphs that spike on the screen.
+*Live Demo Action:* Open **[http://localhost:3001/dashboard](http://localhost:3001/dashboard)**. Click the "Inject Chaos" button. Explain how the frontend uses HTTP POST to tell the backend to spike, and the WebSocket instantly graphs that spike on the screen.
 
 ---
 
@@ -147,10 +147,10 @@ Instead of GitHub pushing changes into our cluster (which requires giving GitHub
 
 ```bash
 kubectl get applications -n argocd
-# Port-forward the UI
-kubectl port-forward svc/argocd-server -n argocd 8080:443
+# Port-forward the UI safely via HTTP (non-SSL) to avoid any secure connection warning
+kubectl port-forward svc/argocd-server -n argocd 8899:80
 ```
-*Live Demo Action:* Open `https://localhost:8080`. Explain the "App of Apps" pattern: One parent app deployed all the child apps (Ingress, Monitoring, Web).
+*Live Demo Action:* Open **[http://localhost:8899](http://localhost:8899)**. Explain the "App of Apps" pattern: One parent app deployed all the child apps (Ingress, Monitoring, Web).
 
 ---
 
@@ -179,9 +179,16 @@ ingress-nginx-controller   LoadBalancer   172.20.50.122   a8b9c...elb.us-east-1.
 Prometheus is acting as a Time-Series Database (TSDB), scraping metrics from the backend every 15 seconds. Grafana queries Prometheus to draw graphs. Loki, powered by Promtail DaemonSets running on every node, aggregates the server logs without heavy Elasticsearch indexing overhead.
 
 ```bash
-kubectl port-forward svc/grafana -n monitoring 3000:80
+#### 1. Checking Active Container Health (Local Prometheus)
+To see which Docker containers are up or down (API gateway, postgres-exporter, redis-exporter, node-exporter), navigate to the **Targets** page:
+👉 Open **[http://localhost:9090/targets](http://localhost:9090/targets)** (Click **Status** -> **Targets** in the top menu).
+
+#### 2. Accessing Grafana Dashboards (EKS Cluster)
+Port-forward Grafana to a non-conflicting port `3002`:
+```bash
+kubectl port-forward svc/grafana -n sentinel-monitoring 3002:80
 ```
-*Live Demo Action:* Open `http://localhost:3000` to show the live Grafana dashboards monitoring the health of the EKS cluster.
+*Live Demo Action:* Open **[http://localhost:3002](http://localhost:3002)** to show the live Grafana dashboards monitoring the health of the EKS cluster.
 
 <p align="center">
   <img src="https://capsule-render.vercel.app/api?type=waving&color=0:7b2ff7,100:0dfaf0&height=100&section=footer" width="100%" />
