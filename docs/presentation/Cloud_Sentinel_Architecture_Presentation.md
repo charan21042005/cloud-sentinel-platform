@@ -372,6 +372,24 @@ This declarative service orchestration enforces infrastructure reproducibility. 
 * **Jenkins Overhead:** Jenkins requires self-hosting. You must manage EC2 servers, JVM memory, and plugin updates. It's an operational nightmare.
 * **GitHub Actions:** SaaS-based. Zero infrastructure overhead. Workflows are defined as code (`.github/workflows/`) and live inside the repository.
 
+<br>
+<p align="center">
+  <img src="images/8.png" width="85%" />
+</p>
+
+> *Figure: GitHub Actions executing automated CI/CD workflows for backend validation, frontend verification, and GitOps infrastructure orchestration inside the Cloud Sentinel engineering pipeline.*
+
+This automated workflow execution ensures continuous integration validation across the entire platform. By triggering Git-driven automation on every push, we enforce strict build verification and deployment orchestration across our backend CI, frontend CI/CD, and GitOps infrastructure validation stages before any code reaches production.
+
+<br>
+<p align="center">
+  <img src="images/9.png" width="85%" />
+</p>
+
+> *Figure: GitHub Actions workflow-as-code configuration defining automated verification stages, dependency installation, build orchestration, container workflows, and deployment validation pipelines.*
+
+By leveraging declarative automation pipelines, we treat our CI/CD logic as version-controlled code. This guarantees reproducible CI/CD execution across environments, automatically orchestrating checkout actions, dependency installation, build verification, security validation, and container orchestration preparation with zero manual intervention.
+
 ### Deep Dive: OIDC (OpenID Connect) Security
 
 We needed GitHub to push Docker images to AWS. Traditionally, you put an AWS Secret Key into GitHub Secrets. **This is dangerous.** If GitHub is breached, your AWS account is compromised indefinitely.
