@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:43E97B,100:38F9D7&height=300&section=header&text=Cloud%20Sentinel%20Platform&desc=The%20Complete%20Engineering%20Journey%20and%20System%20Design%20Masterclass&fontSize=60&descSize=20&animation=fadeIn&fontAlignY=35&descAlignY=55&fontColor=ffffff" width="100%" />
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:FA709A,100:FEE140&height=300&section=header&text=Cloud%20Sentinel%20Platform&desc=The%20Complete%20Engineering%20Journey%20and%20System%20Design%20Masterclass&fontSize=60&descSize=20&animation=fadeIn&fontAlignY=35&descAlignY=55&fontColor=ffffff" width="100%" />
 </p>
 
 <h2 align="center">🛡️ Your Cloud-Native Sentinel</h2>
@@ -20,9 +20,9 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Journey-From_Zero_To_Production-43E97B?style=for-the-badge" />
-  <img src="https://img.shields.io/badge/Architecture-Cloud_Native-38F9D7?style=for-the-badge&logo=cloud&logoColor=black" />
-  <img src="https://img.shields.io/badge/Methodology-GitOps_and_SRE-43E97B?style=for-the-badge&logo=git&logoColor=white" />
+  <img src="https://img.shields.io/badge/Journey-From_Zero_To_Production-FA709A?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/Architecture-Cloud_Native-FEE140?style=for-the-badge&logo=cloud&logoColor=black" />
+  <img src="https://img.shields.io/badge/Methodology-GitOps_and_SRE-FA709A?style=for-the-badge&logo=git&logoColor=white" />
 </p>
 
 ---
@@ -69,49 +69,49 @@ graph TD
 
 Before diving into the phases, let us first understand the complete bird's-eye view of the platform. Think of this system as a living organism where every layer serves a specific purpose to keep the application fast, secure, and resilient.
 
-### ![User & Access Layer](https://img.shields.io/badge/1.-User_and_Access_Layer-43E97B?style=flat-square&logo=amazonaws)
+### ![User & Access Layer](https://img.shields.io/badge/1.-User_and_Access_Layer-FA709A?style=flat-square&logo=amazonaws)
 **The Gateway to the System**
 When an SRE operator types the dashboard URL into their browser, an HTTPS request is securely routed through **AWS Route53**. This traffic immediately hits the **AWS Network Load Balancer (NLB)**, which sits at the edge of our cloud infrastructure. The NLB seamlessly forwards these raw TCP packets into our private Kubernetes cluster, handing them off to the **NGINX Ingress Controller**. The Ingress acts as the smart traffic cop—reading the URL path and deciding exactly which internal service should handle the request.
 
 *Once the request passes the edge, it flows directly into the visual interface...*
 
-### ![Frontend Dashboard Layer](https://img.shields.io/badge/2.-Frontend_Dashboard_Layer-38F9D7?style=flat-square&logo=next.js)
+### ![Frontend Dashboard Layer](https://img.shields.io/badge/2.-Frontend_Dashboard_Layer-FEE140?style=flat-square&logo=next.js)
 **The Operator's Command Center**
 The Ingress routes the user to our **Next.js Dashboard**. This is what the operator actually sees: a sleek, dark-themed UI built with React. It provides real-time visualization of cluster health using Recharts. But this isn't just a static webpage; it actively subscribes to live telemetry and incident monitoring feeds, giving operators the power to interact with the system, visualize anomalies, and even inject controlled chaos to test resilience.
 
 *To get that live data, the frontend opens a secure connection to the backend...*
 
-### ![Backend Intelligence Layer](https://img.shields.io/badge/3.-Backend_Intelligence_Layer-43E97B?style=flat-square&logo=fastapi)
+### ![Backend Intelligence Layer](https://img.shields.io/badge/3.-Backend_Intelligence_Layer-FA709A?style=flat-square&logo=fastapi)
 **The Brain of the Platform**
 The frontend communicates directly with the **FastAPI Backend**. This async Python layer acts as the intelligence of the platform. It handles JWT authentication to ensure only authorized operators can access data. More importantly, it maintains open WebSocket connections to push high-frequency telemetry back to the dashboard. It also exposes custom Chaos Engineering APIs that allow operators to simulate CPU spikes or memory leaks.
 
 *To maintain state and broadcast these updates globally, the backend relies on data storage...*
 
-### ![Data and Messaging Layer](https://img.shields.io/badge/4.-Data_and_Messaging_Layer-38F9D7?style=flat-square&logo=postgresql)
+### ![Data and Messaging Layer](https://img.shields.io/badge/4.-Data_and_Messaging_Layer-FEE140?style=flat-square&logo=postgresql)
 **The Memory and Nervous System**
 Behind the scenes, FastAPI relies on **PostgreSQL** for persistent relational storage—keeping track of user accounts and historical system states. Simultaneously, it uses **Redis** as a blazing-fast in-memory cache and Pub/Sub messaging broker. When one node generates new telemetry, it publishes it to Redis, which instantly broadcasts it to every active WebSocket, ensuring all operators see the update in milliseconds.
 
 *All of these applications are kept alive by the orchestrator...*
 
-### ![Kubernetes Orchestration Layer](https://img.shields.io/badge/5.-Kubernetes_Orchestration_Layer-43E97B?style=flat-square&logo=kubernetes)
+### ![Kubernetes Orchestration Layer](https://img.shields.io/badge/5.-Kubernetes_Orchestration_Layer-FA709A?style=flat-square&logo=kubernetes)
 **The Automated Caretaker**
 Everything mentioned above runs as containerized Pods inside an **Amazon EKS (Elastic Kubernetes Service)** cluster. Kubernetes is the engine that keeps everything alive automatically. If a FastAPI pod crashes due to a chaos experiment, Kubernetes detects it via readiness probes and instantly spins up a replacement (self-healing). It abstracts the underlying servers, managing Deployments, Services, and scaling dynamically based on traffic.
 
 *But how does new code actually get into Kubernetes?*
 
-### ![GitOps and Deployment Layer](https://img.shields.io/badge/6.-GitOps_and_Deployment_Layer-38F9D7?style=flat-square&logo=argo)
+### ![GitOps and Deployment Layer](https://img.shields.io/badge/6.-GitOps_and_Deployment_Layer-FEE140?style=flat-square&logo=argo)
 **The Delivery Pipeline**
 We never deploy manually. When an engineer merges code to GitHub, **GitHub Actions** runs tests and builds Docker images. Then, **ArgoCD** (our GitOps agent) takes over. ArgoCD lives inside the cluster, constantly watching our GitHub repository. The moment it detects a change in our YAML manifests, it executes a reconciliation loop, automatically syncing the cluster to match the exact desired state defined in Git. This ensures zero configuration drift.
 
 *With automated deployments running, we need to know if the system is healthy...*
 
-### ![Monitoring and Observability Layer](https://img.shields.io/badge/7.-Monitoring_and_Observability_Layer-43E97B?style=flat-square&logo=prometheus)
+### ![Monitoring and Observability Layer](https://img.shields.io/badge/7.-Monitoring_and_Observability_Layer-FA709A?style=flat-square&logo=prometheus)
 **The Eyes and Ears**
 While the dashboard shows high-level telemetry, our SRE observability stack goes deeper. **Prometheus** actively scrapes metrics from all our services every 15 seconds. **Grafana** queries this data to provide deeply technical system dashboards. Simultaneously, **Promtail** aggregates raw container logs and ships them to **Loki**, allowing engineers to search through millions of log lines instantly without ever SSH-ing into a server.
 
 *Finally, everything must rest on physical cloud hardware...*
 
-### ![AWS Infrastructure Layer](https://img.shields.io/badge/8.-AWS_Infrastructure_Layer-38F9D7?style=flat-square&logo=amazonaws)
+### ![AWS Infrastructure Layer](https://img.shields.io/badge/8.-AWS_Infrastructure_Layer-FEE140?style=flat-square&logo=amazonaws)
 **The Cloud Foundation**
 AWS provides the bedrock. We utilize a custom **Virtual Private Cloud (VPC)** with strict security boundaries. All EKS worker nodes (EC2 instances) are locked inside private subnets, completely shielded from the internet. The only way in or out is through the **NAT Gateway** (for outbound updates) or the **Network Load Balancer** (for inbound user traffic). AWS handles the physical networking, compute, and encryption (KMS) that makes the entire platform possible.
 
@@ -370,5 +370,5 @@ An enterprise platform is never truly "finished." Here is the roadmap for the ne
     *   *Why:* Instead of swapping all pods at once, Canary deployments shift 5% of traffic to a new version, measure PromQL error rates, and rollback automatically if the new code is failing.
 
 <p align="center">
-  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:38F9D7,100:43E97B&height=120&section=footer" width="100%" />
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:FEE140,100:FA709A&height=120&section=footer" width="100%" />
 </p>
