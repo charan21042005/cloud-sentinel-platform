@@ -390,6 +390,19 @@ This automated workflow execution ensures continuous integration validation acro
 
 By leveraging declarative automation pipelines, we treat our CI/CD logic as version-controlled code. This guarantees reproducible CI/CD execution across environments, automatically orchestrating checkout actions, dependency installation, build verification, security validation, and container orchestration preparation with zero manual intervention.
 
+### Pipeline Architecture: The 3-Stage Orchestration
+Our `sentinel-pipeline.yml` executes a strict, deterministic workflow on every commit:
+1. **Test & Verify Stage**: Spuns up an ephemeral Ubuntu runner, installs Node.js v22, enforces deterministic dependency installation (`npm ci`), runs RBAC security audits, and executes a production build verification.
+2. **Build & Push Stage**: Only triggers if verification passes. Extracts the unique Git commit SHA, builds the Docker image via Buildx, and pushes the immutable artifact to the GitHub Container Registry (`ghcr.io`).
+3. **GitOps Handoff**: The pipeline uses `sed` to update the Kubernetes deployment YAML (`image: ...:sha-1234567`) and pushes the change back to the repository. This guarantees that Git remains the single source of truth, triggering ArgoCD to pull the new state.
+
+### 🎤 Live Verification & Viva Defense Strategy
+If the panel asks you to **"Prove your CI/CD works right now,"** perform this exact live demonstration:
+1. **Trigger a Commit**: Open any frontend file, add a simple console log or comment, and run `git commit -m "feat: trigger live CI" && git push`.
+2. **Trace the Execution**: Instantly open the GitHub Repository -> **Actions** tab. Share your screen and click on the running workflow.
+3. **Narrate the Logs**: As the pipeline runs, click into the `test-and-verify` job. Point out the exact line where `npm run test:ci` executes. Explain to the panel: *"As you can see, our security audit is running live. The pipeline will refuse to build the Docker image if this step fails."*
+4. **Verify the Handoff**: Once the pipeline completes, open `infrastructure/kubernetes/frontend/deployment.yaml` in GitHub. Show them the commit history. Point out how the pipeline's bot automatically updated the image tag to match the commit SHA you just pushed. 
+
 ### Deep Dive: OIDC (OpenID Connect) Security
 
 We needed GitHub to push Docker images to AWS. Traditionally, you put an AWS Secret Key into GitHub Secrets. **This is dangerous.** If GitHub is breached, your AWS account is compromised indefinitely.
