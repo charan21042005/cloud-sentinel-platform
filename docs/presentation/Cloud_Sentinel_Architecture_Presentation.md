@@ -390,18 +390,74 @@ This automated workflow execution ensures continuous integration validation acro
 
 By leveraging declarative automation pipelines, we treat our CI/CD logic as version-controlled code. This guarantees reproducible CI/CD execution across environments, automatically orchestrating checkout actions, dependency installation, build verification, security validation, and container orchestration preparation with zero manual intervention.
 
-### Pipeline Architecture: The 3-Stage Orchestration
-Our `sentinel-pipeline.yml` executes a strict, deterministic workflow on every commit:
-1. **Test & Verify Stage**: Spuns up an ephemeral Ubuntu runner, installs Node.js v22, enforces deterministic dependency installation (`npm ci`), runs RBAC security audits, and executes a production build verification.
-2. **Build & Push Stage**: Only triggers if verification passes. Extracts the unique Git commit SHA, builds the Docker image via Buildx, and pushes the immutable artifact to the GitHub Container Registry (`ghcr.io`).
-3. **GitOps Handoff**: The pipeline uses `sed` to update the Kubernetes deployment YAML (`image: ...:sha-1234567`) and pushes the change back to the repository. This guarantees that Git remains the single source of truth, triggering ArgoCD to pull the new state.
+### 🎤 Project Pipeline: The 5-Stage Orchestration
+This is exactly how our code transitions from a developer's laptop to a live Kubernetes cluster.
 
-### 🎤 Live Verification & Viva Defense Strategy
-If the panel asks you to **"Prove your CI/CD works right now,"** perform this exact live demonstration:
-1. **Trigger a Commit**: Open any frontend file, add a simple console log or comment, and run `git commit -m "feat: trigger live CI" && git push`.
-2. **Trace the Execution**: Instantly open the GitHub Repository -> **Actions** tab. Share your screen and click on the running workflow.
-3. **Narrate the Logs**: As the pipeline runs, click into the `test-and-verify` job. Point out the exact line where `npm run test:ci` executes. Explain to the panel: *"As you can see, our security audit is running live. The pipeline will refuse to build the Docker image if this step fails."*
-4. **Verify the Handoff**: Once the pipeline completes, open `infrastructure/kubernetes/frontend/deployment.yaml` in GitHub. Show them the commit history. Point out how the pipeline's bot automatically updated the image tag to match the commit SHA you just pushed. 
+#### Stage 1: Code Commit
+The pipeline starts automatically when code is pushed or a pull request is created against the main branch.
+**File:** `.github/workflows/sentinel-pipeline.yml`
+```yaml
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+```
+
+#### Stage 2: Test And Verify
+The first CI stage checks out the repo, installs frontend dependencies with `npm ci`, runs the Vitest coverage suite, and verifies the production Next.js build.
+**Job:** `test-and-verify`
+```bash
+npm ci
+npm run test:ci
+npm run build
+```
+
+#### Stage 3: Build Docker Image
+Only after `test-and-verify` succeeds, the build job creates a production Docker image using the frontend Dockerfile. The `needs` block proves this strict stage ordering.
+**Job:** `build-and-push`
+```yaml
+build-and-push:
+  needs: test-and-verify
+```
+
+#### Stage 4: Push Image To Registry
+The image is pushed to GitHub Container Registry with both a commit SHA tag and `latest` for the default branch.
+```yaml
+registry: ${{ env.REGISTRY }}
+username: ${{ github.actor }}
+password: ${{ secrets.GITHUB_TOKEN }}
+# ...
+push: true
+tags: ${{ steps.meta.outputs.tags }}
+```
+
+#### Stage 5: GitOps Deployment With Argo CD
+After Git contains the desired deployment state, Argo CD continuously watches the repository and syncs Kubernetes automatically. If something drifts in the cluster, self-heal restores it.
+**File:** `root-app-of-apps.yaml`
+```yaml
+syncPolicy:
+  automated:
+    prune: true
+    selfHeal: true
+```
+This root app then points to our workloads:
+```yaml
+path: infrastructure/kubernetes/workloads
+```
+
+### 🔁 End-to-End Execution Flow
+
+```mermaid
+graph TD
+    A[Developer Push] -->|Git Trigger| B(GitHub Actions)
+    B --> C{Test & Build Verification}
+    C -->|Success| D[Docker Build + GHCR Push]
+    D --> E[Argo CD GitOps Sync]
+    E --> F((Kubernetes Deployment))
+```
+
+> **UI Demo Tip**: To demonstrate this live, open GitHub Actions and show the completed jobs, then open the Argo CD UI and show the synced, healthy applications.
 
 ### Deep Dive: OIDC (OpenID Connect) Security
 
