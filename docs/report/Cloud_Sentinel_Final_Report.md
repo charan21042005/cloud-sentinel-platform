@@ -249,3 +249,89 @@ sequenceDiagram
 ```
 
 *Figure 4.1: The End-to-End DevSecOps Runtime Lifecycle, detailing the strictly ordered flow from a local Git commit to a zero-downtime Kubernetes deployment managed by ArgoCD.*
+
+---
+
+## 5. Software Requirement Analysis
+
+### 5.1 Introduction
+The Software Requirement Analysis phase defines the foundational expectations, capabilities, and constraints of the Cloud Sentinel Platform. Given its architecture as a robust DevSecOps observability ecosystem, the system’s requirements extend beyond traditional application features (like user interfaces or database schemas) to include stringent infrastructure, orchestration, and telemetry demands. This section codifies the specific functional and non-functional requirements necessary to successfully implement and operate the platform within an enterprise cloud environment.
+
+### 5.2 General Description
+Cloud Sentinel is a distributed, cloud-native platform designed to visualize and manage operational telemetry in real-time. The system is composed of several decoupled layers:
+* **The Application Layer:** A Next.js (React) frontend and a FastAPI (Python) backend, supported by PostgreSQL and Redis.
+* **The Observability Pipeline:** A Prometheus and Grafana stack responsible for scraping, storing, and visualizing hardware and application metrics.
+* **The Orchestration Layer:** Amazon EKS (Kubernetes) managing the containerized workloads.
+* **The Automation Layer:** GitHub Actions for CI/CD and ArgoCD for GitOps deployment synchronization.
+
+### 5.3 Specific Requirements
+
+#### 5.3.1 Functional Requirements
+Functional requirements define the specific behaviors and capabilities the platform must execute:
+1. **Real-Time Telemetry Ingestion:** The backend (FastAPI) must capture system metrics (CPU, Memory) via the `psutil` library every second and publish them to a Redis message broker.
+2. **WebSocket Broadcasting:** The platform must establish persistent, full-duplex WebSocket connections to push Redis Pub/Sub events dynamically to the Next.js frontend without HTTP polling.
+3. **Automated CI/CD Execution:** GitHub Actions must automatically trigger on every `push` to the `main` branch, enforcing a strict sequence of dependency installation (`npm ci`), security audits (Vitest), and Docker image builds.
+4. **Declarative GitOps Synchronization:** ArgoCD must continuously monitor the GitHub repository. Upon detecting a modified `deployment.yaml`, it must automatically pull the new manifest and execute a Kubernetes RollingUpdate.
+5. **Centralized Log Aggregation:** Promtail must scrape `stdout` and `stderr` logs from all active Kubernetes pods and forward them to Loki for centralized querying.
+
+#### 5.3.2 Non-Functional Requirements
+Non-functional requirements dictate the systemic qualities, performance benchmarks, and architectural standards of the platform.
+
+**Performance Requirements:**
+* **WebSocket Latency:** Telemetry data must be reflected on the frontend dashboard in under 50 milliseconds from the moment of generation on the backend.
+* **CI/CD Build Times:** The entire CI/CD pipeline (Test & Verify -> Build Docker Image -> Push to GHCR) must execute and complete in under 5 minutes.
+
+**Scalability Requirements:**
+* **Horizontal Pod Autoscaling (HPA):** The Kubernetes cluster must be capable of dynamically scaling FastAPI backend pods based on concurrent WebSocket connection load.
+* **Stateless Architecture:** Application containers must be entirely stateless, offloading all persistence to PostgreSQL and session/event data to Redis, ensuring that new pods can spin up instantly without data synchronization delays.
+
+**Availability Requirements:**
+* **High Availability (HA):** The EKS cluster must be distributed across multiple AWS Availability Zones (AZs) within the VPC. If an entire AZ fails, the Kubernetes Control Plane must reschedule workloads to surviving nodes automatically.
+* **Zero-Downtime Deployments:** Updates to the system must utilize Kubernetes RollingUpdates, ensuring that the new version of the application is healthy (passing Readiness Probes) before terminating the old pods.
+
+**Security Requirements:**
+* **Secret Management:** Sensitive credentials (such as database passwords and API keys) must be injected into pods at runtime as Kubernetes Secrets, encrypted at rest within `etcd` using AWS Key Management Service (KMS).
+* **OIDC Authentication:** The GitHub Actions pipeline must use OpenID Connect (OIDC) to obtain short-lived, temporary STS tokens from AWS IAM, eliminating the need for hardcoded, permanent AWS Secret Keys.
+* **Network Isolation:** Kubernetes Worker Nodes must reside entirely within Private Subnets. Outbound internet access for pulling Docker images must be routed securely through an AWS NAT Gateway.
+
+**Monitoring Requirements:**
+* **Metric Scraping Frequency:** Prometheus must be configured to scrape `/metrics` endpoints across all discovered pods at an interval of no more than 15 seconds.
+* **Alerting:** The platform must trigger automated alerts in Grafana if node CPU utilization exceeds 85% for a sustained period of 3 minutes.
+
+### 5.4 Implementation-Specific Analysis
+
+* **Frontend (Next.js):** Requires Node.js v22 runtime environments. Must utilize React hooks and Recharts to bind state directly to incoming WebSocket streams.
+* **Backend (FastAPI):** Requires Python 3.11+. Must utilize ASGI (Uvicorn) and `asyncio` to prevent thread-blocking during high-volume WebSocket broadcasts.
+* **Kubernetes (EKS):** Requires `t3.small` EC2 instances configured with VPC CNI Prefix Delegation to bypass default Elastic Network Interface (ENI) pod limits.
+* **GitOps (ArgoCD):** Requires the "App of Apps" pattern (`root-app-of-apps.yaml`) to deterministically order the deployment of infrastructure components (e.g., deploying the Ingress Controller before the application workloads).
+
+### 5.5 Requirement Specifications Tables
+
+The following tables outline the physical, virtual, and software prerequisites necessary to deploy and operate the Cloud Sentinel Platform.
+
+#### Table 5.1: Software & Framework Requirements
+| Component | Technology / Framework | Minimum Version | Purpose |
+| :--- | :--- | :--- | :--- |
+| Frontend | Next.js / React | 14.x | Real-time observability dashboard UI. |
+| Backend | FastAPI (Python) | 3.11+ | High-throughput asynchronous API & Telemetry generator. |
+| Database | PostgreSQL | 15.x | Persistent relational storage for users and historical logs. |
+| Message Broker | Redis | 7.x | High-speed Pub/Sub broker for WebSocket event streaming. |
+| CI/CD Runner | Ubuntu Linux | 22.04 LTS | Operating system for executing GitHub Actions workflows. |
+
+#### Table 5.2: Cloud & Infrastructure Requirements
+| Infrastructure Layer | AWS Service / Tool | Specification | Operational Role |
+| :--- | :--- | :--- | :--- |
+| Orchestration | Amazon EKS | v1.30+ | Managed Kubernetes Control Plane. |
+| Compute Nodes | AWS EC2 (`t3.small`) | 2 vCPUs, 2 GiB RAM | Worker nodes hosting the application and monitoring pods. |
+| Networking | AWS VPC | `10.0.0.0/16` CIDR | Isolated private network partitioned into Public and Private subnets. |
+| Egress Traffic | AWS NAT Gateway | Multi-AZ | Secure outbound internet access for private worker nodes. |
+| Infrastructure Automation | Terraform | 1.5+ | Declarative HCL code for provisioning the entire AWS environment. |
+
+#### Table 5.3: DevOps & Observability Tooling Requirements
+| Tool Category | Software | Usage Context |
+| :--- | :--- | :--- |
+| GitOps Engine | ArgoCD | Synchronizes the live Kubernetes state with the GitHub repository. |
+| Metrics Engine | Prometheus | Scrapes and stores multi-dimensional time-series metrics. |
+| Log Aggregation | Promtail & Loki | Collects container `stdout`/`stderr` logs centrally. |
+| Visualization | Grafana | Provides the single pane of glass for all SRE telemetry. |
+| Containerization | Docker (Buildx) | Builds the immutable application artifacts during CI pipelines. |
