@@ -35,3 +35,43 @@ Cloud Sentinel inverts this paradigm. It is an infrastructure-first project wher
 5. **Real-Time Observability:** Closing the loop by monitoring the entire orchestrated ecosystem using Prometheus, Redis, and WebSockets.
 
 In summary, Cloud Sentinel is not just a software application; it is a holistic demonstration of modern Site Reliability Engineering. It provides a blueprint for how organizations can deploy scalable, secure, and self-healing systems in the cloud, setting the foundation for the deep technical problem analysis and architectural designs detailed in the subsequent sections of this report.
+
+---
+
+## 2. Profile of the Problem. Rationale/Scope of the study (Problem Statement)
+
+### 2.1 The Limitations of Traditional Operations
+Before the widespread adoption of cloud-native methodologies, organizations managed IT infrastructure through highly manual, fragmented, and inefficient processes. As applications scaled to serve millions of global users, these traditional paradigms began to fracture under the weight of their own complexity. The core problem this project seeks to address is the operational fragility that occurs when modern distributed software is managed using legacy infrastructure practices.
+
+Specifically, the industry faces severe limitations across multiple operational axes:
+* **Manual Deployments & Human Error:** Deploying updates historically involved an engineer connecting via SSH to production servers to execute installation scripts. This manual intervention is notoriously error-prone, undocumented, and difficult to roll back during a critical failure.
+* **Infrastructure Inconsistency (Snowflake Servers):** Without Infrastructure as Code (IaC), each server is configured manually over time. When a server inevitably crashes, reproducing its exact state is nearly impossible, leading to prolonged system outages and "snowflake" environments that are too delicate to upgrade.
+* **Scaling Issues and Resource Inefficiency:** Monolithic applications running on static virtual machines cannot scale their specific bottlenecks independently. If the frontend experiences high traffic, the entire monolith must be scaled, resulting in massive hardware over-provisioning and wasted capital expenditure.
+* **Fragmented Observability and Lack of Centralized Telemetry:** When a microservices architecture spans dozens of nodes, tracking an error becomes searching for a needle in a haystack. Traditional monitoring tools often fragment logs, metrics, and network traces into isolated silos, preventing engineers from diagnosing the root cause of systemic cascading failures.
+
+### 2.2 The Rationale of the Study: The Cloud Sentinel Solution
+The rationale behind the Cloud Sentinel Platform is to construct a unified architecture that categorically eliminates these traditional limitations. Rather than addressing these problems in isolation, this study proposes a holistic, interconnected platform where automation, orchestration, and observability form a continuous feedback loop.
+
+Cloud Sentinel resolves these legacy bottlenecks through the following modern paradigms:
+1. **Real-Time Telemetry:** By abandoning legacy HTTP polling in favor of persistent WebSocket connections and a Redis Pub/Sub backbone, the platform ensures that operational telemetry (CPU spikes, memory leaks, latency degradation) is surfaced to the dashboard in milliseconds.
+2. **Kubernetes Orchestration:** Ephemeral Docker containers are orchestrated by Amazon EKS (Elastic Kubernetes Service). This natively solves the scaling issue, as Kubernetes can independently auto-scale specific microservices based on exact CPU or memory constraints, while its internal reconciliation loop automatically restarts crashed containers without human intervention.
+3. **CI/CD Automation:** The implementation of GitHub Actions entirely eradicates manual deployment risks. Every code push is intercepted by an automated workflow that runs deterministic security audits, builds container images, and securely pushes them to a registry via OIDC.
+4. **GitOps Automation with ArgoCD:** To solve configuration drift, ArgoCD continuously monitors the Git repository. If an unauthorized infrastructure change is detected in the live Kubernetes cluster, ArgoCD’s self-healing mechanisms instantly overwrite the live state to match the approved Git code.
+5. **Observability Centralization:** The platform unifies the fragmented monitoring landscape. The Prometheus Operator scrapes time-series metrics across all nodes, Promtail aggregates stdout/stderr logs from every ephemeral container into Loki, and Grafana serves as the single pane of glass for all SRE visualization.
+
+### 2.3 Problem Statement
+*“As enterprise applications transition into distributed, cloud-native microservices, traditional manual deployment strategies, fragmented monitoring tools, and static infrastructure provisioning result in severe operational fragility, configuration drift, and prolonged incident resolution times. There is an imperative need for a unified platform that securely automates the entire software deployment lifecycle while providing centralized, real-time observability into the health and performance of the underlying distributed architecture.”*
+
+### 2.4 Scope and Operational Goals
+The scope of the Cloud Sentinel Platform is rigidly focused on the operational engineering layer—the deployment, scaling, security, and monitoring of distributed services. 
+
+**Target Users:**
+The intended users of this platform are Site Reliability Engineers (SREs), DevOps practitioners, and Cloud Architects who require deep, real-time visibility into complex cloud-native architectures. 
+
+**Operational Objectives:**
+* To achieve **zero-downtime deployments** by leveraging Kubernetes RollingUpdates alongside rigorous Readiness and Liveness probes.
+* To enforce **declarative infrastructure management** where 100% of the AWS infrastructure and application configurations are defined as code (Terraform and YAML).
+* To establish **end-to-end telemetry visibility** ensuring that metrics from hardware nodes, network gateways, databases, and application code are aggregated into a unified real-time dashboard.
+* To eliminate **credential exposure** by migrating from static cloud secrets to dynamic, cryptographic identity verification (OIDC).
+
+By fulfilling these objectives, the Cloud Sentinel project proves the viability of modern DevSecOps practices, demonstrating how profound architectural challenges can be mitigated through disciplined automation and real-time observability.
