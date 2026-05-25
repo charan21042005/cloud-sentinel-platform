@@ -598,3 +598,76 @@ The following tables detail the specific, actionable test cases executed to vali
 | **TC-11** | GitOps | Verify ArgoCD drift reconciliation. | Manually delete a live pod via `kubectl`. | ArgoCD instantly spins up a replacement pod. | Pass |
 | **TC-12** | Monitor | Verify Prometheus dynamic service discovery. | View Prometheus `/targets` endpoint. | App pods show as `UP` with `15s` scrape intervals. | Pass |
 | **TC-13** | Monitor | Verify Grafana dashboard telemetry mapping. | Run a CPU stress test inside a worker pod. | Grafana CPU dashboard spikes in real-time. | Pass |
+
+---
+
+## 8. Implementation
+
+### 8.1 Introduction to DevSecOps Implementation
+The implementation phase of the Cloud Sentinel Platform translates theoretical design architectures and algorithmic pseudocode into declarative configuration files and executable binaries. Because Cloud Sentinel is an infrastructure-heavy DevSecOps platform, the implementation is not merely writing Python or JavaScript; it fundamentally revolves around writing YAML and HCL (HashiCorp Configuration Language) files that strictly define the orchestration, pipeline automation, and cloud topologies.
+
+### 8.2 Project Implementation & Deployment Lifecycle
+The implementation of the system is strictly ordered. A microservice cannot be deployed if the cluster does not exist, and the cluster cannot exist if the VPC network has not been provisioned. The deployment lifecycle follows a 4-stage operational flow:
+
+1. **Local Containerization:** Standardizing the development environment using Docker Compose to ensure code executes identically across all developer machines.
+2. **Cloud Provisioning (Terraform):** Bootstrapping the immutable AWS cloud foundation (Networking, IAM, and the EKS Control Plane).
+3. **CI/CD Pipeline (GitHub Actions):** Implementing the automated testing and Docker build workflows.
+4. **GitOps Orchestration (ArgoCD & Kubernetes):** Deploying the application payloads and observability stack into the live cluster.
+
+### 8.3 Detailed Implementation Analysis
+
+The following sections provide a repository-aware analysis of the actual configuration files and scripts that implement the Cloud Sentinel architecture.
+
+#### 8.3.1 Docker & Local Orchestration Implementation
+To eliminate environmental discrepancies, the local execution environment is implemented via a `docker-compose.yaml` file located in the project root.
+
+**Implementation Details:**
+* The compose file explicitly defines four dependent services: `frontend`, `backend`, `redis`, and `postgres`.
+* **Network Bridging:** It creates a dedicated local Docker bridge network, allowing the `backend` container to resolve the database simply by querying the hostname `postgres:5432`, mirroring how Kubernetes DNS functions in production.
+* **Volume Mounts:** Local source code directories (`./frontend` and `./backend`) are mounted directly into the running containers. This implementation allows developers to write code on their host machine and instantly see hot-reloaded changes inside the container without rebuilding the Docker image.
+
+*(Note for Report: Insert a screenshot here showing Docker Desktop running the 4 Cloud Sentinel containers locally.)*
+`[Insert Screenshot here: Docker Desktop showing running Next.js, FastAPI, Redis, and Postgres containers]`
+
+#### 8.3.2 Terraform Infrastructure Provisioning
+The physical cloud boundary is implemented using Terraform, located within the `infrastructure/terraform/` directory. This is the foundation upon which the entire Kubernetes cluster rests.
+
+**Implementation Details:**
+* **State Management:** The implementation utilizes an `s3` backend to store the `terraform.tfstate` file, ensuring that multiple engineers cannot simultaneously mutate the infrastructure, which would cause state corruption.
+* **VPC Module:** The `main.tf` file utilizes the official AWS VPC module to carve a `10.0.0.0/16` network. Crucially, it implements a highly secure topology: EKS worker nodes are placed exclusively in **Private Subnets**, meaning they cannot be accessed directly from the public internet. 
+* **NAT Gateway:** Outbound traffic from the worker nodes (such as pulling Docker images from GHCR) is securely routed out through an AWS NAT Gateway situated in the Public Subnet.
+
+*(Note for Report: Insert a screenshot here showing the successfully provisioned EKS Cluster in the AWS Web Console.)*
+`[Insert Screenshot here: AWS Console showing the successfully created EKS Cluster and worker nodes]`
+
+#### 8.3.3 GitHub Actions CI/CD Implementation
+The continuous integration pipeline is implemented as a declarative workflow in `.github/workflows/deploy.yml`. 
+
+**Runtime Execution Flow:**
+1. **Trigger:** The workflow is configured with `on: push: branches: ["main"]`.
+2. **OIDC Authentication:** It implements the `aws-actions/configure-aws-credentials` step. Instead of using a dangerous, long-lived AWS Access Key, it requests a temporary, cryptographically signed STS token directly from AWS IAM.
+3. **Build & Push:** It utilizes Docker `buildx` to compile the Next.js and FastAPI images, tags them with the specific `$GITHUB_SHA` (the unique Git commit hash), and pushes them to the GitHub Container Registry.
+
+*(Note for Report: Insert a screenshot here showing the GitHub Actions pipeline succeeding with green checkmarks.)*
+`[Insert Screenshot here: GitHub Actions passing pipeline with a green checkmark]`
+
+#### 8.3.4 Kubernetes & GitOps Implementation
+With the infrastructure provisioned and the Docker images built, the application is deployed into EKS using ArgoCD, configured via manifests in the `infrastructure/kubernetes/` directory.
+
+**Implementation Details:**
+* **ArgoCD Application CRD:** The system is implemented using the "App of Apps" pattern. An `Application.yaml` Custom Resource Definition tells the ArgoCD controller inside the cluster to monitor the `charan21042005/cloud-sentinel-platform` repository.
+* **Deployment & Services:** The `deployment.yaml` files implement the pod templates. If the GitHub Actions pipeline updates the image tag in this file, ArgoCD detects the change.
+* **Orchestration Lifecycle:** During an update, ArgoCD implements a Kubernetes **RollingUpdate**. It spins up a new pod with the new image. Only when the new pod passes its `readinessProbe` will Kubernetes terminate the old pod, achieving true zero-downtime deployments.
+
+*(Note for Report: Insert a screenshot here showing the ArgoCD UI with the Cloud Sentinel application displaying a "Synced" and "Healthy" state.)*
+`[Insert Screenshot here: ArgoCD UI showing the "Synced" and "Healthy" state of the Cloud Sentinel application]`
+
+#### 8.3.5 Observability & Monitoring Implementation
+The final layer implements the real-time telemetry stack.
+
+**Implementation Details:**
+* **Prometheus Scraping:** Prometheus is implemented using a `ServiceMonitor` Custom Resource. Instead of hardcoding the IP addresses of the FastAPI pods (which change every time a pod restarts), the `ServiceMonitor` tells Prometheus to dynamically scrape any pod possessing the label `app: backend`. 
+* **Telemetry Flow:** Once the metrics are scraped into Prometheus's time-series database, the Grafana deployment executes PromQL (Prometheus Query Language) statements to visualize the data. Concurrently, the FastAPI backend implements the `psutil` library to read raw hardware stats and pushes them through the Redis websocket tunnel to the frontend.
+
+*(Note for Report: Insert a screenshot here showing the Grafana Dashboard or the Next.js UI displaying real-time metrics.)*
+`[Insert Screenshot here: Grafana Dashboard displaying real-time CPU utilization and WebSocket active connections]`
