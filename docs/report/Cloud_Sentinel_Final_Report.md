@@ -822,3 +822,109 @@ If the platform experiences degradation, utilize the following steps to diagnose
   ```bash
   terraform force-unlock <lock-id>
   ```
+
+---
+
+## 11. Source Code & Snapshots
+
+This section contains critical source code snippets that define the architectural boundaries of the Cloud Sentinel Platform, alongside visual snapshots verifying operational success.
+
+*(Note to Author: Please upload and attach the actual screenshot images below the bracketed placeholders prior to final report submission.)*
+
+### 11.1 Infrastructure Source Code (Terraform)
+The following snippet demonstrates the declarative provisioning of the AWS Elastic Kubernetes Service (EKS) cluster utilizing HashiCorp Configuration Language (HCL).
+
+```hcl
+module "eks" {
+  source  = "terraform-aws-modules/eks/aws"
+  version = "~> 20.0"
+
+  cluster_name    = "cloud-sentinel-cluster"
+  cluster_version = "1.30"
+
+  vpc_id     = module.vpc.vpc_id
+  subnet_ids = module.vpc.private_subnets
+
+  eks_managed_node_groups = {
+    general = {
+      instance_types = ["t3.small"]
+      min_size       = 2
+      max_size       = 4
+      desired_size   = 2
+    }
+  }
+}
+```
+
+### 11.2 GitOps Orchestration Code (ArgoCD)
+The following YAML snippet represents the root `Application` Custom Resource Definition used to bootstrap the platform via the GitOps pull methodology.
+
+```yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: cloud-sentinel-root
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: 'https://github.com/charan21042005/cloud-sentinel-platform.git'
+    targetRevision: HEAD
+    path: infrastructure/kubernetes
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: application
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+```
+
+### 11.3 System Snapshots & Architecture Diagrams
+
+#### 11.3.1 Macro Architecture Diagram
+`[Insert Image Here: Figure 6.1 Full-Stack Cloud-Native Architecture Topology Diagram]`
+*Figure 11.1: The full-stack topology demonstrating the flow from the AWS Cloud boundary into the Kubernetes internal Service network.*
+
+#### 11.3.2 Local Development Verification
+`[Insert Image Here: Docker Desktop UI showing the 4 running containers (Next.js, FastAPI, PostgreSQL, Redis)]`
+*Figure 11.2: Local orchestration validation utilizing Docker Compose for deterministic development.*
+
+#### 11.3.3 CI/CD Pipeline Verification
+`[Insert Image Here: GitHub Actions workflow UI showing a successful build and push to GHCR]`
+*Figure 11.3: The automated DevSecOps pipeline compiling immutable Docker artifacts and executing security tests.*
+
+#### 11.3.4 GitOps Synchronization Verification
+`[Insert Image Here: ArgoCD Dashboard showing the Cloud Sentinel app as "Synced" and "Healthy"]`
+*Figure 11.4: ArgoCD successfully resolving the desired Git state with the live Kubernetes cluster state.*
+
+#### 11.3.5 Real-Time Observability Dashboards
+`[Insert Image Here: Grafana Dashboard displaying real-time CPU spikes or WebSocket telemetry]`
+*Figure 11.5: Centralized telemetry visualization powered by Prometheus and Grafana.*
+
+---
+
+## 12. Bibliography
+
+1. **Kubernetes Architecture & Best Practices:** 
+   Cloud Native Computing Foundation (CNCF). (2024). *Kubernetes Documentation*. Available at: https://kubernetes.io/docs/home/
+2. **Containerization & Immutable Infrastructure:** 
+   Docker, Inc. (2024). *Docker Overview and Architecture*. Available at: https://docs.docker.com/get-started/overview/
+3. **Infrastructure as Code (IaC):** 
+   HashiCorp. (2024). *Terraform AWS Provider Documentation*. Available at: https://registry.terraform.io/providers/hashicorp/aws/latest/docs
+4. **GitOps Methodology & Implementation:** 
+   Argo Project. (2024). *Argo CD - Declarative GitOps CD for Kubernetes*. Available at: https://argo-cd.readthedocs.io/
+5. **High-Performance Asynchronous Python APIs:** 
+   Ramírez, S. (2024). *FastAPI Documentation*. Available at: https://fastapi.tiangolo.com/
+6. **Time-Series Observability:** 
+   Prometheus Authors. (2024). *Prometheus - Monitoring system & time series database*. Available at: https://prometheus.io/docs/introduction/overview/
+7. **Telemetry Visualization:** 
+   Grafana Labs. (2024). *Grafana Open Source Documentation*. Available at: https://grafana.com/docs/grafana/latest/
+8. **In-Memory Message Brokering (Pub/Sub):** 
+   Redis Ltd. (2024). *Redis Pub/Sub Documentation*. Available at: https://redis.io/docs/interact/pubsub/
+9. **Cloud Networking and Orchestration Engine:** 
+   Amazon Web Services. (2024). *Amazon Elastic Kubernetes Service (EKS) User Guide*. Available at: https://docs.aws.amazon.com/eks/latest/userguide/what-is-eks.html
+10. **Automated DevSecOps Pipelines:** 
+    GitHub, Inc. (2024). *Understanding GitHub Actions*. Available at: https://docs.github.com/en/actions/learn-github-actions/understanding-github-actions
+11. **Modern Open Source Telemetry (Future Scope):**
+    OpenTelemetry Project. (2024). *OpenTelemetry - High-quality, ubiquitous, and portable telemetry*. Available at: https://opentelemetry.io/docs/
