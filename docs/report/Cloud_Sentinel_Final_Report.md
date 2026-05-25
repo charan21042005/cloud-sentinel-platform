@@ -241,12 +241,12 @@ sequenceDiagram
     Dev->>Git: 1. git push (Frontend Update)
     Git-->>CI: 2. Webhook Triggers Pipeline
     Note over CI: npm ci & vitest coverage
-    CI->>Reg: 3. docker push <commit-sha>
+    CI->>Reg: 3. docker push [commit-sha]
     CI->>Git: 4. sed -i (Updates deployment.yaml with new SHA)
     Git-->>Argo: 5. Git drift detected
     Argo->>K8s: 6. Apply new Deployment Manifest
     K8s->>K8s: 7. Execute RollingUpdate
-    Note over K8s: Terminates old pods smoothly,<br/>spins up new pods with new SHA.
+    Note over K8s: Terminates old pods smoothly, spins up new pods with new SHA.
 ```
 
 *Figure 4.1: The End-to-End DevSecOps Runtime Lifecycle, detailing the strictly ordered flow from a local Git commit to a zero-downtime Kubernetes deployment managed by ArgoCD.*
