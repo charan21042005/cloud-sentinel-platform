@@ -75,3 +75,103 @@ The intended users of this platform are Site Reliability Engineers (SREs), DevOp
 * To eliminate **credential exposure** by migrating from static cloud secrets to dynamic, cryptographic identity verification (OIDC).
 
 By fulfilling these objectives, the Cloud Sentinel project proves the viability of modern DevSecOps practices, demonstrating how profound architectural challenges can be mitigated through disciplined automation and real-time observability.
+
+---
+
+## 3. Existing System
+
+### 3.1 Introduction
+To fully contextualize the architectural improvements introduced by the Cloud Sentinel Platform, it is necessary to examine the methodologies that historically governed software deployments and system monitoring. The "Existing System" in this context refers to the legacy, pre-cloud-native approaches characterized by monolithic applications, manual operational pipelines, and reactive, fragmented monitoring software.
+
+### 3.2 Existing Software and Methodologies
+In the traditional operations landscape, the deployment and management of software relied heavily on isolated, non-declarative tools:
+* **Monolithic Infrastructure:** Applications were packaged as single, massive executables running on bare-metal servers or static Virtual Machines (VMs). 
+* **Manual Deployment Pipelines:** Continuous Integration (if present) often relied on heavy, server-based tools like Jenkins, while the actual deployment (Continuous Delivery) was executed manually. Engineers would use Bash scripts or SSH to physically move binaries onto production servers and restart services.
+* **Isolated Monitoring Tools:** Monitoring was reactive and fragmented. Server health was monitored by legacy tools like Nagios, logs were manually grepped via SSH, and application performance was often tracked in completely separate, proprietary dashboards. There was no single pane of glass.
+
+#### Shortcomings of the Existing System
+1. **No GitOps or Declarative State:** Because infrastructure was provisioned via UI clicks (ClickOps) rather than code, configuration drift was inevitable. There was no automated mechanism to ensure the live environment matched the repository.
+2. **Poor Scalability:** Scaling required purchasing and provisioning new physical or virtual machines, a process that took hours or days. Monoliths could not be scaled granularly.
+3. **Delayed Incident Visibility:** Without WebSockets or Pub/Sub streaming, dashboards relied on HTTP polling. By the time a dashboard refreshed to show a CPU spike, the server may have already crashed.
+4. **Lack of Centralized Observability:** Engineers wasted critical incident-response time logging into disparate systems to correlate a network drop in one tool with an application error in another.
+
+### 3.3 Data Flow Diagram (DFD) for Present System
+The following diagram illustrates the flawed, manual deployment and monitoring lifecycle inherent to traditional existing systems.
+
+```mermaid
+graph TD
+    subgraph Development
+        A[Developer Commits Code] -->|Manual Trigger| B(Jenkins Build Server)
+    end
+    
+    subgraph Operations & Deployment
+        B -->|Success| C[Generate Binary/Artifact]
+        C -->|Manual SSH / FTP| D[Production VM 1]
+        C -->|Manual SSH / FTP| E[Production VM 2]
+    end
+    
+    subgraph Fragmented Monitoring
+        D -.-> F[Nagios Server Health]
+        E -.-> F
+        D -.-> G[Local Log Files]
+        E -.-> G
+        G -->|Manual Investigation| H((Engineer SSH))
+    end
+    
+    style A fill:#f9f,stroke:#333,stroke-width:2px
+    style C fill:#ff9,stroke:#333,stroke-width:2px
+    style H fill:#f66,stroke:#333,stroke-width:2px
+```
+
+*Figure 3.1: DFD of the traditional deployment and monitoring flow, highlighting manual bottlenecks and fragmented observability.*
+
+### 3.4 What's New in the Proposed System (Cloud Sentinel)
+The proposed system completely overhauls the legacy architecture by introducing a suite of modern, cloud-native innovations. Cloud Sentinel eliminates manual operations and introduces a fully automated, scalable, and observable ecosystem.
+
+#### Key Innovations Introduced:
+* **Kubernetes (Amazon EKS):** Replaces static VMs. Kubernetes abstracts the underlying hardware, allowing the platform to deploy applications as ephemeral containers that are self-healing and auto-scaling.
+* **Terraform (Infrastructure as Code):** Eliminates "ClickOps". The entire AWS networking layer (VPCs, Subnets, Gateways) and Kubernetes clusters are programmatically generated using declarative HCL code.
+* **ArgoCD (GitOps):** Replaces manual deployments. ArgoCD continuously monitors the GitHub repository and uses a pull-based mechanism to automatically synchronize the Kubernetes cluster state with the code.
+* **GitHub Actions:** Replaces heavy Jenkins servers with a serverless, SaaS-based CI/CD pipeline that automatically tests, builds, and pushes Docker images to a registry upon every code commit.
+* **Prometheus & Grafana:** Replaces fragmented monitoring. Prometheus actively scrapes metrics from all nodes and pods, storing them in a time-series database. Grafana provides a centralized, unified dashboard for all telemetry.
+* **Redis Pub/Sub & WebSockets:** Replaces HTTP polling. Real-time telemetry is streamed instantaneously from the backend to the frontend, ensuring operators see incidents the exact millisecond they occur.
+
+#### Proposed System Deployment & Monitoring Flow
+The following diagram illustrates the highly automated, GitOps-driven architecture of the new Cloud Sentinel platform.
+
+```mermaid
+graph TD
+    subgraph CI/CD Pipeline
+        A[Developer Push] -->|Automated| B(GitHub Actions)
+        B -->|Test & Build| C[Docker Image]
+        C -->|OIDC Auth| D[(GitHub Container Registry)]
+    end
+    
+    subgraph GitOps Orchestration
+        E[Manifest Update Push] -->|Webhook| F(ArgoCD)
+        F -->|Detects Drift| G[Syncs State]
+    end
+    
+    subgraph Kubernetes Production Cluster
+        G --> H[Amazon EKS Worker Nodes]
+        H --> I[Next.js Frontend Pods]
+        H --> J[FastAPI Backend Pods]
+        
+        %% Telemetry Flow
+        J -->|Metrics| K(Prometheus)
+        J -->|Logs| L(Loki)
+        J -->|Pub/Sub| M(Redis)
+        M -->|WebSockets| I
+    end
+    
+    subgraph Centralized Observability
+        K --> N((Grafana Dashboard))
+        L --> N
+    end
+    
+    style A fill:#4CAF50,stroke:#333,stroke-width:2px
+    style F fill:#2196F3,stroke:#333,stroke-width:2px
+    style N fill:#FF9800,stroke:#333,stroke-width:2px
+```
+
+*Figure 3.2: DFD of the proposed Cloud Sentinel architecture, showcasing the automated CI/CD pipeline, ArgoCD GitOps synchronization, and centralized real-time observability flow.*
