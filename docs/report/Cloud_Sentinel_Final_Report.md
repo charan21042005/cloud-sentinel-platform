@@ -335,3 +335,204 @@ The following tables outline the physical, virtual, and software prerequisites n
 | Log Aggregation | Promtail & Loki | Collects container `stdout`/`stderr` logs centrally. |
 | Visualization | Grafana | Provides the single pane of glass for all SRE telemetry. |
 | Containerization | Docker (Buildx) | Builds the immutable application artifacts during CI pipelines. |
+
+---
+
+## 6. Design
+
+### 6.1 System Design Overview
+The architectural design of the Cloud Sentinel Platform is founded on the principles of **decoupled microservices** and **declarative state management**. Rather than deploying a monolithic codebase, the system divides operational responsibilities into highly specialized, isolated layers. The system is conceptually partitioned into four core domains:
+1. **The Infrastructure Layer:** AWS compute and networking resources provisioned immutably via Terraform.
+2. **The Orchestration Layer:** The Amazon EKS control plane and worker nodes executing Docker containers.
+3. **The Application Layer:** The Next.js frontend and FastAPI backend handling the core business logic of data processing.
+4. **The Observability Pipeline:** The Prometheus, Redis, and Grafana ecosystem responsible for capturing and broadcasting telemetry.
+
+### 6.2 Design Notations
+To accurately depict the complex distributed nature of the platform, the following detailed design diagrams utilize standard **UML (Unified Modeling Language)** notations, implemented computationally via Mermaid.js. 
+* Solid arrows (`-->`) represent synchronous HTTP requests or direct data flow.
+* Dotted arrows (`-.->`) represent asynchronous data streams, message bus broadcasts (Pub/Sub), or webhook triggers.
+* Cylinder shapes (`[( )]`) represent persistent storage volumes or registries.
+
+### 6.3 Detailed Architecture Design
+
+#### 6.3.1 Full-Stack Cloud-Native Architecture Topology
+This flowchart models the macro-level architecture, demonstrating how external user traffic navigates through the AWS cloud boundary and interacts with the internal Kubernetes services.
+
+```mermaid
+graph TB
+    subgraph AWS Cloud Environment
+        subgraph Public Subnet
+            IGW[Internet Gateway]
+            ALB[Application Load Balancer]
+        end
+        
+        subgraph Private Subnet / EKS Cluster
+            ALB -->|Ingress Route| Nginx[NGINX Ingress Controller]
+            
+            subgraph Application Namespace
+                Nginx -->|Route /api| Fast[FastAPI Pods]
+                Nginx -->|Route /| Next[Next.js Pods]
+                Fast -.->|Publish Telemetry| Redis[(Redis Broker)]
+                Fast -->|Read/Write| DB[(PostgreSQL)]
+                Redis -.->|WebSockets| Next
+            end
+            
+            subgraph Observability Namespace
+                Prom[Prometheus Server] -.->|Scrape /metrics| Fast
+                Prom -.->|Scrape /metrics| Next
+                Grafana[Grafana UI] -->|Query PromQL| Prom
+            end
+        end
+    end
+    
+    User((SRE Operator)) -->|HTTPS| IGW
+    IGW --> ALB
+```
+
+#### 6.3.2 Kubernetes Workload and Service Architecture
+Within the EKS cluster, workloads are strictly isolated using Kubernetes Namespaces. Communication between pods does not rely on static IP addresses; instead, it utilizes Kubernetes `ClusterIP` Services acting as internal load balancers.
+
+* **Deployment Workloads:** Define the desired number of pod replicas (e.g., `replicas: 3` for FastAPI).
+* **Service Discovery:** `backend-service` routes traffic dynamically to any healthy FastAPI pod in the ReplicaSet.
+* **Ingress Resource:** Defines the URL path routing rules, funneling external traffic from the Cloud Load Balancer directly to the correct internal Service.
+
+#### 6.3.3 Request and Telemetry Lifecycle
+The following sequence diagram models the highly asynchronous, real-time telemetry lifecycle. It highlights how a backend hardware event is captured, routed through the message broker, and streamed to the frontend dashboard.
+
+```mermaid
+sequenceDiagram
+    participant Worker as AWS EC2 Node
+    participant Fast as FastAPI (Python)
+    participant Redis as Redis Broker
+    participant Next as Next.js (React)
+    participant UI as Operator Dashboard
+    
+    Note over Fast,Next: Persistent WebSocket Connection Established
+    
+    loop Every 1 Second
+        Worker->>Fast: Hardware Metrics (psutil)
+        Fast->>Fast: Serialize to JSON
+        Fast->>Redis: PUBLISH (channel: metrics)
+        Redis-->>Fast: Broadcast to subscribed Pods
+        Fast-->>Next: WebSocket PUSH payload
+        Next-->>UI: Recharts UI Re-render
+    end
+```
+
+### 6.4 Component Interaction and Runtime Behavior
+
+The runtime behavior of Cloud Sentinel is entirely event-driven. 
+* **The CI/CD Event:** Triggered by a Git push. GitHub Actions assumes an ephemeral AWS IAM role via OIDC, runs unit tests, and compiles the Docker image. 
+* **The GitOps Event:** Triggered by ArgoCD's 3-minute polling cycle. When ArgoCD detects a difference between the cluster state and the Git state, it initiates a Kubernetes API call to perform a `RollingUpdate`.
+* **The Telemetry Event:** Triggered by Python `asyncio` loops. FastAPI constantly polls hardware usage, avoiding thread-blocking by immediately offloading the payload to Redis.
+
+### 6.5 Algorithmic Pseudocode
+
+To bridge the gap between architectural theory and software implementation, the following pseudocode blocks document the underlying algorithmic logic executed within the platform's core components.
+
+#### 6.5.1 Real-Time Telemetry Broadcasting (Backend API)
+The backend utilizes asynchronous generators to continuously broadcast data without blocking the main execution thread.
+
+```python
+// Pseudocode: FastAPI Telemetry Generator
+FUNCTION stream_telemetry(websocket_connection):
+    ACCEPT websocket_connection
+    
+    WHILE connection_is_open DO
+        // Fetch real-time hardware statistics
+        cpu_usage = GET_SYSTEM_CPU()
+        memory_usage = GET_SYSTEM_MEMORY()
+        
+        // Construct JSON Payload
+        payload = FORMAT_JSON(cpu=cpu_usage, mem=memory_usage, timestamp=NOW())
+        
+        // Publish to Redis for horizontal scalability
+        AWAIT REDIS.publish("telemetry_channel", payload)
+        
+        // Send payload down the specific WebSocket tunnel
+        AWAIT websocket_connection.send_text(payload)
+        
+        SLEEP(1.0 seconds) // Non-blocking sleep
+    END WHILE
+    
+    ON DISCONNECT:
+        CLOSE websocket_connection
+END FUNCTION
+```
+
+#### 6.5.2 WebSocket Streaming (Frontend Subscription)
+The React frontend leverages Hooks to maintain a persistent connection and dynamically update the UI without browser refreshes.
+
+```javascript
+// Pseudocode: Next.js Real-Time Metrics Hook
+FUNCTION useRealTimeMetrics():
+    STATE metrics_data = EMPTY_ARRAY
+    
+    ON COMPONENT_MOUNT:
+        ws = OPEN_WEBSOCKET("wss://api.cloudsentinel.com/ws")
+        
+        ws.ON_MESSAGE(event):
+            parsed_data = PARSE_JSON(event.data)
+            
+            // Append new data, keeping only the last 60 seconds
+            UPDATE_STATE(metrics_data = APPEND(metrics_data, parsed_data))
+            IF LENGTH(metrics_data) > 60:
+                REMOVE_OLDEST(metrics_data)
+        
+        ws.ON_ERROR(error):
+            LOG "WebSocket Error"
+            ATTEMPT_RECONNECT()
+            
+    ON COMPONENT_UNMOUNT:
+        CLOSE_WEBSOCKET(ws)
+        
+    RETURN metrics_data
+END FUNCTION
+```
+
+#### 6.5.3 GitOps Synchronization Loop (ArgoCD)
+The conceptual logic of ArgoCD's reconciliation engine continuously enforcing declarative infrastructure.
+
+```bash
+// Pseudocode: ArgoCD Reconciliation Loop
+WHILE true DO
+    desired_state = FETCH_YAML_FROM_GITHUB("main")
+    live_state = FETCH_YAML_FROM_KUBERNETES_API()
+    
+    IF desired_state != live_state THEN
+        LOG "Configuration Drift Detected!"
+        
+        // Execute self-healing mechanism
+        EXECUTE "kubectl apply -f desired_state.yaml"
+        
+        WAIT_FOR_ROLLING_UPDATE_COMPLETION()
+        LOG "Cluster successfully synchronized to Git state."
+    ELSE
+        LOG "Cluster is In-Sync."
+    END IF
+    
+    SLEEP(180 seconds) // Standard ArgoCD poll interval
+END WHILE
+```
+
+#### 6.5.4 Monitoring Collection Flow (Prometheus)
+The conceptual configuration logic that allows Prometheus to dynamically discover and scrape ephemeral pods.
+
+```yaml
+# Pseudocode: Prometheus Scrape Configuration
+JOB_NAME: "kubernetes-pods"
+SCRAPE_INTERVAL: "15s"
+
+# Dynamic Discovery Rule
+DISCOVERY_MECHANISM: kubernetes_service_discovery (role=pod)
+
+FILTERING_RULES:
+  IF pod_annotation["prometheus.io/scrape"] == "true":
+      # Dynamically extract port and IP
+      TARGET_PORT = pod_annotation["prometheus.io/port"]
+      TARGET_IP = pod.ip_address
+      
+      # Execute HTTP GET
+      EXECUTE_SCRAPE("http://TARGET_IP:TARGET_PORT/metrics")
+      STORE_IN_TIME_SERIES_DATABASE()
+```
