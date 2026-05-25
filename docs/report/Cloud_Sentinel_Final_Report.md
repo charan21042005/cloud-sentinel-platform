@@ -230,8 +230,7 @@ The following sequence diagram illustrates the automated execution lifecycle of 
 
 ```mermaid
 sequenceDiagram
-    autonumber
-    actor Dev as SRE Engineer
+    participant Dev as SRE Engineer
     participant Git as GitHub (Code)
     participant CI as GitHub Actions
     participant Reg as GHCR (Registry)
