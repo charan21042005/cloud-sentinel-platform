@@ -175,3 +175,78 @@ graph TD
 ```
 
 *Figure 3.2: DFD of the proposed Cloud Sentinel architecture, showcasing the automated CI/CD pipeline, ArgoCD GitOps synchronization, and centralized real-time observability flow.*
+
+---
+
+## 4. Problem Analysis
+
+### 4.1 Product Definition
+The **Cloud Sentinel Platform** is an enterprise-grade, cloud-native DevSecOps and Observability ecosystem designed to simulate and manage the complete software delivery lifecycle. It acts as both the target infrastructure and the monitoring command center. The product is defined by its ability to ingest real-time hardware and application telemetry, visualize it via a high-performance Next.js dashboard, and guarantee zero-downtime, automated deployments using an ArgoCD GitOps engine running on Amazon EKS.
+
+### 4.2 Feasibility Analysis
+
+#### 4.2.1 Technical Feasibility
+The project is highly technically feasible due to its reliance on established, open-source Cloud Native Computing Foundation (CNCF) technologies. The architecture is explicitly designed to avoid vendor lock-in where possible, abstracting compute logic into Docker containers. 
+* **Deployment Feasibility:** The use of declarative Kubernetes manifests (`infrastructure/kubernetes/`) guarantees that the deployment can be recreated across any compatible Kubernetes cluster.
+* **Real-time Feasibility:** The use of Python’s `asyncio` within FastAPI, coupled with a Redis Pub/Sub backend, successfully circumvents traditional blocking I/O constraints, making millisecond WebSocket telemetry highly feasible and scalable.
+
+#### 4.2.2 Operational Feasibility
+Operationally, the platform radically reduces the administrative overhead historically associated with software deployment. By adopting a pure GitOps methodology, operations become deterministic. If a Kubernetes node fails, the EKS control plane automatically reschedules the pods. If a manifest is altered manually, ArgoCD’s reconciliation loop overwrites it with the Git-defined state. The operational feasibility is further solidified by replacing heavy, self-hosted CI tools (like Jenkins) with serverless GitHub Actions, effectively pushing the CI/CD compute burden to a SaaS provider.
+
+#### 4.2.3 Economic Feasibility
+Cloud-native infrastructure can suffer from runaway costs if not properly architected. The Cloud Sentinel platform addresses economic feasibility through strategic engineering:
+* **Right-Sizing:** Utilizing cost-effective `t3.small` EC2 instances for the EKS worker nodes.
+* **VPC CNI Prefix Delegation:** Implemented in Terraform to bypass the Elastic Network Interface (ENI) limits of smaller EC2 instances, allowing high pod density (maximized resource utilization) without paying for larger instances.
+* **Open Source Stack:** By utilizing the open-source Prometheus/Grafana stack instead of enterprise SaaS monitoring tools (like Datadog or New Relic), the project eliminates massive telemetry ingestion costs.
+
+### 4.3 Engineering Decisions and Architecture Reasoning
+
+The Cloud Sentinel architecture is governed by specific, implementation-aware engineering decisions. Each technology was selected to solve a distinct operational deployment challenge.
+
+#### 4.3.1 Why FastAPI? (Asynchronous Telemetry)
+Traditional Python frameworks like Django or Flask utilize synchronous, blocking workers (WSGI). If an operator holds a persistent connection open for real-time telemetry, traditional frameworks quickly exhaust their worker pools, causing server gridlock. **FastAPI** was chosen because it implements the Asynchronous Server Gateway Interface (ASGI). This allows a single FastAPI worker to concurrently manage thousands of persistent WebSocket connections using non-blocking event loops, making it the mathematically superior choice for real-time SRE dashboards.
+
+#### 4.3.2 Why Redis? (Pub/Sub Event Broker)
+In a Kubernetes cluster, the backend is scaled horizontally across multiple pods. If a user connects to Pod A via WebSockets, and a telemetry alert is generated on Pod B, Pod A has no knowledge of it. **Redis Pub/Sub** was implemented as the high-speed nervous system. When any backend pod generates an alert, it publishes the JSON payload to a Redis channel. Every connected FastAPI pod subscribes to this channel, instantly receiving the data and broadcasting it down their active WebSocket connections to the frontend.
+
+#### 4.3.3 Why Kubernetes (EKS)? (Container Orchestration)
+Docker alone cannot manage networking, load balancing, or failovers across multiple virtual machines. **Amazon EKS (Kubernetes)** was selected to orchestrate the containers. Kubernetes constantly monitors the *desired state* vs. the *actual state*. If an API Gateway pod crashes, the Kubernetes Control Plane detects the failure and immediately schedules a replacement pod. Furthermore, it natively handles internal DNS resolution (e.g., `redis-master.default.svc.cluster.local`), eliminating hard-coded IP addresses.
+
+#### 4.3.4 Why Terraform? (Infrastructure as Code)
+Manually creating VPCs, Subnets, Internet Gateways, and EKS clusters in the AWS Console is irreproducible and vulnerable to human error. **Terraform** was used to define the entire cloud foundation declaratively. If the infrastructure is destroyed, running `terraform apply` exactly recreates the 10.0.0.0/16 VPC network architecture, the public/private subnet routing tables, and the worker nodes in under 15 minutes.
+
+#### 4.3.5 Why GitHub Actions & Docker? (Immutable Artifacts)
+To prevent "it works on my machine" failures, the CI pipeline leverages **Docker Buildx** within **GitHub Actions**. Upon every commit, GitHub Actions clones the repository, runs Vitest security audits, and builds a production-ready Next.js Docker image. This image is tagged with the unique Git Commit SHA. This guarantees that the exact binary tested in CI is the identical binary running in production. The immutable container is then pushed to the GitHub Container Registry (`ghcr.io`).
+
+#### 4.3.6 Why GitOps (ArgoCD)? (Reconciliation)
+Pushing deployments from CI pipelines to Kubernetes requires giving GitHub highly privileged access to the production cluster, posing a massive security risk. Instead, **ArgoCD** was installed inside the cluster. Operating on a GitOps Pull-model, ArgoCD watches the repository. When the pipeline updates the `deployment.yaml` with a new Docker image tag, ArgoCD detects the Git commit and pulls the new manifest down, orchestrating a zero-downtime Rolling Update safely from *inside* the firewall.
+
+#### 4.3.7 Why Prometheus & Grafana? (Centralized Observability)
+In a microservices ecosystem, logs and metrics are scattered across ephemeral containers. **Prometheus** was implemented because it utilizes a "pull" architecture, dynamically discovering Kubernetes targets via ServiceMonitors and scraping them every 15 seconds. This multidimensional time-series data is then centralized into **Grafana**, providing operators with a single unified dashboard to monitor node CPU utilization, ingress network throughput, and application latency.
+
+### 4.4 Runtime Lifecycle Explanation
+
+The following sequence diagram illustrates the automated execution lifecycle of the Cloud Sentinel ecosystem during a standard operational update.
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Dev as SRE Engineer
+    participant Git as GitHub (Code)
+    participant CI as GitHub Actions
+    participant Reg as GHCR (Registry)
+    participant Argo as ArgoCD (Cluster)
+    participant K8s as EKS Control Plane
+    
+    Dev->>Git: 1. git push (Frontend Update)
+    Git-->>CI: 2. Webhook Triggers Pipeline
+    Note over CI: npm ci & vitest coverage
+    CI->>Reg: 3. docker push <commit-sha>
+    CI->>Git: 4. sed -i (Updates deployment.yaml with new SHA)
+    Git-->>Argo: 5. Git drift detected
+    Argo->>K8s: 6. Apply new Deployment Manifest
+    K8s->>K8s: 7. Execute RollingUpdate
+    Note over K8s: Terminates old pods smoothly,<br/>spins up new pods with new SHA.
+```
+
+*Figure 4.1: The End-to-End DevSecOps Runtime Lifecycle, detailing the strictly ordered flow from a local Git commit to a zero-downtime Kubernetes deployment managed by ArgoCD.*
