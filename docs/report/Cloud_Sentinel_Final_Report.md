@@ -706,3 +706,119 @@ The modular, decoupled nature of the Cloud Sentinel Platform allows for extensiv
 * **OpenTelemetry Standardization:** As the observability landscape shifts, future iterations of the platform should migrate from Prometheus-specific SDKs to vendor-agnostic OpenTelemetry (OTel) collectors, which provide superior distributed tracing capabilities across multiple languages.
 * **Advanced Autoscaling:** Currently, scaling is based on rudimentary metrics like CPU utilization. Future enhancements will integrate KEDA (Kubernetes Event-driven Autoscaling) to scale pods based on external events, such as the length of the Redis Pub/Sub message queue.
 * **AI-Powered Observability (AIOps):** The ultimate evolution of the platform would involve piping the Prometheus time-series data into machine learning algorithms. Instead of relying on static Grafana alerts (e.g., "Alert if CPU > 85%"), an AIOps engine could learn the cluster's baseline behavior and predictively auto-scale or alert on anomalies before an outage occurs.
+
+---
+
+## 10. User Manual
+
+### 10.1 Introduction
+This user manual provides beginner-friendly, step-by-step instructions for deploying, operating, and troubleshooting the Cloud Sentinel Platform. It serves as the primary operational guide for engineers aiming to replicate or manage the environment either locally or in a production AWS cloud cluster.
+
+### 10.2 Local Development & Testing (Docker Compose)
+Running the platform locally is the fastest way to verify application logic without incurring AWS cloud costs.
+
+**Prerequisites:** Ensure you have Docker Desktop and Git installed on your host machine.
+
+1. **Clone the Repository:**
+   ```bash
+   git clone https://github.com/charan21042005/cloud-sentinel-platform.git
+   cd cloud-sentinel-platform
+   ```
+2. **Start the Local Containers:**
+   Run the following command to build the Docker images and start the orchestrated network in detached mode:
+   ```bash
+   docker-compose up --build -d
+   ```
+3. **Accessing Localhost Services:**
+   Once the containers are running, access the services via your web browser:
+   * **Frontend Dashboard:** `http://localhost:3000`
+   * **Backend API Swagger UI:** `http://localhost:8000/docs`
+   * **Redis CLI:** Execute `docker exec -it redis-master redis-cli` to inspect Pub/Sub channels directly.
+
+*(Note for Report: Insert a screenshot here showing the terminal output of a successful `docker-compose up` or the Docker Desktop UI.)*
+`[Insert Screenshot here: Terminal showing successful Docker Compose container creation]`
+
+### 10.3 Cloud Provisioning & Kubernetes Deployment
+To deploy the platform into a production environment, follow these steps to provision the AWS infrastructure and synchronize it via ArgoCD.
+
+**Prerequisites:** AWS CLI configured with administrative credentials, Terraform CLI, and `kubectl` installed.
+
+1. **Provision AWS Infrastructure (Terraform):**
+   ```bash
+   cd infrastructure/terraform
+   terraform init
+   terraform apply --auto-approve
+   ```
+2. **Connect `kubectl` to the EKS Cluster:**
+   Once Terraform finishes (approx. 15 minutes), bind your local terminal to the new Kubernetes cluster:
+   ```bash
+   aws eks update-kubeconfig --region <your-region> --name cloud-sentinel-cluster
+   ```
+3. **Install ArgoCD:**
+   Apply the official ArgoCD manifests to the cluster:
+   ```bash
+   kubectl create namespace argocd
+   kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+   ```
+4. **Deploy Cloud Sentinel via GitOps:**
+   Apply the root application manifest to tell ArgoCD to deploy the project:
+   ```bash
+   kubectl apply -f infrastructure/kubernetes/argocd-root-app.yaml
+   ```
+
+### 10.4 Observability Access & Dashboard Usage
+Because monitoring tools are situated within private Kubernetes namespaces, they are not exposed to the public internet by default for security purposes. Operators must port-forward traffic from the cluster to their `localhost`.
+
+**1. Accessing Prometheus:**
+To view raw metrics and active scraping targets:
+```bash
+kubectl port-forward svc/prometheus-server -n observability 9090:80
+```
+* **URL:** Navigate to `http://localhost:9090`
+* **Operational Verification:** Click on `Status -> Targets` to ensure the FastAPI and Next.js pods are marked as "UP".
+
+**2. Accessing Grafana:**
+To view the centralized SRE dashboards:
+```bash
+kubectl port-forward svc/grafana -n observability 3000:80
+```
+* **URL:** Navigate to `http://localhost:3000`
+* **Dashboard Usage:** Login with the default credentials (usually `admin`/`admin` unless changed in secrets). Select the "Cloud Sentinel Overview" dashboard to view real-time Node CPU spikes and incoming network throughput.
+
+*(Note for Report: Insert a screenshot here showing the operator successfully logging into Grafana and viewing the active dashboard.)*
+`[Insert Screenshot here: Grafana Dashboard displaying live telemetry]`
+
+### 10.5 API Testing & Operational Verification
+You can verify the backend is functioning correctly by querying the API endpoints directly.
+
+1. **Health Check Verification:**
+   ```bash
+   curl -X GET http://localhost:8000/health
+   # Expected Output: {"status": "healthy"}
+   ```
+2. **WebSocket Telemetry Verification:**
+   Use the `wscat` tool to test the live streaming connection:
+   ```bash
+   wscat -c ws://localhost:8000/ws
+   # Expected Output: Continuous stream of JSON payloads every 1 second containing CPU and Memory metrics.
+   ```
+
+### 10.6 Troubleshooting Guidance
+If the platform experiences degradation, utilize the following steps to diagnose the issue:
+
+* **Pod is stuck in `CrashLoopBackOff`:**
+  The container is repeatedly crashing. View the logs to find the exact Python or Node.js error:
+  ```bash
+  kubectl logs <failing-pod-name> -n application
+  ```
+  If the logs are empty, describe the pod to see if it failed a Readiness probe or lacked memory:
+  ```bash
+  kubectl describe pod <failing-pod-name> -n application
+  ```
+* **ArgoCD App is `OutOfSync`:**
+  If ArgoCD shows the app is out of sync, click the "Sync" button in the ArgoCD UI. If it fails, check the Git repository's recent commit history to ensure a malformed YAML file was not merged into the `main` branch.
+* **Terraform State is Locked:**
+  If a previous `terraform apply` crashed mid-execution, the state file may be locked. Manually unlock it using:
+  ```bash
+  terraform force-unlock <lock-id>
+  ```
