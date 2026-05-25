@@ -536,3 +536,65 @@ FILTERING_RULES:
       EXECUTE_SCRAPE("http://TARGET_IP:TARGET_PORT/metrics")
       STORE_IN_TIME_SERIES_DATABASE()
 ```
+
+---
+
+## 7. Testing
+
+### 7.1 Introduction to DevSecOps Testing
+Testing a cloud-native platform like Cloud Sentinel requires a methodology far more expansive than traditional software testing. While legacy testing often stops at validating the source code logic (Functional Testing), a DevSecOps platform requires rigorous verification of the infrastructure, the security posture, the container orchestration, and the CI/CD pipelines. In Cloud Sentinel, "Testing" is defined as the continuous validation of both the application state and the infrastructure state.
+
+### 7.2 Levels of Testing
+The project implements a multi-tiered testing strategy to isolate faults at every level of the stack:
+
+1. **Unit Testing:** At the lowest level, testing focuses on individual application components. For example, verifying that the React frontend correctly renders state changes when passed mock telemetry data.
+2. **Integration Testing:** Validating that microservices communicate correctly. This includes testing the FastAPI connection to the Redis Pub/Sub broker and the PostgreSQL database.
+3. **Infrastructure Testing (Static Analysis):** Validating the syntax and execution plans of declarative code. This ensures that a malformed Kubernetes YAML manifest or a misconfigured Terraform file cannot corrupt the production cluster.
+4. **End-to-End (E2E) Pipeline Testing:** Validating the complete automation lifecycle. A simulated code push is tracked from the GitHub commit, through the GitHub Actions runner, into the Docker registry, and finally verified via ArgoCD synchronization in the live cluster.
+
+### 7.3 Testing the Project: Methodologies and Validation
+
+#### 7.3.1 Application Testing (Frontend & Backend)
+* **Structural Testing (Frontend):** The Next.js frontend utilizes **Vitest** during the CI/CD pipeline to perform structural unit tests. These tests mount React components in a headless environment to ensure critical UI elements (such as the Recharts telemetry graphs) do not break during code updates.
+* **API & WebSocket Validation (Backend):** Functional testing of the FastAPI backend is achieved using tools like `cURL` for standard HTTP GET requests (e.g., verifying the `/health` endpoint) and tools like `wscat` to establish CLI-based WebSocket connections, verifying that JSON payloads are broadcasted at the exact 1-second interval.
+
+#### 7.3.2 Infrastructure and Orchestration Validation
+* **Kubernetes Validation:** Executed using the `kubectl` CLI. Tests involve asserting that pods successfully transition to the `Running` state. Furthermore, Kubernetes **Readiness Probes** and **Liveness Probes** are configured to automatically test if the FastAPI pod is actively accepting traffic before the load balancer routes requests to it.
+* **Terraform Validation:** Prior to any infrastructure mutation, `terraform plan` is executed to perform a dry-run. This command validates the HCL syntax and calculates the exact "diff" of AWS resources that will be created, modified, or destroyed, preventing accidental cloud deletions.
+
+#### 7.3.3 CI/CD & GitOps Verification
+* **CI/CD Security & Build Validation:** GitHub Actions acts as the automated test runner. The pipeline is tested by triggering a push and verifying that the OIDC integration successfully fetches an ephemeral AWS STS token, proving that no static AWS keys are hardcoded.
+* **GitOps Reconciliation Testing:** ArgoCD is tested by intentionally introducing "Configuration Drift." An operator manually modifies a live Kubernetes deployment (e.g., `kubectl scale deployment frontend --replicas=10`). ArgoCD passes the test if it detects the drift and automatically scales the deployment back down to match the desired state defined in Git.
+
+#### 7.3.4 Observability & Ingress Testing
+* **Prometheus & Container Validation:** Tested by port-forwarding the Prometheus pod (`kubectl port-forward svc/prometheus 9090:9090`) and checking the `/targets` dashboard to ensure Prometheus has successfully discovered and is actively scraping the backend and frontend Docker containers.
+* **Ingress & Authentication Testing:** NGINX Ingress rules are validated by performing HTTP requests against the external Cloud Load Balancer DNS name, ensuring that `/api` traffic correctly terminates at the FastAPI pods and `/` traffic routes to the Next.js frontend without CORS errors.
+
+### 7.4 Test Case Specifications
+
+The following tables detail the specific, actionable test cases executed to validate the production readiness of the Cloud Sentinel Platform.
+
+#### Table 7.1: Application & API Test Cases
+| Test ID | Component | Test Description | Validation Method | Expected Output | Status |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **TC-01** | Backend | Verify FastAPI health-check endpoint. | Execute `curl http://<api-url>/health` | HTTP 200 OK. Returns `{"status": "healthy"}` | Pass |
+| **TC-02** | Backend | Verify WebSocket real-time telemetry broadcast. | Connect using `wscat -c wss://<api-url>/ws` | Streams JSON CPU/Memory data every 1s. | Pass |
+| **TC-03** | Frontend | Verify Next.js component rendering in CI. | Run `npm run test` (Vitest) in pipeline. | All DOM component tests execute successfully. | Pass |
+| **TC-04** | Backend | Verify Redis Pub/Sub connectivity. | Trigger event on Pod A, listen on Pod B. | Pod B instantly receives published event. | Pass |
+
+#### Table 7.2: Kubernetes & Infrastructure Test Cases
+| Test ID | Component | Test Description | Validation Method | Expected Output | Status |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **TC-05** | EKS Cluster | Verify Kubernetes worker node scaling. | Run `kubectl get nodes` | 2 healthy `t3.small` nodes in `Ready` state. | Pass |
+| **TC-06** | EKS Pods | Verify Liveness/Readiness probes. | Run `kubectl describe pod <backend-pod>` | Probes return HTTP 200; Pod marked `Ready`. | Pass |
+| **TC-07** | Networking| Verify NGINX Ingress routing rules. | Navigate to public Load Balancer URL. | Frontend UI loads; API fetches data without 404s. | Pass |
+| **TC-08** | Terraform | Validate AWS VPC and Subnet creation. | Run `terraform plan` | Plan executes cleanly; 0 errors in HCL syntax. | Pass |
+
+#### Table 7.3: CI/CD, GitOps, and Observability Test Cases
+| Test ID | Component | Test Description | Validation Method | Expected Output | Status |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **TC-09** | CI/CD | Verify GitHub Actions Docker image build. | Push code to `main` branch. | Workflow passes; Image pushed to GHCR (`ghcr.io`). | Pass |
+| **TC-10** | CI/CD | Verify secure AWS OIDC Authentication. | Inspect GitHub Actions workflow logs. | AWS STS issues temporary token; successful login. | Pass |
+| **TC-11** | GitOps | Verify ArgoCD drift reconciliation. | Manually delete a live pod via `kubectl`. | ArgoCD instantly spins up a replacement pod. | Pass |
+| **TC-12** | Monitor | Verify Prometheus dynamic service discovery. | View Prometheus `/targets` endpoint. | App pods show as `UP` with `15s` scrape intervals. | Pass |
+| **TC-13** | Monitor | Verify Grafana dashboard telemetry mapping. | Run a CPU stress test inside a worker pod. | Grafana CPU dashboard spikes in real-time. | Pass |
