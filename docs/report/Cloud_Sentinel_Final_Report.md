@@ -477,37 +477,71 @@ The Cloud Sentinel Platform has achieved its primary operational goals, successf
 
 ## 10. User Manual
 
-### 10.1 Local Development & Testing (Docker Compose)
+### 10.1 Local Orchestration & Containerization (Docker Compose)
+To rapidly test the application logic and observability pipelines without incurring cloud compute costs, the platform can be executed locally via Docker Compose.
 
-Running the platform locally is the fastest way to verify application logic.
+**1. Initialize the Container Stack:**
+Navigate to the project root and execute the following commands to build and start the core application and monitoring infrastructure:
+```bash
+cd cloud-sentinel-platform
+docker compose -f infrastructure/docker/docker-compose.yml up -d --build
+docker compose -f infrastructure/docker/docker-compose.yml -f infrastructure/docker/docker-compose.monitoring.yml up -d --build
+```
 
-1. **Clone the Repository:** `git clone https://github.com/charan21042005/cloud-sentinel-platform.git`
-2. **Start Local Containers:** `docker-compose up --build -d`
-3. **Access Services:**
-   * Frontend Dashboard: `http://localhost:3000`
-   * Backend API Swagger: `http://localhost:8000/docs`
+**2. Verify Container Health:**
+Ensure all critical components are running via `docker ps`. The stack includes:
+*   **sentinel-api-gateway:** FastAPI backend on port `8000`.
+*   **sentinel-frontend:** Next.js dashboard on port `3001`.
+*   **sentinel-postgres:** Relational database on port `5432`.
+*   **sentinel-redis:** Message broker on port `6379`.
+*   **sentinel-prometheus & grafana:** Observability stack on ports `9090` and `3002`.
 
-### 10.2 Cloud Provisioning & Kubernetes Deployment
+### 10.2 Kubernetes Provisioning & GitOps Synchronization
+For production-grade simulation, the platform utilizes Minikube to emulate an Amazon EKS environment locally, avoiding unnecessary AWS infrastructure billing during demonstrations.
 
-1. **Provision AWS Infrastructure:**
-   ```bash
-   cd infrastructure/terraform
-   terraform init && terraform apply --auto-approve
-   ```
-2. **Connect to the EKS Cluster:** `aws eks update-kubeconfig --region <region> --name cloud-sentinel-cluster`
-3. **Deploy via GitOps (ArgoCD):** `kubectl apply -f infrastructure/kubernetes/argocd-root-app.yaml`
+**1. Initialize Kubernetes Cluster:**
+```bash
+minikube start --driver=docker
+```
+
+**2. Deploy ArgoCD (GitOps Engine):**
+```bash
+kubectl apply -k infrastructure/kubernetes/gitops/argocd
+kubectl -n argocd wait --for=condition=available deployment/argocd-server --timeout=180s
+```
+
+**3. Apply the App-of-Apps Architecture:**
+```bash
+kubectl apply -k infrastructure/kubernetes/gitops/apps
+```
+
+**4. Access the GitOps Dashboard:**
+```bash
+kubectl -n argocd port-forward svc/argocd-server 8099:80
+```
+*(Default Credentials — Username: `admin` | Password: `XytX-1XbQ2tcbIbX`)*
 
 ### 10.3 Observability Access & Operational Verification
+Once the DevSecOps pipeline is running, the following endpoints provide comprehensive visibility into the system's state:
 
-* **Access Grafana Dashboard:** `kubectl port-forward svc/grafana -n observability 3000:80`
-* **API Health Check:** `curl -X GET http://localhost:8000/health`
-* **WebSocket Test:** `wscat -c ws://localhost:8000/ws`
+**Application Endpoints:**
+*   **Frontend Dashboard:** `http://localhost:3001/dashboard`
+*   **API Swagger Documentation:** `http://localhost:8000/docs`
+
+**Telemetry Endpoints:**
+*   **Prometheus Targets:** `http://localhost:9090/targets`
+*   **Grafana Dashboards:** `http://localhost:3002` *(Credentials: `admin` / `sentinel_admin`)*
+*   **Database Browser (Adminer):** `http://localhost:8888`
+
+**System Health Checks:**
+*   **API Health:** `curl http://localhost:8000/health`
+*   **Database Health:** `curl http://localhost:8000/health/database`
+*   **Redis Broker Health:** `curl http://localhost:8000/health/redis`
 
 ### 10.4 Troubleshooting Guidance
-
-* **Pod CrashLoopBackOff:** View container logs using `kubectl logs <pod-name> -n application`.
-* **ArgoCD OutOfSync:** Check the Git repository's recent commit history to ensure malformed YAML was not merged into the `main` branch.
-* **Terraform State Locked:** Manually unlock the state using `terraform force-unlock <lock-id>`.
+*   **Container Failures:** Utilize `docker logs <container-name>` to debug runtime exceptions in the local stack.
+*   **ArgoCD OutOfSync State:** Ensure the local Kubernetes cluster has outbound internet access to pull the latest YAML manifests from the GitHub repository.
+*   **AWS Infrastructure Conflicts:** To prevent runaway cloud costs, ensure `terraform apply` is not executed unless explicitly testing the cloud boundary. The local Minikube cluster serves as a cost-effective replica of the EKS production environment.
 
 ---
 
