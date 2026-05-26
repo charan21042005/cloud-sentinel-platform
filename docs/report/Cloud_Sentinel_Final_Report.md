@@ -155,7 +155,7 @@ The proposed Cloud Sentinel system overhauls the legacy architecture by introduc
 * **Prometheus & Grafana:** Prometheus actively scrapes metrics from all nodes and pods, storing them in a time-series database for centralized visualization in Grafana.
 * **Redis Pub/Sub & WebSockets:** Real-time telemetry is streamed instantaneously from the backend to the frontend.
 
-### 3.5 Proposed System Architecture Flow
+##### 3.5 Proposed System Architecture Flow
 
 ```mermaid
 graph TD
@@ -277,13 +277,12 @@ The Software Requirement Analysis phase defines the foundational capabilities an
 * **Availability:** Updates must utilize Kubernetes RollingUpdates, ensuring the new application version is healthy (passing Readiness Probes) before terminating old pods.
 * **Security:** Sensitive credentials must be injected into pods at runtime as Kubernetes Secrets. The CI pipeline must use OpenID Connect (OIDC) for temporary AWS STS tokens, eliminating hardcoded keys.
 
-### 5.3 Requirement Specifications Tables
+#### 5.3 Requirement Specifications Tables
 
 **Table 5.1: Software & Framework Requirements**
 
 | Component      | Technology / Framework | Minimum Version | Operational Role                          |
 | :------------- | :--------------------- | :-------------- | :---------------------------------------- |
-| Frontend       | Next.js / React        | 14.x            | Real-time observability dashboard UI.     |
 | Backend        | FastAPI (Python)       | 3.11+           | High-throughput asynchronous API.         |
 | Database       | PostgreSQL             | 15.x            | Persistent relational storage.            |
 | Message Broker | Redis                  | 7.x             | High-speed Pub/Sub broker for WebSockets. |
