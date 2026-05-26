@@ -4,30 +4,36 @@
 
 ### 1.1 The Evolution of Cloud-Native Infrastructure
 The paradigm of software engineering has undergone a tectonic shift over the last decade, migrating from monolithic architectures deployed on bare-metal servers to highly distributed, microservices-based, cloud-native ecosystems. While this transition has unlocked unprecedented scalability, fault tolerance, and rapid feature delivery, it has simultaneously introduced an astronomical level of infrastructure complexity. In modern cloud engineering, applications are no longer statically bound to specific IP addresses or physical machines; they are ephemeral, containerized workloads that spin up and down dynamically across vast clusters of compute nodes. 
+The paradigm of software engineering has undergone a tectonic shift over the last decade, migrating from monolithic architectures deployed on bare-metal servers to highly distributed, microservices-based, cloud-native ecosystems. While this transition has unlocked unprecedented scalability, fault tolerance, and rapid feature delivery, it has simultaneously introduced an astronomical level of infrastructure complexity. In modern cloud engineering, applications are no longer statically bound to specific IP addresses or physical machines; they are ephemeral, containerized workloads that spin up and down dynamically across vast clusters of compute nodes.
 
 This dynamic nature necessitates specialized orchestration platforms, primarily Kubernetes, to manage the scheduling, networking, and lifecycle of these containers. However, adopting Kubernetes does not merely change where code runs—it fundamentally alters how engineering teams must approach deployment, security, and maintenance. The Cloud Sentinel Platform was conceived precisely at the intersection of these modern operational challenges, designed as a comprehensive, enterprise-grade DevSecOps and observability ecosystem that simulates and solves the real-world complexities faced by Site Reliability Engineering (SRE) teams in production environments.
 
 ### 1.2 Modern DevOps and Automation Challenges
-Historically, software deployment was a highly manual, error-prone process characterized by "wall-of-confusion" bottlenecks between development and operations teams. Developers would write code locally and pass it to operations engineers, who frequently struggled to run it in production due to environmental discrepancies. The advent of Docker containerization resolved the dependency matrix by packaging the application and its runtime environment into an immutable artifact. However, containerization alone is insufficient for enterprise-scale deployments. 
 
-Modern DevOps demands rigorous automation to eliminate human intervention from the deployment lifecycle. Traditional Continuous Integration and Continuous Deployment (CI/CD) pipelines are evolving towards SaaS-based, declarative workflows (such as GitHub Actions). Yet, pushing code directly into a Kubernetes cluster via traditional CI pipelines presents severe security and configuration-drift risks. If an engineer manually alters a production server to quickly fix a bug, the live state diverges from the source code repository. 
+Historically, software deployment was a highly manual, error-prone process characterized by "wall-of-confusion" bottlenecks between development and operations teams. Developers would write code locally and pass it to operations engineers, who frequently struggled to run it in production due to environmental discrepancies. The advent of Docker containerization resolved the dependency matrix by packaging the application and its runtime environment into an immutable artifact. However, containerization alone is insufficient for enterprise-scale deployments.
+
+Modern DevOps demands rigorous automation to eliminate human intervention from the deployment lifecycle. Traditional Continuous Integration and Continuous Deployment (CI/CD) pipelines are evolving towards SaaS-based, declarative workflows (such as GitHub Actions). Yet, pushing code directly into a Kubernetes cluster via traditional CI pipelines presents severe security and configuration-drift risks. If an engineer manually alters a production server to quickly fix a bug, the live state diverges from the source code repository.
 
 The Cloud Sentinel project directly tackles this challenge by implementing an advanced GitOps architecture utilizing ArgoCD. By adopting a pull-based model, the Kubernetes cluster autonomously reaches out to the Git repository to pull the desired state, effectively making Git the single, irrefutable source of truth. If any manual drift occurs in the cluster, the system automatically detects the anomaly and executes a self-healing reconciliation loop to restore the infrastructure to its version-controlled state.
 
 ### 1.3 The Criticality of Observability in Distributed Systems
+
 As monolithic applications fracture into hundreds of microservices, traditional monitoring strategies become fundamentally obsolete. A distributed system can experience partial degradation—where the database is healthy, the frontend is serving files, but a specific asynchronous background worker has silently crashed. This necessitates a paradigm shift from mere monitoring to true observability.
 
 Observability is the measure of how well internal states of a system can be inferred from knowledge of its external outputs. In the context of Cloud Sentinel, observability is treated as a primary architectural pillar. The platform implements a robust telemetry pipeline leveraging the industry-standard Prometheus and Grafana stack. This architecture allows for the proactive scraping of multi-dimensional time-series metrics—ranging from raw CPU and memory utilization on the AWS EC2 worker nodes to application-level latency within the FastAPI backend. Furthermore, by integrating Promtail and Loki, the system achieves centralized, label-based log aggregation, ensuring that when an ephemeral container terminates, its forensic logs are preserved and instantly searchable.
 
 ### 1.4 Real-Time Telemetry and Operational Visibility
+
 A core limitation of many existing observability dashboards is their reliance on HTTP polling mechanisms, where a web browser must continuously refresh to request new data. In high-stakes SRE environments, latency in detecting an anomaly can result in severe system degradation.
 
 To resolve this latency, Cloud Sentinel features a sophisticated telemetry pipeline. Instead of static dashboards, the platform implements a Next.js React frontend that establishes persistent, full-duplex WebSocket connections directly to the Python FastAPI backend. When backend services generate telemetry, the data is pushed into a Redis Pub/Sub (Publish/Subscribe) broker. This architecture ensures that regardless of which Kubernetes pod generates an alert, the event is broadcasted across the cluster and pushed instantaneously to the operator's interface, resulting in a dynamic, live-updating incident command center.
 
 ### 1.5 Motivation and Scope of the Project
-The primary motivation behind the Cloud Sentinel Platform is to bridge the gap between theoretical cloud computing concepts and the practical realities of enterprise engineering. While many academic projects focus solely on application logic, Cloud Sentinel is an infrastructure-first project where the application (the observability dashboard) serves to validate the underlying DevOps automation. 
+
+The primary motivation behind the Cloud Sentinel Platform is to bridge the gap between theoretical cloud computing concepts and the practical realities of enterprise engineering. While many academic projects focus solely on application logic, Cloud Sentinel is an infrastructure-first project where the application (the observability dashboard) serves to validate the underlying DevOps automation.
 
 The scope of this study encompasses the entire software delivery lifecycle:
+
 1. **Local Orchestration:** Ensuring deterministic developer environments using Docker Compose.
 2. **Infrastructure as Code (IaC):** Eliminating manual cloud console operations by programmatically provisioning AWS Virtual Private Clouds (VPCs), NAT Gateways, and EKS clusters using Terraform.
 3. **Automated CI/CD:** Building strict GitHub Actions pipelines that enforce automated testing, image building, and cryptographic OIDC authentication with AWS.
@@ -41,18 +47,22 @@ In summary, Cloud Sentinel serves as a holistic demonstration of modern Site Rel
 ## 2. Profile of the Problem, Rationale, and Scope of the Study
 
 ### 2.1 The Limitations of Traditional Operations
+
 Before the widespread adoption of cloud-native methodologies, organizations managed IT infrastructure through highly manual, fragmented, and inefficient processes. As applications scale to serve global user bases, traditional paradigms fracture under the weight of operational complexity. The core problem this project seeks to address is the operational fragility that occurs when modern distributed software is managed using legacy infrastructure practices.
 
 The industry faces severe limitations across multiple operational axes:
+
 * **Manual Deployments & Human Error:** Deploying updates historically involved an engineer connecting via SSH to production servers to execute installation scripts. This intervention is notoriously error-prone, undocumented, and difficult to roll back during a critical failure.
 * **Infrastructure Inconsistency:** Without Infrastructure as Code (IaC), each server is configured manually over time. When a server crashes, reproducing its exact state is nearly impossible, leading to prolonged outages and "snowflake" environments that are too delicate to upgrade.
 * **Resource Inefficiency:** Monolithic applications running on static virtual machines cannot scale their specific bottlenecks independently, resulting in massive hardware over-provisioning and wasted capital expenditure.
 * **Fragmented Observability:** When a microservices architecture spans dozens of nodes, tracking an error requires searching through isolated silos. Traditional monitoring tools fragment logs, metrics, and network traces, preventing engineers from diagnosing systemic cascading failures efficiently.
 
 ### 2.2 Rationale of the Study: The Cloud Sentinel Solution
+
 The rationale behind the Cloud Sentinel Platform is to construct a unified architecture that categorically eliminates these traditional limitations. This study proposes an interconnected platform where automation, orchestration, and observability form a continuous feedback loop.
 
 Cloud Sentinel resolves legacy bottlenecks through the following paradigms:
+
 1. **Real-Time Telemetry:** By abandoning legacy HTTP polling in favor of persistent WebSocket connections and a Redis Pub/Sub backbone, operational telemetry is surfaced to the dashboard in milliseconds.
 2. **Kubernetes Orchestration:** Ephemeral Docker containers are orchestrated by Amazon EKS (Elastic Kubernetes Service), which inherently solves scaling issues. Kubernetes can independently auto-scale specific microservices based on exact CPU or memory constraints, while its reconciliation loop automatically restarts crashed containers.
 3. **CI/CD Automation:** The implementation of GitHub Actions eradicates manual deployment risks. Every code push is intercepted by an automated workflow that runs deterministic security audits, builds container images, and securely pushes them to a registry via OIDC.
@@ -60,15 +70,18 @@ Cloud Sentinel resolves legacy bottlenecks through the following paradigms:
 5. **Observability Centralization:** The Prometheus Operator scrapes time-series metrics across all nodes, Promtail aggregates logs from ephemeral containers into Loki, and Grafana serves as the single pane of glass for all SRE visualization.
 
 ### 2.3 Problem Statement
+
 *As enterprise applications transition into distributed, cloud-native microservices, traditional manual deployment strategies, fragmented monitoring tools, and static infrastructure provisioning result in severe operational fragility, configuration drift, and prolonged incident resolution times. There is an imperative need for a unified platform that securely automates the entire software deployment lifecycle while providing centralized, real-time observability into the health and performance of the underlying distributed architecture.*
 
 ### 2.4 Project Scope and Operational Goals
-The scope of the Cloud Sentinel Platform focuses strictly on the operational engineering layer—the deployment, scaling, security, and monitoring of distributed services. 
+
+The scope of the Cloud Sentinel Platform focuses strictly on the operational engineering layer—the deployment, scaling, security, and monitoring of distributed services.
 
 **Target Users:**
-Site Reliability Engineers (SREs), DevOps practitioners, and Cloud Architects who require deep, real-time visibility into complex cloud-native architectures. 
+Site Reliability Engineers (SREs), DevOps practitioners, and Cloud Architects who require deep, real-time visibility into complex cloud-native architectures.
 
 **Operational Objectives:**
+
 * To achieve **zero-downtime deployments** by leveraging Kubernetes RollingUpdates alongside rigorous Readiness and Liveness probes.
 * To enforce **declarative infrastructure management** where 100% of the AWS infrastructure and application configurations are defined as code.
 * To establish **end-to-end telemetry visibility**, ensuring metrics from hardware nodes, network gateways, databases, and application code are aggregated into a unified real-time dashboard.
@@ -81,20 +94,25 @@ By fulfilling these objectives, the Cloud Sentinel project proves the viability 
 ## 3. Existing System vs. Proposed Architecture
 
 ### 3.1 Introduction to the Existing System
+
 To fully contextualize the architectural improvements introduced by the Cloud Sentinel Platform, it is necessary to examine the methodologies that historically governed software deployments. The "Existing System" refers to legacy, pre-cloud-native approaches characterized by monolithic applications, manual operational pipelines, and reactive monitoring.
 
 ### 3.2 Shortcomings of Existing Methodologies
+
 In the traditional landscape, the deployment of software relied heavily on isolated, non-declarative tools:
-* **Monolithic Infrastructure:** Applications were packaged as single executables running on bare-metal servers or static Virtual Machines (VMs). 
+
+* **Monolithic Infrastructure:** Applications were packaged as single executables running on bare-metal servers or static Virtual Machines (VMs).
 * **Manual Deployment Pipelines:** Continuous Delivery was executed manually via Bash scripts or SSH, lacking automated rollback capabilities.
 * **Isolated Monitoring Tools:** Server health was monitored by legacy tools (e.g., Nagios), logs were manually aggregated via SSH, and application performance was tracked in separate dashboards.
 
 **Primary Limitations:**
+
 1. **No GitOps or Declarative State:** Infrastructure provisioned via UI clicks (ClickOps) led to inevitable configuration drift.
 2. **Poor Scalability:** Scaling required provisioning new physical or virtual machines, taking hours or days.
 3. **Delayed Incident Visibility:** Dashboards relied on HTTP polling, resulting in delayed incident response times.
 
 ### 3.3 Data Flow Diagram (DFD) for the Present System
+
 The following diagram illustrates the manual deployment and monitoring lifecycle inherent to traditional systems.
 
 ```mermaid
@@ -102,13 +120,13 @@ graph TD
     subgraph Development
         A[Developer Commits Code] -->|Manual Trigger| B(Jenkins Build Server)
     end
-    
+  
     subgraph Operations & Deployment
         B -->|Success| C[Generate Binary/Artifact]
         C -->|Manual SSH / FTP| D[Production VM 1]
         C -->|Manual SSH / FTP| E[Production VM 2]
     end
-    
+  
     subgraph Fragmented Monitoring
         D -.-> F[Nagios Server Health]
         E -.-> F
@@ -116,17 +134,20 @@ graph TD
         E -.-> G
         G -->|Manual Investigation| H((Engineer SSH))
     end
-    
+  
     style A fill:#f9f,stroke:#333,stroke-width:2px
     style C fill:#ff9,stroke:#333,stroke-width:2px
     style H fill:#f66,stroke:#333,stroke-width:2px
 ```
+
 *Figure 3.1: DFD of the traditional deployment and monitoring flow, highlighting manual bottlenecks.*
 
 ### 3.4 Innovations in the Proposed System (Cloud Sentinel)
+
 The proposed Cloud Sentinel system overhauls the legacy architecture by introducing a suite of modern, cloud-native innovations, completely eliminating manual operations.
 
 **Key Innovations Introduced:**
+
 * **Kubernetes (Amazon EKS):** Abstracts the underlying hardware, allowing the platform to deploy applications as ephemeral, self-healing containers.
 * **Terraform (Infrastructure as Code):** The entire AWS networking layer and Kubernetes clusters are programmatically generated using declarative HCL code.
 * **ArgoCD (GitOps):** Continuously monitors the GitHub repository and uses a pull-based mechanism to automatically synchronize the Kubernetes cluster state with the code.
@@ -135,6 +156,7 @@ The proposed Cloud Sentinel system overhauls the legacy architecture by introduc
 * **Redis Pub/Sub & WebSockets:** Real-time telemetry is streamed instantaneously from the backend to the frontend.
 
 ### 3.5 Proposed System Architecture Flow
+
 ```mermaid
 graph TD
     subgraph CI/CD Pipeline
@@ -142,33 +164,34 @@ graph TD
         B -->|Test & Build| C[Docker Image]
         C -->|OIDC Auth| D[(GitHub Container Registry)]
     end
-    
+  
     subgraph GitOps Orchestration
         E[Manifest Update Push] -->|Webhook| F(ArgoCD)
         F -->|Detects Drift| G[Syncs State]
     end
-    
+  
     subgraph Kubernetes Production Cluster
         G --> H[Amazon EKS Worker Nodes]
         H --> I[Next.js Frontend Pods]
         H --> J[FastAPI Backend Pods]
-        
+      
         %% Telemetry Flow
         J -->|Metrics| K(Prometheus)
         J -->|Logs| L(Loki)
         J -->|Pub/Sub| M(Redis)
         M -->|WebSockets| I
     end
-    
+  
     subgraph Centralized Observability
         K --> N((Grafana Dashboard))
         L --> N
     end
-    
+  
     style A fill:#4CAF50,stroke:#333,stroke-width:2px
     style F fill:#2196F3,stroke:#333,stroke-width:2px
     style N fill:#FF9800,stroke:#333,stroke-width:2px
 ```
+
 *Figure 3.2: DFD of the proposed Cloud Sentinel architecture, showcasing the automated GitOps lifecycle.*
 
 ---
@@ -176,20 +199,25 @@ graph TD
 ## 4. Problem Analysis & Feasibility Study
 
 ### 4.1 Product Definition
+
 The Cloud Sentinel Platform is an enterprise-grade DevSecOps and Observability ecosystem designed to simulate and manage the complete software delivery lifecycle. It acts as both the target infrastructure and the monitoring command center. The product is defined by its ability to ingest real-time hardware telemetry and guarantee zero-downtime, automated deployments using an ArgoCD GitOps engine running on Amazon EKS.
 
 ### 4.2 Feasibility Analysis
 
 #### 4.2.1 Technical Feasibility
+
 The project is highly technically feasible due to its reliance on established Cloud Native Computing Foundation (CNCF) technologies. The use of declarative Kubernetes manifests guarantees that the deployment can be recreated across any compatible cluster. Furthermore, the use of Python’s `asyncio` within FastAPI, coupled with a Redis Pub/Sub backend, successfully circumvents traditional blocking I/O constraints, making millisecond WebSocket telemetry highly scalable.
 
 #### 4.2.2 Operational Feasibility
+
 Operationally, the platform radically reduces administrative overhead. By adopting a pure GitOps methodology, operations become deterministic. If a Kubernetes node fails, the EKS control plane automatically reschedules the pods. Replacing heavy, self-hosted CI tools with serverless GitHub Actions effectively pushes the CI/CD compute burden to a reliable SaaS provider.
 
 #### 4.2.3 Economic Feasibility
+
 Cloud-native infrastructure can suffer from runaway costs if not properly architected. The Cloud Sentinel platform addresses economic feasibility by utilizing cost-effective `t3.small` EC2 instances and implementing VPC CNI Prefix Delegation in Terraform to maximize pod density per node. Furthermore, utilizing the open-source Prometheus/Grafana stack eliminates enterprise telemetry ingestion costs.
 
 ### 4.3 Engineering Decisions and Architecture Reasoning
+
 Each technology within Cloud Sentinel was selected to solve a distinct operational deployment challenge.
 
 * **Why FastAPI (Asynchronous Telemetry):** Traditional Python frameworks utilize synchronous, blocking workers. FastAPI implements the Asynchronous Server Gateway Interface (ASGI), allowing a single worker to concurrently manage thousands of persistent WebSocket connections using non-blocking event loops.
@@ -200,6 +228,7 @@ Each technology within Cloud Sentinel was selected to solve a distinct operation
 * **Why ArgoCD (GitOps Reconciliation):** Pushing deployments directly from CI pipelines poses massive security risks. ArgoCD operates on a pull-model from inside the cluster, watching the repository and orchestrating zero-downtime Rolling Updates safely from behind the firewall.
 
 ### 4.4 Runtime Lifecycle Sequence
+
 The following sequence diagram illustrates the automated execution lifecycle during a standard operational update.
 
 ```mermaid
@@ -210,7 +239,7 @@ sequenceDiagram
     participant Reg as GHCR (Registry)
     participant Argo as ArgoCD (Cluster)
     participant K8s as EKS Control Plane
-    
+  
     Dev->>Git: 1. git push (Update Code)
     Git-->>CI: 2. Webhook Triggers Pipeline
     Note over CI: Run Security Tests & Build
@@ -220,6 +249,7 @@ sequenceDiagram
     Argo->>K8s: 6. Apply new Deployment Manifest
     K8s->>K8s: 7. Execute RollingUpdate
 ```
+
 *Figure 4.1: The End-to-End DevSecOps Runtime Lifecycle.*
 
 ---
@@ -227,11 +257,13 @@ sequenceDiagram
 ## 5. Software Requirement Analysis
 
 ### 5.1 Introduction
+
 The Software Requirement Analysis phase defines the foundational capabilities and constraints of the Cloud Sentinel Platform. This section codifies the specific functional and non-functional requirements necessary to successfully implement and operate the platform within an enterprise cloud environment.
 
 ### 5.2 Specific Requirements
 
 #### 5.2.1 Functional Requirements
+
 1. **Real-Time Telemetry Ingestion:** The backend must capture system metrics via the `psutil` library every second and publish them to a Redis message broker.
 2. **WebSocket Broadcasting:** The platform must establish persistent WebSocket connections to push Redis Pub/Sub events dynamically to the Next.js frontend without HTTP polling.
 3. **Automated CI/CD Execution:** GitHub Actions must automatically trigger on every `push` to the `main` branch, enforcing dependency installation, security audits, and Docker builds.
@@ -239,6 +271,7 @@ The Software Requirement Analysis phase defines the foundational capabilities an
 5. **Centralized Log Aggregation:** Promtail must scrape `stdout` and `stderr` logs from all active Kubernetes pods and forward them to Loki.
 
 #### 5.2.2 Non-Functional Requirements
+
 * **Performance:** Telemetry data must be reflected on the frontend dashboard in under 50 milliseconds. The CI/CD pipeline must execute completely in under 5 minutes.
 * **Scalability:** Application containers must be entirely stateless, offloading persistence to PostgreSQL and session data to Redis, ensuring rapid horizontal scaling.
 * **Availability:** Updates must utilize Kubernetes RollingUpdates, ensuring the new application version is healthy (passing Readiness Probes) before terminating old pods.
@@ -247,28 +280,31 @@ The Software Requirement Analysis phase defines the foundational capabilities an
 ### 5.3 Requirement Specifications Tables
 
 **Table 5.1: Software & Framework Requirements**
-| Component | Technology / Framework | Minimum Version | Operational Role |
-| :--- | :--- | :--- | :--- |
-| Frontend | Next.js / React | 14.x | Real-time observability dashboard UI. |
-| Backend | FastAPI (Python) | 3.11+ | High-throughput asynchronous API. |
-| Database | PostgreSQL | 15.x | Persistent relational storage. |
-| Message Broker | Redis | 7.x | High-speed Pub/Sub broker for WebSockets. |
-| CI/CD Runner | Ubuntu Linux | 22.04 LTS | GitHub Actions workflow execution. |
+
+| Component      | Technology / Framework | Minimum Version | Operational Role                          |
+| :------------- | :--------------------- | :-------------- | :---------------------------------------- |
+| Frontend       | Next.js / React        | 14.x            | Real-time observability dashboard UI.     |
+| Backend        | FastAPI (Python)       | 3.11+           | High-throughput asynchronous API.         |
+| Database       | PostgreSQL             | 15.x            | Persistent relational storage.            |
+| Message Broker | Redis                  | 7.x             | High-speed Pub/Sub broker for WebSockets. |
+| CI/CD Runner   | Ubuntu Linux           | 22.04 LTS       | GitHub Actions workflow execution.        |
 
 **Table 5.2: Cloud & Infrastructure Requirements**
-| Infrastructure Layer | AWS Service / Tool | Specification | Operational Role |
-| :--- | :--- | :--- | :--- |
-| Orchestration | Amazon EKS | v1.30+ | Managed Kubernetes Control Plane. |
-| Compute Nodes | AWS EC2 (`t3.small`) | 2 vCPUs, 2 GiB RAM | Worker nodes hosting application pods. |
-| Networking | AWS VPC | `10.0.0.0/16` CIDR | Isolated private network topology. |
-| Infrastructure as Code | Terraform | 1.5+ | Declarative HCL code for provisioning. |
+
+| Infrastructure Layer   | AWS Service / Tool     | Specification        | Operational Role                       |
+| :--------------------- | :--------------------- | :------------------- | :------------------------------------- |
+| Orchestration          | Amazon EKS             | v1.30+               | Managed Kubernetes Control Plane.      |
+| Compute Nodes          | AWS EC2 (`t3.small`) | 2 vCPUs, 2 GiB RAM   | Worker nodes hosting application pods. |
+| Networking             | AWS VPC                | `10.0.0.0/16` CIDR | Isolated private network topology.     |
+| Infrastructure as Code | Terraform              | 1.5+                 | Declarative HCL code for provisioning. |
 
 **Table 5.3: DevOps & Observability Tooling Requirements**
-| Tool Category | Software | Usage Context |
-| :--- | :--- | :--- |
-| GitOps Engine | ArgoCD | Synchronizes Kubernetes state with GitHub. |
-| Metrics Engine | Prometheus | Scrapes multi-dimensional time-series metrics. |
-| Visualization | Grafana | Single pane of glass for all SRE telemetry. |
+
+| Tool Category    | Software        | Usage Context                                   |
+| :--------------- | :-------------- | :---------------------------------------------- |
+| GitOps Engine    | ArgoCD          | Synchronizes Kubernetes state with GitHub.      |
+| Metrics Engine   | Prometheus      | Scrapes multi-dimensional time-series metrics.  |
+| Visualization    | Grafana         | Single pane of glass for all SRE telemetry.     |
 | Containerization | Docker (Buildx) | Builds immutable artifacts during CI pipelines. |
 
 ---
@@ -276,7 +312,9 @@ The Software Requirement Analysis phase defines the foundational capabilities an
 ## 6. System Design Architecture
 
 ### 6.1 System Design Overview
+
 The architectural design of the Cloud Sentinel Platform is founded on the principles of decoupled microservices and declarative state management. The system is conceptually partitioned into four core domains:
+
 1. **The Infrastructure Layer:** AWS compute and networking resources provisioned immutably via Terraform.
 2. **The Orchestration Layer:** The Amazon EKS control plane and worker nodes executing Docker containers.
 3. **The Application Layer:** The Next.js frontend and FastAPI backend handling data processing.
@@ -285,6 +323,7 @@ The architectural design of the Cloud Sentinel Platform is founded on the princi
 ### 6.2 Detailed Architecture Design
 
 #### 6.2.1 Full-Stack Topology
+
 ```mermaid
 graph TB
     subgraph AWS Cloud Environment
@@ -292,10 +331,10 @@ graph TB
             IGW[Internet Gateway]
             ALB[Application Load Balancer]
         end
-        
+      
         subgraph Private Subnet / EKS Cluster
             ALB -->|Ingress Route| Nginx[NGINX Ingress Controller]
-            
+          
             subgraph Application Namespace
                 Nginx -->|Route /api| Fast[FastAPI Pods]
                 Nginx -->|Route /| Next[Next.js Pods]
@@ -303,7 +342,7 @@ graph TB
                 Fast -->|Read/Write| DB[(PostgreSQL)]
                 Redis -.->|WebSockets| Next
             end
-            
+          
             subgraph Observability Namespace
                 Prom[Prometheus Server] -.->|Scrape /metrics| Fast
                 Prom -.->|Scrape /metrics| Next
@@ -311,10 +350,11 @@ graph TB
             end
         end
     end
-    
+  
     User((SRE Operator)) -->|HTTPS| IGW
     IGW --> ALB
 ```
+
 *Figure 6.1: Cloud Sentinel architecture topology detailing ingress routing and namespace isolation.*
 
 ### 6.3 Algorithmic Pseudocode
@@ -322,16 +362,17 @@ graph TB
 To bridge the gap between architectural theory and software implementation, the following pseudocode blocks document the underlying algorithmic logic executed within the platform.
 
 **6.3.1 Real-Time Telemetry Broadcasting (Backend API)**
+
 ```python
 FUNCTION stream_telemetry(websocket_connection):
     ACCEPT websocket_connection
     WHILE connection_is_open DO
         cpu_usage = GET_SYSTEM_CPU()
         memory_usage = GET_SYSTEM_MEMORY()
-        
+      
         payload = FORMAT_JSON(cpu=cpu_usage, mem=memory_usage, timestamp=NOW())
         AWAIT REDIS.publish("telemetry_channel", payload)
-        
+      
         AWAIT websocket_connection.send_text(payload)
         SLEEP(1.0 seconds) 
     END WHILE
@@ -339,11 +380,12 @@ END FUNCTION
 ```
 
 **6.3.2 GitOps Synchronization Loop (ArgoCD)**
+
 ```bash
 WHILE true DO
     desired_state = FETCH_YAML_FROM_GITHUB("main")
     live_state = FETCH_YAML_FROM_KUBERNETES_API()
-    
+  
     IF desired_state != live_state THEN
         LOG "Configuration Drift Detected!"
         EXECUTE "kubectl apply -f desired_state.yaml"
@@ -358,34 +400,40 @@ END WHILE
 ## 7. Testing and Validation
 
 ### 7.1 Introduction to DevSecOps Testing
+
 In Cloud Sentinel, "Testing" is defined as the continuous validation of both the application state and the infrastructure state. The project implements a multi-tiered testing strategy to isolate faults:
+
 1. **Unit/Integration Testing:** Validating that microservices communicate correctly via Vitest and API assertions.
 2. **Infrastructure Testing:** Validating the syntax and execution plans of declarative code (HCL and YAML).
 3. **End-to-End Pipeline Testing:** Validating the automation lifecycle from GitHub commit to ArgoCD cluster synchronization.
 
 ### 7.2 Testing Methodologies
+
 * **Infrastructure and Orchestration Validation:** Executed using the `kubectl` CLI. Tests involve asserting that pods successfully transition to the `Running` state, and that Readiness Probes return HTTP 200 responses. Terraform validation utilizes `terraform plan` to perform dry-runs prior to infrastructure mutation.
 * **CI/CD & GitOps Verification:** GitHub Actions acts as the automated test runner, verifying OIDC integration. ArgoCD is tested by intentionally introducing "Configuration Drift" (e.g., manually deleting a pod) to verify that the self-healing reconciliation loop spins up a replacement pod instantaneously.
 
 ### 7.3 Test Case Specifications
 
 **Table 7.1: Application & Infrastructure Test Cases**
-| Test ID | Component | Test Description | Validation Method | Expected Output | Status |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| **TC-01** | Backend | Verify FastAPI health-check. | `curl http://<api>/health` | HTTP 200 OK | Pass |
-| **TC-02** | Backend | Verify WebSocket broadcast. | `wscat -c wss://<api>/ws` | Streams JSON every 1s. | Pass |
-| **TC-03** | EKS Cluster | Verify worker node scaling. | `kubectl get nodes` | 2 `t3.small` nodes Ready. | Pass |
-| **TC-04** | Terraform | Validate AWS VPC creation. | `terraform plan` | 0 errors in HCL syntax. | Pass |
-| **TC-05** | CI/CD | Verify GitHub Actions build. | Push code to `main`. | Workflow passes; Image pushed to GHCR. | Pass |
-| **TC-06** | GitOps | Verify ArgoCD drift reconciliation. | Delete a live pod. | ArgoCD spins up a replacement pod. | Pass |
-| **TC-07** | Monitor | Verify Prometheus discovery. | View `/targets` endpoint. | App pods show as `UP` (15s interval). | Pass |
+
+| Test ID         | Component   | Test Description                    | Validation Method            | Expected Output                         | Status |
+| :-------------- | :---------- | :---------------------------------- | :--------------------------- | :-------------------------------------- | :----- |
+| **TC-01** | Backend     | Verify FastAPI health-check.        | `curl http://<api>/health` | HTTP 200 OK                             | Pass   |
+| **TC-02** | Backend     | Verify WebSocket broadcast.         | `wscat -c wss://<api>/ws`  | Streams JSON every 1s.                  | Pass   |
+| **TC-03** | EKS Cluster | Verify worker node scaling.         | `kubectl get nodes`        | 2 `t3.small` nodes Ready.             | Pass   |
+| **TC-04** | Terraform   | Validate AWS VPC creation.          | `terraform plan`           | 0 errors in HCL syntax.                 | Pass   |
+| **TC-05** | CI/CD       | Verify GitHub Actions build.        | Push code to `main`.       | Workflow passes; Image pushed to GHCR.  | Pass   |
+| **TC-06** | GitOps      | Verify ArgoCD drift reconciliation. | Delete a live pod.           | ArgoCD spins up a replacement pod.      | Pass   |
+| **TC-07** | Monitor     | Verify Prometheus discovery.        | View `/targets` endpoint.  | App pods show as `UP` (15s interval). | Pass   |
 
 ---
 
 ## 8. Implementation Details
 
 ### 8.1 Introduction to DevSecOps Implementation
+
 The implementation phase translates theoretical design architectures into declarative configuration files and executable binaries. The deployment lifecycle follows a strict 4-stage operational flow:
+
 1. **Local Containerization:** Standardizing the development environment via Docker Compose.
 2. **Cloud Provisioning:** Bootstrapping the immutable AWS cloud foundation via Terraform.
 3. **CI/CD Pipeline:** Implementing automated testing and build workflows via GitHub Actions.
@@ -410,14 +458,17 @@ Prometheus is implemented using a `ServiceMonitor` Custom Resource, allowing it 
 ## 9. Project Legacy & Future Scope
 
 ### 9.1 Current Status of the Project
+
 The Cloud Sentinel Platform has achieved its primary operational goals, successfully transitioning from a theoretical architectural concept into a fully functional DevSecOps ecosystem. Infrastructure is securely managed as code, continuous integration is automated, and deployment synchronization is handled via GitOps on Amazon EKS. The core deliverable—a real-time observability dashboard—actively reflects distributed telemetry in milliseconds.
 
 ### 9.2 Technical & Managerial Lessons Learned
+
 * **The Complexity of Kubernetes:** The project underscored that Kubernetes is a vast, distributed state machine. Managing Ingress Controllers and `etcd` consensus proved that orchestrating containers is highly complex.
 * **The Absolute Necessity of GitOps:** Manual `kubectl apply` commands resulted in immediate configuration drift. Enforcing that all infrastructure changes pass through Git Pull Requests eliminated the operational barrier between developers and system administrators.
 * **Infrastructure Cost Management:** Misconfigured infrastructure can result in runaway costs. Managing AWS billing required strict operational discipline, such as right-sizing EC2 worker nodes (`t3.small`) and utilizing open-source monitoring stacks instead of expensive SaaS alternatives.
 
 ### 9.3 Remaining Areas of Concern and Future Scope
+
 * **Secret Management Complexity:** Currently, secrets are managed via native Kubernetes Secrets. Enterprise environments require dynamic secret rotation via external vaults (e.g., HashiCorp Vault).
 * **Stateful Scaling:** Architecting highly available, multi-primary relational databases across distributed Kubernetes nodes remains a complex challenge requiring specialized Operators.
 * **Service Mesh Integration (Istio):** Future iterations will implement a Service Mesh to enable zero-trust mutual TLS (mTLS) encryption between microservices and advanced traffic routing (Canary Deployments).
@@ -428,14 +479,17 @@ The Cloud Sentinel Platform has achieved its primary operational goals, successf
 ## 10. User Manual
 
 ### 10.1 Local Development & Testing (Docker Compose)
+
 Running the platform locally is the fastest way to verify application logic.
+
 1. **Clone the Repository:** `git clone https://github.com/charan21042005/cloud-sentinel-platform.git`
 2. **Start Local Containers:** `docker-compose up --build -d`
-3. **Access Services:** 
+3. **Access Services:**
    * Frontend Dashboard: `http://localhost:3000`
    * Backend API Swagger: `http://localhost:8000/docs`
 
 ### 10.2 Cloud Provisioning & Kubernetes Deployment
+
 1. **Provision AWS Infrastructure:**
    ```bash
    cd infrastructure/terraform
@@ -445,11 +499,13 @@ Running the platform locally is the fastest way to verify application logic.
 3. **Deploy via GitOps (ArgoCD):** `kubectl apply -f infrastructure/kubernetes/argocd-root-app.yaml`
 
 ### 10.3 Observability Access & Operational Verification
+
 * **Access Grafana Dashboard:** `kubectl port-forward svc/grafana -n observability 3000:80`
 * **API Health Check:** `curl -X GET http://localhost:8000/health`
 * **WebSocket Test:** `wscat -c ws://localhost:8000/ws`
 
 ### 10.4 Troubleshooting Guidance
+
 * **Pod CrashLoopBackOff:** View container logs using `kubectl logs <pod-name> -n application`.
 * **ArgoCD OutOfSync:** Check the Git repository's recent commit history to ensure malformed YAML was not merged into the `main` branch.
 * **Terraform State Locked:** Manually unlock the state using `terraform force-unlock <lock-id>`.
@@ -461,6 +517,7 @@ Running the platform locally is the fastest way to verify application logic.
 *(Note to Author: Please upload and attach the actual screenshot images below the bracketed placeholders prior to final report submission.)*
 
 ### 11.1 Infrastructure Source Code (Terraform)
+
 The following snippet demonstrates the declarative provisioning of the AWS Elastic Kubernetes Service (EKS) cluster utilizing HashiCorp Configuration Language (HCL).
 
 ```hcl
