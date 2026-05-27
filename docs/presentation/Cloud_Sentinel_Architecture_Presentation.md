@@ -538,7 +538,7 @@ Based on our real-world AWS billing cycle (Cost Breakdown analysis), deploying t
 
 <br>
 <p align="center">
-  <img src="images/11.png" width="85%" />
+  <img src="images/18.png" width="85%" />
 </p>
 
 > *Figure: AWS Cost and Usage dashboard reflecting real cloud infrastructure utilization across Amazon EKS, EC2 compute resources, VPC networking, and supporting cloud-native platform services.*
