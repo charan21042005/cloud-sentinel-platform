@@ -8,7 +8,7 @@ export const viewport = {
 };
 
 export const metadata: Metadata = {
-  title: 'Cloud Sentinel Monitoring and Observabiliy | Platform',
+  title: 'Cloud Sentinel | Platform',
   description: 'Enterprise-grade cloud observability and incident management platform.',
 };
 
