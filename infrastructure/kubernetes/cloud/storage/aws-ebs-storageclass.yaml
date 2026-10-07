@@ -13,7 +13,7 @@ parameters:
   iops: "3000"
   throughput: "125"
   encrypted: "true"
-  kmsKeyId: "arn:aws:kms:us-east-1:123456789012:key/placeholder-kms-key"
+  kmsKeyId: "arn:aws:kms:us-east-1:434504869339:key/56157d2b-2dab-422b-b62b-161d57ed2eeb"
 ---
 apiVersion: snapshot.storage.k8s.io/v1
 kind: VolumeSnapshotClass

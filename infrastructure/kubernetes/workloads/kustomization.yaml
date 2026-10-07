@@ -2,14 +2,10 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
-  - ../../base
-
-patches:
-  - path: patches/env-patch.yaml
-
-namePrefix: prod-
-commonLabels:
-  env: production
+  - api-gateway
+  - frontend
+  - redis
+  - traffic-generator
 
 images:
   - name: cloud-sentinel/gateway:latest
