@@ -39,6 +39,8 @@ resource "aws_eks_cluster" "main" {
   version  = var.cluster_version
   role_arn = var.cluster_role_arn
 
+  bootstrap_self_managed_addons = false
+
   vpc_config {
     subnet_ids              = var.subnet_ids
     security_group_ids      = [aws_security_group.cluster.id]
