@@ -1,26 +1,26 @@
 <div align="center">
-  <img src="https://img.shields.io/badge/Site_Reliability_Engineering-D946EF?style=for-the-badge&logo=grafana&logoColor=white" alt="Site Reliability Engineering" />
+  <img src="https://img.shields.io/badge/Shared_Resources-A855F7?style=for-the-badge&logo=share&logoColor=white" alt="Shared Resources" />
 </div>
 
 <div align="center">
-  <img src="https://img.shields.io/badge/Architecture-High_Availability-blue?style=flat-square" alt="Architecture" />
+  <img src="https://img.shields.io/badge/Architecture-Common_Configuration-blue?style=flat-square" alt="Architecture" />
   <img src="https://img.shields.io/badge/Managed_By-Kustomize-026e00?style=flat-square&logo=kubernetes" alt="Managed By Kustomize" />
   <img src="https://img.shields.io/badge/Environment-Production_Ready-success?style=flat-square" alt="Environment" />
 </div>
 
 <br />
 
-# 🚀 Site Reliability Engineering
+# 🚀 Shared Resources
 
-> **Autoscaling (HPA/VPA), disruption budgets (PDB), and HA scheduling.**
+> **Shared configurations, ConfigMaps, and cross-boundary secrets.**
 
 ---
 
 ## 📋 Overview
-This directory contains the declarative Kubernetes definitions for **Site Reliability Engineering** within the Cloud Sentinel Platform. Engineered for maximum portability, scalability, and resilience, these configurations adhere strictly to GitOps principles and zero-trust security models.
+This directory contains the declarative Kubernetes definitions for **Shared Resources** within the Cloud Sentinel Platform. Engineered for maximum portability, scalability, and resilience, these configurations adhere strictly to GitOps principles and zero-trust security models.
 
 ## 🏗️ Core Architecture
-The resources within this module are grouped into logical components to provide High Availability:
+The resources within this module are grouped into logical components to provide Common Configuration:
 
 * **Declarative Immutability**: All resources are strictly defined in YAML.
 * **Kustomize Overlays**: Built natively to integrate with Kustomize bases and environment-specific patches.
