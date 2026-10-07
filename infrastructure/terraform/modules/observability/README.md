@@ -1,19 +1,19 @@
 <p align="center">
-  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:10B981,100:047857&height=300&section=header&text=Relational%20Database&fontSize=60&animation=fadeIn&fontAlignY=38&fontColor=ffffff" width="100%" />
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:84CC16,100:4D7C0F&height=300&section=header&text=Cloud%20Observability&fontSize=60&animation=fadeIn&fontAlignY=38&fontColor=ffffff" width="100%" />
 </p>
 
-<h3 align="center">☁️ AWS Terraform Module: Relational Database</h3>
+<h3 align="center">☁️ AWS Terraform Module: Cloud Observability</h3>
 <p align="center"><strong>"Infrastructure as Code • AWS Native • Secure By Default"</strong></p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Architecture-Relational_Database-blue?style=for-the-badge" alt="Architecture" />
+  <img src="https://img.shields.io/badge/Architecture-Cloud_Telemetry-blue?style=for-the-badge" alt="Architecture" />
   <img src="https://img.shields.io/badge/Managed_By-Terraform-844FBA?style=for-the-badge&logo=terraform&logoColor=white" alt="Managed By Terraform" />
-  <img src="https://img.shields.io/badge/Provider-AWS_Postgresql-047857?style=for-the-badge&logo=postgresql&logoColor=white" alt="Environment" />
+  <img src="https://img.shields.io/badge/Provider-AWS_Grafana-4D7C0F?style=for-the-badge&logo=grafana&logoColor=white" alt="Environment" />
 </p>
 
 ---
 
-The **Cloud Sentinel Relational Database Module** provides AWS RDS PostgreSQL instance deployed securely in private subnets with KMS encryption.
+The **Cloud Sentinel Cloud Observability Module** provides AWS CloudWatch log groups, X-Ray tracing, and infrastructure alarms.
 
 ---
 
@@ -30,7 +30,7 @@ This Terraform module is built around strict AWS well-architected principles:
 To validate this Terraform module locally before a pipeline execution, run:
 
 ```bash
-cd infrastructure/terraform/modules/rds
+cd infrastructure/terraform/modules/observability
 terraform init
 terraform validate
 ```
@@ -40,5 +40,5 @@ terraform validate
 ---
 
 <p align="center">
-  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:10B981,100:047857&height=100&section=footer" width="100%" />
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:84CC16,100:4D7C0F&height=100&section=footer" width="100%" />
 </p>
