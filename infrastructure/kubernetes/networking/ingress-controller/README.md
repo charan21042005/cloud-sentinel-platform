@@ -1,54 +1,45 @@
-# 🚦 Cloud Sentinel Ingress Controller Architecture (Phase 3A)
+<p align="center">
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:8B5CF6,100:5B21B6&height=300&section=header&text=AWS%20Load%20Balancer%20Controller&fontSize=60&animation=fadeIn&fontAlignY=38&fontColor=ffffff" width="100%" />
+</p>
 
-## 1. High-Performance Ingress Fabric Overview
-To protect distributed internal microservices from public network exposure, the **Cloud Sentinel Platform** implements a dedicated **NGINX Ingress Controller Plane** isolated inside the `sentinel-ingress` namespace.
+<h3 align="center">☁️ Cloud Sentinel AWS Load Balancer Controller</h3>
+<p align="center"><strong>"Secure Boundaries • Traffic Optimization • Internal Routing"</strong></p>
 
-```text
-┌────────────────────────────────────────────────────────────────────────┐
-│                      Public Client Traversal                           │
-│                                                                        │
-│               [HTTPS / WSS Upstream Packets]                           │
-│                             │                                          │
-│                             ▼                                          │
-│   ┌────────────────────────────────────────────────────────────────┐   │
-│   │             sentinel-ingress Namespace Boundary                │   │
-│   │                                                                │   │
-│   │   ┌────────────────────────────────────────────────────────┐   │   │
-│   │   │            NGINX Ingress Pod Controller Plane          │   │   │
-│   │   │  (Tuned for Low-Latency Keepalive WebSockets & JSON)   │   │   │
-│   │   └────────────────────────────────────────────────────────┘   │   │
-│   └─────────────────────────────────┬──────────────────────────────┘   │
-│                                     │                                  │
-│        ┌────────────────────────────┴───────────────────────────┐      │
-│        ▼                                                        ▼      │
-│ ┌──────────────┐                                         ┌───────────┐ │
-│ │ sentinel-apps│                                         │ monitoring│ │
-│ └──────────────┘                                         └───────────┘ │
-└────────────────────────────────────────────────────────────────────────┘
+<p align="center">
+  <img src="https://img.shields.io/badge/Architecture-AWS_Networking-blue?style=for-the-badge" alt="Architecture" />
+  <img src="https://img.shields.io/badge/Managed_By-Kustomize-8B5CF6?style=for-the-badge&logo=kubernetes&logoColor=white" alt="Managed By Kustomize" />
+  <img src="https://img.shields.io/badge/Environment-Production_Ready-5B21B6?style=for-the-badge&logo=amazonwebservices&logoColor=white" alt="Environment" />
+</p>
+
+---
+
+The **AWS Load Balancer Controller** module provides AWS ALB/NLB controller definitions for native AWS ingress routing. This module acts as the core nervous system for all microservice communication.
+
+---
+
+## 🏗️ 1. Architecture & Security Decisions
+We have engineered this networking component to strictly enforce secure data flows:
+*   **Encrypted Ingress**: All edge traffic is terminated securely with strict TLS profiles.
+*   **Micro-Segmentation**: Explicit network boundaries isolate distinct application tiers, mitigating horizontal movement.
+*   **Intelligent Routing**: Optimized pathing ensures minimal latency across services.
+
+---
+
+## 🚀 2. Quick Start & Validation
+To validate this networking module's configuration locally before a GitOps rollout, run:
+
+```bash
+cd infrastructure/kubernetes/networking/ingress-controller
+kubectl kustomize .
+```
+
+To apply manually during an emergency:
+```bash
+kubectl apply -k .
 ```
 
 ---
 
-## 2. Real-Time WebSocket Tuning Parameters
-Standard web proxies automatically drop idle connections after 60 seconds. Since SOC operators monitor live streaming threat visualizations continuously, we tuned the underlying connection variables within `configmap-tuning.yaml`:
-
-*   **`proxy-read-timeout: "3600"`**: Permits streaming feeds to remain open up to 1 hour without manual reconnection storms.
-*   **`proxy-send-timeout: "3600"`**: Guarantees large asynchronous fanout broadcast payloads arrive reliably across congested client pipes.
-*   **`keep-alive-requests: "10000"`**: Allows single TCP handshakes to process large numbers of client events without TLS overhead renegotiation.
-
----
-
-## 3. Observability Tracing Integration (Phase 3E)
-Upstream execution logs inject custom parameter keys into formatted JSON logs to assist telemetry platforms in tracing performance anomalies:
-
-```json
-{
-  "time": "2026-05-14T10:42:00+00:00",
-  "request_id": "a9b8c7d6-e5f4-3a2b-1c0d",
-  "upstream_response_time": 0.012,
-  "status": 101,
-  "request_proto": "HTTP/1.1",
-  "path": "/ws/incidents"
-}
-```
-This structured format allows **Loki** and **Elasticsearch** ingesters to parse metrics instantly without executing manual regular expression filters.
+<p align="center">
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:8B5CF6,100:5B21B6&height=100&section=footer" width="100%" />
+</p>
