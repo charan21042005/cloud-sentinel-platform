@@ -2,9 +2,9 @@
 # EC2 Launch Template (Compute Security Baseline)
 # -----------------------------------------------------------------------------
 resource "aws_launch_template" "eks_nodes" {
-  name_prefix   = "${var.cluster_name}-node-template-"
-  description   = "Hardened launch template for EKS Managed Node Groups"
-  
+  name_prefix = "${var.cluster_name}-node-template-"
+  description = "Hardened launch template for EKS Managed Node Groups"
+
   # Ensure all root volumes are encrypted by default
   block_device_mappings {
     device_name = "/dev/xvda"
@@ -47,10 +47,10 @@ resource "aws_eks_node_group" "main" {
   node_role_arn   = var.node_role_arn
   subnet_ids      = var.subnet_ids
 
-#  launch_template {
-#    id      = aws_launch_template.eks_nodes.id
-#    version = aws_launch_template.eks_nodes.latest_version
-#  }
+  #  launch_template {
+  #    id      = aws_launch_template.eks_nodes.id
+  #    version = aws_launch_template.eks_nodes.latest_version
+  #  }
 
   # Cost-optimized sizing boundary
   scaling_config {
@@ -61,7 +61,7 @@ resource "aws_eks_node_group" "main" {
 
   # Default capacity type (Switch to SPOT in future phases for 70% cost reduction)
   capacity_type  = "ON_DEMAND"
-  ami_type = "AL2023_x86_64_STANDARD"
+  ami_type       = "AL2023_x86_64_STANDARD"
   instance_types = var.instance_types
 
   # Initial Labeling Strategy for Workload Segregation
