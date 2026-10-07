@@ -7,7 +7,7 @@ variable "aws_region" {
 variable "state_bucket_name" {
   description = "Name of the S3 bucket to store Terraform state. Must be globally unique."
   type        = string
-  default     = "cloud-sentinel-terraform-state-prod"
+  default     = "cloud-sentinel-terraform-state-434504869339"
 }
 
 variable "dynamodb_table_name" {
