@@ -1,8 +1,6 @@
 locals {
   environment = "prod"
   project     = "cloud-sentinel"
-
-  # Enterprise FinOps Tagging Governance
   common_tags = {
     Environment = local.environment
     Project     = local.project
