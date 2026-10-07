@@ -18,7 +18,7 @@ data "terraform_remote_state" "eks" {
   backend = "s3"
   config = {
     bucket = "cloud-sentinel-terraform-state-434504869339"
-    key    = "environments/prod/03-eks/terraform.tfstate"
+    key    = "environments/prod/04-eks/terraform.tfstate"
     region = "us-east-1"
   }
 }
