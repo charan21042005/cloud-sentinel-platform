@@ -1,58 +1,46 @@
-<div align="center">
-  <img src="https://img.shields.io/badge/Security_and_RBAC-EAB308?style=for-the-badge&logo=springsecurity&logoColor=white" alt="Security & RBAC" />
-</div>
+<p align="center">
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:EAB308,100:A16207&height=300&section=header&text=Security%20RBAC&fontSize=70&animation=fadeIn&fontAlignY=38&fontColor=ffffff" width="100%" />
+</p>
 
-<div align="center">
-  <img src="https://img.shields.io/badge/Architecture-Identity_&_Access-blue?style=flat-square" alt="Architecture" />
-  <img src="https://img.shields.io/badge/Managed_By-Kustomize-026e00?style=flat-square&logo=kubernetes" alt="Managed By Kustomize" />
-  <img src="https://img.shields.io/badge/Environment-Production_Ready-success?style=flat-square" alt="Environment" />
-</div>
+<h3 align="center">☁️ Cloud Sentinel Security RBAC Architecture</h3>
+<p align="center"><strong>"Declarative Immutability • GitOps Synchronization • Zero-Trust"</strong></p>
 
-<br />
-
-# 🚀 Security & RBAC
-
-> **ServiceAccounts, RoleBindings, and Pod Security Standards (PSS).**
+<p align="center">
+  <img src="https://img.shields.io/badge/Architecture-Identity_Access-blue?style=for-the-badge" alt="Architecture" />
+  <img src="https://img.shields.io/badge/Managed_By-Kustomize-EAB308?style=for-the-badge&logo=kubernetes&logoColor=white" alt="Managed By Kustomize" />
+  <img src="https://img.shields.io/badge/Environment-Production_Ready-A16207?style=for-the-badge&logo=springsecurity&logoColor=white" alt="Environment" />
+</p>
 
 ---
 
-## 📋 Overview
-This directory contains the declarative Kubernetes definitions for **Security & RBAC** within the Cloud Sentinel Platform. Engineered for maximum portability, scalability, and resilience, these configurations adhere strictly to GitOps principles and zero-trust security models.
+The **Cloud Sentinel Security RBAC Module** provides ServiceAccounts, RoleBindings, and Pod Security Standards (PSS). It places the resources securely within isolated Kustomize structures, ensuring that the Kubernetes manifests are completely declarative and easy to audit.
 
-## 🏗️ Core Architecture
-The resources within this module are grouped into logical components to provide Identity & Access:
+---
 
-* **Declarative Immutability**: All resources are strictly defined in YAML.
-* **Kustomize Overlays**: Built natively to integrate with Kustomize bases and environment-specific patches.
-* **GitOps Synchronization**: Fully compatible with ArgoCD for continuous reconciliation.
+## 🏗️ 1. Architecture & Security Decisions
+We have engineered this Kubernetes layer to adhere strictly to defense-in-depth principles:
+*   **Declarative Infrastructure**: All components are fully defined in code, ensuring absolute drift protection when synchronized via ArgoCD.
+*   **Kustomize Native**: Built natively to integrate with Kustomize bases and environment-specific patches, avoiding redundant code.
+*   **Role-Based Access Control**: Pod Security Standards (PSS) and native RBAC are inherently supported across all deployments.
+*   **No Hardcoded Secrets**: Secrets are entirely decoupled using ExternalSecrets.
 
-## ⚙️ Components
-Inside this module, you will find:
-- Core Kubernetes Primitives (Deployments, Services, ConfigMaps)
-- Environment-specific tuning patches (if applicable)
-- Resource allocation and scaling policies
+---
 
-## 🚀 Quick Start
+## 🚀 2. Quick Start & Validation
+To validate the configuration locally before a GitOps rollout, run:
 
-### 1️⃣ Validation (Dry Run)
-Before committing changes to this directory, validate the rendering locally:
 ```bash
+cd infrastructure/kubernetes/security
 kubectl kustomize .
 ```
 
-### 2️⃣ Application (Manual/Emergency)
-While ArgoCD handles standard deployments, emergency manual applies can be executed via:
+To apply manually during an emergency:
 ```bash
 kubectl apply -k .
 ```
-> **⚠️ WARNING**: Manual applies will be eventually overwritten by the GitOps controller if they drift from the source of truth!
-
-## 🛡️ Operational Best Practices
-- **Never hardcode secrets** in these manifests. Always rely on `ExternalSecrets` integration.
-- Ensure that any new components respect the global `PodSecurityStandards`.
-- Use relative paths when referencing bases in Kustomize.
 
 ---
-<div align="center">
-  <i>Maintained by the Cloud Sentinel Platform Team</i>
-</div>
+
+<p align="center">
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:EAB308,100:A16207&height=100&section=footer" width="100%" />
+</p>
