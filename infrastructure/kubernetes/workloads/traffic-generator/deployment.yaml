@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: traffic-generator
+  namespace: sentinel-apps
+  labels:
+    app.kubernetes.io/name: traffic-generator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: traffic-generator
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: traffic-generator
+    spec:
+      containers:
+        - name: traffic-generator
+          image: 434504869339.dkr.ecr.us-east-1.amazonaws.com/cloud-sentinel-prod-traffic-generator:git-edffd6a
+          env:
+            - name: API_URL
+              value: "http://api-gateway-svc.sentinel-apps.svc.cluster.local:8000/api/v1"
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 100m
+              memory: 128Mi

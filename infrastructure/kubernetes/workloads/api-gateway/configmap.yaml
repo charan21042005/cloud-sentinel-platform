@@ -13,3 +13,4 @@ data:
   WEBSOCKET_HEARTBEAT_INTERVAL_MS: "30000"
   ENABLE_CHAOS_CONTROLLER: "true"
   PROMETHEUS_METRICS_PATH: "/metrics"
+  REDIS_URL: "redis://redis.sentinel-apps.svc.cluster.local:6379/0"
