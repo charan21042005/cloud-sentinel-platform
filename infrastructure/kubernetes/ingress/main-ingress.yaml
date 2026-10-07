@@ -17,7 +17,7 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: sentinel-backend-svc
+                name: api-gateway-svc
                 port:
                   number: 8000
           
@@ -26,6 +26,6 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: sentinel-frontend-svc
+                name: frontend-svc
                 port:
                   number: 80

@@ -6,6 +6,6 @@ metadata:
   labels:
     app.kubernetes.io/name: frontend
 data:
-  NEXT_PUBLIC_API_URL: "http://sentinel.ops.internal/api"
-  NEXT_PUBLIC_WS_URL: "ws://sentinel.ops.internal/ws"
+  NEXT_PUBLIC_API_URL: "/api"
+  NEXT_PUBLIC_WS_URL: "/ws"
   NODE_ENV: "production"
