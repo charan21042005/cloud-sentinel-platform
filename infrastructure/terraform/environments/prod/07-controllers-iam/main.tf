@@ -143,6 +143,16 @@ data "aws_iam_policy_document" "eso" {
       data.terraform_remote_state.iam.outputs.kms_key_arn
     ]
   }
+
+  statement {
+    effect = "Allow"
+    actions = [
+      "ssm:GetParameter"
+    ]
+    resources = [
+      "arn:aws:ssm:us-east-1:434504869339:parameter/sentinel/production/api-gateway/jwt-secret"
+    ]
+  }
 }
 
 resource "aws_iam_policy" "eso" {
