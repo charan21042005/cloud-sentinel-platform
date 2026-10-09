@@ -14,6 +14,22 @@ resource "aws_security_group" "cluster" {
     self      = true
   }
 
+  # Allow kubelet communication from control plane
+  ingress {
+    from_port = 10250
+    to_port   = 10250
+    protocol  = "tcp"
+    self      = true
+  }
+
+  # Allow ALB controller webhook from control plane
+  ingress {
+    from_port = 9443
+    to_port   = 9443
+    protocol  = "tcp"
+    self      = true
+  }
+
   egress {
     from_port   = 0
     to_port     = 0
