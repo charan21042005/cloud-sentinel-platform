@@ -15,10 +15,10 @@ commonLabels:
 images:
   - name: cloud-sentinel/gateway:latest
     newName: 434504869339.dkr.ecr.us-east-1.amazonaws.com/cloud-sentinel-prod-api-gateway
-    newTag: git-e17d7b0
+    newTag: git-818e1b5
   - name: cloud-sentinel/frontend:latest
     newName: 434504869339.dkr.ecr.us-east-1.amazonaws.com/cloud-sentinel-prod-frontend
-    newTag: git-e17d7b0
+    newTag: git-818e1b5
   - name: cloud-sentinel/traffic-generator:latest
     newName: 434504869339.dkr.ecr.us-east-1.amazonaws.com/cloud-sentinel-prod-traffic-generator
-    newTag: git-e17d7b0
+    newTag: git-818e1b5
