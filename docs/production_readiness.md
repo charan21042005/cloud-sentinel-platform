@@ -114,3 +114,25 @@ Standard binary `{"status": "healthy"}` indicators are insufficient for horizont
 *   **Transport Boundaries**: Secured via absolute token handshake verification mapped to internal Pydantic security domains.
 *   **Abuse Hardening**: Unauthenticated user domains are isolated securely inside read-only non-blocking `"anonymous_viewer"` connection fallback boundaries.
 *   **Observability Transparency**: Directly exposes runtime variables to automated Prometheus scraper tasks, guaranteeing single-pane-of-glass administrative operational awareness.
+
+---
+
+## 6. Phase 7K Deployment Readiness Status
+
+**Verified Application Image Provenance:**
+All images represent the verified application source revision `818e1b5`.
+
+**Verified ECR Images (linux/amd64):**
+*   **API Gateway**: `434504869339.dkr.ecr.us-east-1.amazonaws.com/cloud-sentinel-prod-api-gateway:git-818e1b5`
+    *   Digest: `sha256:7525ba1d880cd5e322349d98480a138acbdb6da45afcb4ff82b246cbbccfbc9a`
+*   **Frontend**: `434504869339.dkr.ecr.us-east-1.amazonaws.com/cloud-sentinel-prod-frontend:git-818e1b5`
+    *   Digest: `sha256:cae358a6fe73ec9a9977ad0e4b6e04cf01e03ba78edad13cd06323e93ff0aaa4`
+*   **Traffic Generator**: `434504869339.dkr.ecr.us-east-1.amazonaws.com/cloud-sentinel-prod-traffic-generator:git-818e1b5`
+    *   Digest: `sha256:d4ab1eccd11b5877b145a5ec93c12ba4b8bfdf1ccbd9a62612f7fe0f9baa64bb`
+
+**IAM & Infrastructure Readiness:**
+*   The `07-controllers-iam` Terraform layer has been successfully applied and the post-apply plan returns exactly `No changes`.
+*   The exact JWT SSM permission (`ssm:GetParameter` for `arn:aws:ssm:us-east-1:434504869339:parameter/sentinel/production/api-gateway/jwt-secret`) has been securely scoped and applied to the External Secrets role.
+
+**Current Deployment Boundary:**
+Controller infrastructure is fully provisioned and ready. **Application workloads have NOT been applied to Kubernetes yet.**
