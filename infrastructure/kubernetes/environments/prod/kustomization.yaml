@@ -3,6 +3,7 @@ kind: Kustomization
 
 resources:
   - ../../base
+  - ../../workloads
 
 patches:
   - path: patches/env-patch.yaml
@@ -14,7 +15,10 @@ commonLabels:
 images:
   - name: cloud-sentinel/gateway:latest
     newName: 434504869339.dkr.ecr.us-east-1.amazonaws.com/cloud-sentinel-prod-api-gateway
-    newTag: git-edffd6a
+    newTag: git-e17d7b0
   - name: cloud-sentinel/frontend:latest
     newName: 434504869339.dkr.ecr.us-east-1.amazonaws.com/cloud-sentinel-prod-frontend
-    newTag: git-edffd6a
+    newTag: git-e17d7b0
+  - name: cloud-sentinel/traffic-generator:latest
+    newName: 434504869339.dkr.ecr.us-east-1.amazonaws.com/cloud-sentinel-prod-traffic-generator
+    newTag: git-e17d7b0
