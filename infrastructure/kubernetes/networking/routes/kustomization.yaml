@@ -3,7 +3,7 @@ kind: Kustomization
 
 resources:
   - apps-ingress.yaml
-  - monitoring-ingress.yaml
+  # - monitoring-ingress.yaml
 
 commonLabels:
   platform.sentinel.io/component: ingress-routes

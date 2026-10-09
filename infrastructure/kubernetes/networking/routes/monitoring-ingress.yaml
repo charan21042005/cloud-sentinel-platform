@@ -6,9 +6,10 @@ metadata:
   labels:
     app.kubernetes.io/part-of: cloud-sentinel
   annotations:
-    kubernetes.io/ingress.class: "sentinel-nginx"
-    nginx.ingress.kubernetes.io/proxy-body-size: "8m"
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
 spec:
+  ingressClassName: alb
   rules:
     - host: grafana.sentinel.ops.internal
       http:

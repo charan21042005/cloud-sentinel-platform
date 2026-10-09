@@ -6,16 +6,10 @@ metadata:
   labels:
     app.kubernetes.io/part-of: cloud-sentinel
   annotations:
-    kubernetes.io/ingress.class: "sentinel-nginx"
-    nginx.ingress.kubernetes.io/proxy-body-size: "16m"
-    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
-    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
-    # Ensure client browsers pass standard upgrading keys to access continuous WebSocket streams
-    nginx.ingress.kubernetes.io/configuration-snippet: |
-      proxy_set_header Upgrade $http_upgrade;
-      proxy_set_header Connection "upgrade";
-      proxy_set_header X-Request-ID $req_id;
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
 spec:
+  ingressClassName: alb
   rules:
     - host: sentinel.ops.internal
       http:
