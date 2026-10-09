@@ -6,6 +6,15 @@ resource "aws_security_group" "cluster" {
   description = "EKS cluster security group"
   vpc_id      = data.aws_subnet.first.vpc_id
 
+  # Allow all intra-cluster communication for worker nodes and pods
+  ingress {
+    description = "Allow all intra-cluster pod and node communication"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    self        = true
+  }
+
   # Allow inbound traffic from worker nodes (future)
   ingress {
     from_port = 443
