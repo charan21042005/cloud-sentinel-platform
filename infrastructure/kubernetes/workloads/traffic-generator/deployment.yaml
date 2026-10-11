@@ -6,7 +6,9 @@ metadata:
   labels:
     app.kubernetes.io/name: traffic-generator
 spec:
-  replicas: 1
+  # Legacy workload retained for migration history; the bounded Job is prepared
+  # separately and is intentionally suspended until a later authorized run.
+  replicas: 0
   selector:
     matchLabels:
       app.kubernetes.io/name: traffic-generator
@@ -20,7 +22,15 @@ spec:
           image: cloud-sentinel/traffic-generator:latest
           env:
             - name: API_URL
-              value: "http://api-gateway-svc.sentinel-apps.svc.cluster.local:8000/api/v1"
+              value: "http://api-gateway-svc.sentinel-apps.svc.cluster.local:8000"
+            - name: MAX_DURATION_SECONDS
+              value: "30"
+            - name: MAX_REQUESTS
+              value: "10"
+            - name: REQUEST_TIMEOUT_SECONDS
+              value: "3"
+            - name: CONCURRENCY
+              value: "2"
           resources:
             requests:
               cpu: 50m
