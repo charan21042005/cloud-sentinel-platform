@@ -530,7 +530,7 @@ Once the DevSecOps pipeline is running, the following endpoints provide comprehe
 
 **Telemetry Endpoints:**
 *   **Prometheus Targets:** `http://localhost:9090/targets`
-*   **Grafana Dashboards:** `http://localhost:3002` *(Credentials: `admin` / `sentinel_admin`)*
+*   **Grafana Dashboards:** `http://localhost:3002` *(Credentials: `admin` / `[REDACTED — verify and rotate if valid]`)*
 *   **Database Browser (Adminer):** `http://localhost:8888`
 
 **System Health Checks:**
