@@ -26,42 +26,73 @@ requests concurrently.
 outside the `/api/v1` prefix. The generator does not use environment proxies or
 follow redirects, so a redirect cannot send health requests to another host.
 
-## Prepared Kubernetes configuration
+## Kubernetes configuration and verified run
 
-The API Service is `api-gateway-svc` in `sentinel-apps` on port `8000`; the Job
-uses its in-cluster DNS name. A separate suspended Job is in `job/`. It is
-intentionally excluded from both the traffic-generator Kustomization and the
-GitOps workloads tree, so GitOps sync will not create or start it. The existing
-Deployment manifest is preserved as a legacy resource with desired replicas set
-to zero. Its URL now follows the service-origin convention.
+The API Service is `api-gateway-svc` in `sentinel-apps` on port `8000`; the
+Job targets its in-cluster DNS name. The standalone Job is in `job/` and is
+excluded from the active workload Kustomization. This keeps a one-shot smoke
+Job out of normal GitOps reconciliation. The existing traffic-generator
+Deployment remains a legacy resource with desired replicas set to zero.
 
-The Job has one completion, one worker pod, no retries, a 60-second active
-deadline, and a one-hour TTL after completion. Its generator limits are set
-explicitly to 30 seconds, 10 attempts, 3 seconds per request, and concurrency 2.
-It also disables service-account token mounting and applies a non-root,
-read-only container security context.
-
-The image field is a placeholder. No image was built or verified in this phase.
-Before a future run, replace it with the immutable digest of an image built from
-the reviewed bounded source. Render and review the configuration locally:
+The committed Job template stays suspended (`suspend: true`). It configures
+one completion, one parallel pod, no retries, a 60-second active deadline, and
+a one-hour completion TTL. It explicitly sets a 30-second generator duration,
+10 total request attempts, a 3-second per-request timeout, and concurrency 2.
+The container disables service-account token mounting and runs non-root with a
+read-only root filesystem and restricted capabilities. Render the standalone
+manifest locally with:
 
 ```powershell
 kubectl kustomize infrastructure/kubernetes/workloads/traffic-generator/job
 ```
 
-This phase did not render or apply the Job, and the Job remains suspended. In a
-later specifically authorized phase, after confirming the namespace, service,
-image digest, and live baseline, the intended manual sequence is:
+### Historical Phase 7V execution
 
-```powershell
-kubectl apply -k infrastructure/kubernetes/workloads/traffic-generator/job
-kubectl -n sentinel-apps patch job traffic-generator-phase-7v --type=merge -p '{"spec":{"suspend":false}}'
+The separately authorized one-time run completed on 2026-10-11. The committed
+manifest remains a suspended template; that does not describe the historical
+live Job state. No live re-verification was performed while writing this
+documentation.
+
+The run used source commit
+`52a0a23c766c48b482b58da3454e177594e3634d`, Job-manifest commit
+`67e7306b31a1392136dfdf297465c5676666b613`, and image tag
+`bounded-52a0a23-c2-5f5bc4c7`. The immutable image reference was:
+
+```text
+434504869339.dkr.ecr.us-east-1.amazonaws.com/cloud-sentinel-prod-traffic-generator@sha256:b20afb140569b574003e34d6b14e2053b77698ee1a3524ddcd47bf1403019f78
 ```
 
-The second command starts the one-shot run. Do not run it until the later phase
-has verified prerequisites. The static Job name prevents a second same-name Job
-from being created concurrently; a subsequent run requires a separately
-reviewed lifecycle decision after the prior Job is complete.
+That digest identifies the ECR OCI index. Its `linux/amd64` platform manifest
+digest was
+`sha256:6dfa416e6c5d5fb56169e3a30e50914b93e3f1f98c516fe91365c9d85b094809`;
+these are distinct OCI objects.
+
+Job `traffic-generator-phase-7v` in `sentinel-apps` had one pod and completed
+successfully: `Complete=True`, one success, zero retries, and pod exit code 0.
+It made 10 attempts, all 10 succeeded with HTTP 200; there were zero reported
+failures and timeouts. Runtime was 5.899 seconds and the stop reason was
+`request_limit`. The 30-second duration is an upper bound; the request budget
+ended this run first.
+
+Before the run, API, database, and Redis health checks reported healthy; the
+API had 2/2 ready pods, Redis 1/1, and both Kubernetes nodes were Ready. After
+the run, those health checks remained healthy, API stayed 2/2 and Redis 1/1,
+both nodes remained Ready, and all five Prometheus targets were up. The
+available five-minute HTTP metric samples showed 2xx traffic; rates also
+included background and health-check requests and cannot be attributed solely
+to this Job. No 5xx series or in-flight request metric was available. Those
+metrics are unavailable, not evidence of zero errors or zero in-flight
+requests.
+
+This was a controlled smoke test of the read-only `/health` endpoint, not a
+load-capacity or performance test and not proof of a zero error rate. See
+[`docs/report/Cloud_Sentinel_Phase_7V_Execution_Report.md`](../../../../docs/report/Cloud_Sentinel_Phase_7V_Execution_Report.md)
+for the recorded timeline, pre/post evidence, and monitoring limitations.
+
+For any future run, separately verify the current namespace, service, image,
+and live baseline, then obtain explicit authorization for the Job lifecycle.
+The static Job name also requires a reviewed lifecycle decision before another
+same-name run.
 
 ## Local smoke run and offline tests
 
