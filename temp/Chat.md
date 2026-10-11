@@ -903,7 +903,7 @@ We will review the local recovery report first, then proceed to the NEW AWS ACCO
 | Chaos API    | `http://localhost:8000/api/v1/chaos/inject`          | Chaos fault injection       | No                           | Working |
 | Adminer      | `http://localhost:8888`                              | PostgreSQL Web UI           | Yes (DB Creds)               | Working |
 | Prometheus   | `http://localhost:9090`                              | Metrics Storage/Scraping    | No                           | Working |
-| Grafana      | `http://localhost:3002`                              | Monitoring Dashboards       | Yes (admin / sentinel_admin) | Working |
+| Grafana      | `http://localhost:3002`                              | Monitoring Dashboards       | Yes (admin / [REDACTED — verify and rotate if valid]) | Working |
 | AlertManager | `http://localhost:9093`                              | Alert Routing               | No                           | Working |
 
 **Errors/Warnings:**
@@ -17828,7 +17828,7 @@ S. KMS verification
 
 T. Managed Secrets Manager credential verification
 
-* Verified. `manage_master_user_password = true` created Secrets Manager entry `arn:aws:secretsmanager:us-east-1:434504869339:secret:rds!db-9f7d3302-f771-418d-94e7-89cbf4ad279b-uRHF0U`. NO plaintext password was exposed.
+* Verified. `manage_master_user_password = true` created Secrets Manager entry `arn:aws:secretsmanager:us-east-1:434504869339:secret:[REDACTED — verify and rotate if valid]`. NO plaintext password was exposed.
 
 U. Database name/user/port
 
