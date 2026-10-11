@@ -2,9 +2,12 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
-  - prometheus.yaml
-  - service-monitors.yaml
-  - cluster-telemetry.yaml
+  - namespace.yaml
+  - rbac.yaml
+  - configmap.yaml
+  - node-exporter.yaml
+  - deployment.yaml
+  - service.yaml
 
 commonLabels:
   platform.sentinel.io/component: prometheus-stack

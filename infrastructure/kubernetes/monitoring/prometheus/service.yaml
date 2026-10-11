@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: sentinel-prometheus
+  namespace: sentinel-monitoring
+  labels:
+    app.kubernetes.io/name: prometheus
+    platform.sentinel.io/component: prometheus-stack
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 9090
+      targetPort: 9090
+  selector:
+    app.kubernetes.io/name: prometheus
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: prometheus
+  namespace: sentinel-monitoring
+  labels:
+    app.kubernetes.io/name: prometheus
+    platform.sentinel.io/component: prometheus-stack
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 9090
+      targetPort: 9090
+  selector:
+    app.kubernetes.io/name: prometheus

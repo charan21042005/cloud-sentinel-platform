@@ -1,0 +1,48 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: sentinel-prometheus
+  namespace: sentinel-monitoring
+  labels:
+    app.kubernetes.io/name: prometheus
+    platform.sentinel.io/component: prometheus-stack
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: sentinel-prometheus
+  labels:
+    app.kubernetes.io/name: prometheus
+    platform.sentinel.io/component: prometheus-stack
+rules:
+  - apiGroups: [""]
+    resources:
+      - nodes
+      - nodes/metrics
+      - nodes/proxy
+      - services
+      - endpoints
+      - pods
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["extensions", "networking.k8s.io"]
+    resources:
+      - ingresses
+    verbs: ["get", "list", "watch"]
+  - nonResourceURLs: ["/metrics"]
+    verbs: ["get"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: sentinel-prometheus
+  labels:
+    app.kubernetes.io/name: prometheus
+    platform.sentinel.io/component: prometheus-stack
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: sentinel-prometheus
+subjects:
+  - kind: ServiceAccount
+    name: sentinel-prometheus
+    namespace: sentinel-monitoring
