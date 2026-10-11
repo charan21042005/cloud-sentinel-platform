@@ -19,6 +19,7 @@ export const metricsApi = {
       
       // Fallback state (Safe Degradation UX)
       return {
+        source: 'simulated',
         cpu_usage: 0,
         memory_usage: 0,
         active_requests: 0,

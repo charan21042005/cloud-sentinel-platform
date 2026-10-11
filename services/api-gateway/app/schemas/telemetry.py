@@ -22,6 +22,7 @@ class SystemTelemetryResponse(BaseModel):
     Strictly types all observability data before it hits the network.
     """
 
+    source: str = "prometheus"
     cpu_usage: float
     memory_usage: float
     active_requests: int

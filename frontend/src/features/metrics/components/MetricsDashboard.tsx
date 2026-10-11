@@ -1,24 +1,20 @@
 'use client';
 
 import React from 'react';
-import { Cpu, MemoryStick, Activity, Network } from 'lucide-react';
+import { Cpu, MemoryStick, Activity, Network, Radio } from 'lucide-react';
+import { clsx, type ClassValue } from 'clsx';
+import { twMerge } from 'tailwind-merge';
 import MetricCard from './MetricCard';
 import TimeSeriesChart from './TimeSeriesChart';
 import { useSystemMetrics } from '../hooks/useMetrics';
 import Skeleton from '@/components/ui/Skeleton';
 
+function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+
 export default function MetricsDashboard() {
   const { data, isLoading, error } = useSystemMetrics();
-
-  if (isLoading || !data) {
-    return (
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        {[1, 2, 3, 4].map((i) => (
-          <Skeleton key={i} className="h-40 w-full rounded-2xl" />
-        ))}
-      </div>
-    );
-  }
 
   if (error) {
     return (
@@ -28,49 +24,93 @@ export default function MetricsDashboard() {
     );
   }
 
+  if (isLoading || !data) {
+    return (
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <Skeleton className="h-6 w-36 rounded-lg" />
+          <Skeleton className="h-6 w-44 rounded-full" />
+        </div>
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {[1, 2, 3, 4].map((i) => (
+            <Skeleton key={i} className="h-40 w-full rounded-2xl" />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  const isPrometheus = data.source === 'prometheus';
+
   return (
-    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-      <MetricCard 
-        title="Compute (CPU)" 
-        value={`${data.cpu_usage}%`} 
-        icon={Cpu}
-        trend={{ value: 2.4, isPositive: false }}
-        className="col-span-1 lg:col-span-2"
-      >
-        <TimeSeriesChart 
-          data={data.history.cpu} 
-          color="#3b82f6" // blue-500
-          valueSuffix="%" 
+    <div className="space-y-4">
+      <div className="flex flex-wrap items-center justify-between gap-2 px-1">
+        <div className="flex items-center space-x-2 text-xs font-medium uppercase tracking-wider text-zinc-400">
+          <Radio className="h-3.5 w-3.5 text-zinc-500" />
+          <span>Cluster Telemetry Stream</span>
+        </div>
+        <div
+          data-testid="telemetry-source-badge"
+          className={cn(
+            "inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold tracking-wide border transition-all duration-300",
+            isPrometheus
+              ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400 shadow-sm shadow-emerald-500/10"
+              : "border-amber-500/30 bg-amber-500/10 text-amber-400 shadow-sm shadow-amber-500/10"
+          )}
+        >
+          <span
+            className={cn(
+              "h-1.5 w-1.5 rounded-full",
+              isPrometheus ? "bg-emerald-400 animate-pulse" : "bg-amber-400"
+            )}
+          />
+          <span>{isPrometheus ? "PROMETHEUS (LIVE)" : "SIMULATED (DEMO FALLBACK)"}</span>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <MetricCard 
+          title="Compute (CPU)" 
+          value={`${data.cpu_usage}%`} 
+          icon={Cpu}
+          trend={{ value: 2.4, isPositive: false }}
+          className="col-span-1 lg:col-span-2"
+        >
+          <TimeSeriesChart 
+            data={data.history.cpu} 
+            color="#3b82f6" // blue-500
+            valueSuffix="%" 
+          />
+        </MetricCard>
+
+        <MetricCard 
+          title="Memory Allocation" 
+          value={`${data.memory_usage}%`} 
+          icon={MemoryStick}
+          trend={{ value: 0.8, isPositive: true }}
+          className="col-span-1 lg:col-span-2"
+        >
+          <TimeSeriesChart 
+            data={data.history.memory} 
+            color="#8b5cf6" // violet-500
+            valueSuffix="%" 
+          />
+        </MetricCard>
+
+        <MetricCard 
+          title="Active Requests" 
+          value={data.active_requests.toLocaleString()} 
+          icon={Activity}
+          className="col-span-1 lg:col-span-2"
         />
-      </MetricCard>
 
-      <MetricCard 
-        title="Memory Allocation" 
-        value={`${data.memory_usage}%`} 
-        icon={MemoryStick}
-        trend={{ value: 0.8, isPositive: true }}
-        className="col-span-1 lg:col-span-2"
-      >
-        <TimeSeriesChart 
-          data={data.history.memory} 
-          color="#8b5cf6" // violet-500
-          valueSuffix="%" 
+        <MetricCard 
+          title="Global Latency" 
+          value={`${data.latency_ms}ms`} 
+          icon={Network}
+          className="col-span-1 lg:col-span-2"
         />
-      </MetricCard>
-
-      <MetricCard 
-        title="Active Requests" 
-        value={data.active_requests.toLocaleString()} 
-        icon={Activity}
-        className="col-span-1 lg:col-span-2"
-      />
-
-      <MetricCard 
-        title="Global Latency" 
-        value={`${data.latency_ms}ms`} 
-        icon={Network}
-        className="col-span-1 lg:col-span-2"
-      />
+      </div>
     </div>
   );
 }

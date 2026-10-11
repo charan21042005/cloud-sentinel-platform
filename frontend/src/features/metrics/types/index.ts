@@ -4,6 +4,7 @@ export interface TimeSeriesDataPoint {
 }
 
 export interface SystemMetrics {
+  source?: 'prometheus' | 'simulated';
   cpu_usage: number;
   memory_usage: number;
   active_requests: number;

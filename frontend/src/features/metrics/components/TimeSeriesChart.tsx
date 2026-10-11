@@ -25,6 +25,14 @@ export default function TimeSeriesChart({
   dataKey = 'value',
   valueSuffix = ''
 }: TimeSeriesChartProps) {
+  if (!data || data.length === 0) {
+    return (
+      <div className="flex h-full w-full min-h-[100px] items-center justify-center rounded-lg border border-dashed border-zinc-800/80 bg-zinc-950/30 text-xs text-zinc-500">
+        <span>No historical data points available</span>
+      </div>
+    );
+  }
+
   return (
     <ResponsiveContainer width="100%" height="100%">
       <AreaChart data={data} margin={{ top: 5, right: 0, left: 0, bottom: 0 }}>
