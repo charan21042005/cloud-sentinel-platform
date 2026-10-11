@@ -31,7 +31,7 @@ spec:
       containers:
         - name: traffic-generator
           # Replace with a digest built from the reviewed bounded source before unsuspending.
-          image: 434504869339.dkr.ecr.us-east-1.amazonaws.com/cloud-sentinel-prod-traffic-generator:REPLACE_WITH_VERIFIED_BOUNDED_IMAGE_TAG
+          image: 434504869339.dkr.ecr.us-east-1.amazonaws.com/cloud-sentinel-prod-traffic-generator@sha256:b20afb140569b574003e34d6b14e2053b77698ee1a3524ddcd47bf1403019f78
           imagePullPolicy: Always
           securityContext:
             allowPrivilegeEscalation: false
