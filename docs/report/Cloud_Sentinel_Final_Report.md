@@ -519,7 +519,7 @@ kubectl apply -k infrastructure/kubernetes/gitops/apps
 ```bash
 kubectl -n argocd port-forward svc/argocd-server 8099:80
 ```
-*(Default Credentials — Username: `admin` | Password: `XytX-1XbQ2tcbIbX`)*
+*(Default Credentials — Username: `admin` | Password: `[REDACTED — rotate if valid]`)*
 
 ### 10.3 Observability Access & Operational Verification
 Once the DevSecOps pipeline is running, the following endpoints provide comprehensive visibility into the system's state:
