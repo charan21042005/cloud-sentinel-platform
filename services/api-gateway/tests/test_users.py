@@ -335,7 +335,41 @@ def test_bootstrap_target_fails_closed(
 
 def test_bootstrap_target_accepts_explicit_local_development_database(monkeypatch):
     bootstrap_admin = configure_bootstrap(monkeypatch)
-    bootstrap_admin.validate_bootstrap_target()
+    target = bootstrap_admin.validate_bootstrap_target()
+    assert target.url.host == "127.0.0.1"
+    assert target.compose_target is None
+
+
+def test_bootstrap_target_accepts_only_verified_local_compose_database(monkeypatch):
+    compose_url = (
+        "postgresql+asyncpg://local-user:synthetic-password@postgres:5432/cloud_sentinel"
+    )
+    bootstrap_admin = configure_bootstrap(monkeypatch, database_url=compose_url)
+    monkeypatch.setattr(
+        bootstrap_admin,
+        "_verify_local_compose_database",
+        lambda _url: bootstrap_admin.VerifiedComposeTarget("a" * 64, "172.20.0.4"),
+    )
+
+    resolved = bootstrap_admin.validate_bootstrap_target()
+
+    assert resolved.url.host == "postgres"
+    assert resolved.url.port == 5432
+    assert resolved.url.database == "cloud_sentinel"
+    assert resolved.compose_target.database_ip == "172.20.0.4"
+
+
+def test_bootstrap_target_rejects_unverified_compose_database(monkeypatch):
+    compose_url = (
+        "postgresql+asyncpg://local-user:synthetic-password@postgres:5432/cloud_sentinel"
+    )
+    bootstrap_admin = configure_bootstrap(monkeypatch, database_url=compose_url)
+    monkeypatch.setattr(
+        bootstrap_admin, "_verify_local_compose_database", lambda _url: False
+    )
+
+    with pytest.raises(SystemExit, match="not a supported local development"):
+        bootstrap_admin.validate_bootstrap_target()
 
 
 def test_bootstrap_host_check_rejects_nonlocal_and_ambiguous_hosts():
@@ -366,6 +400,132 @@ async def test_bootstrap_refuses_noninteractive_terminal_before_database_access(
     monkeypatch.setattr(bootstrap_admin, "SessionLocal", database_access_must_not_happen)
     with pytest.raises(SystemExit, match="interactive terminal"):
         await bootstrap_admin.bootstrap_admin()
+
+
+def test_compose_child_requires_matching_api_container_identity(monkeypatch):
+    from app.cli import bootstrap_admin
+
+    compose_url = (
+        "postgresql+asyncpg://local-user:synthetic-password@postgres:5432/cloud_sentinel"
+    )
+    bootstrap = configure_bootstrap(monkeypatch, database_url=compose_url)
+    target = bootstrap.VerifiedComposeTarget("a" * 64, "172.20.0.4")
+    monkeypatch.setenv("HOSTNAME", "b" * 12)
+
+    with pytest.raises(SystemExit, match="handoff could not be verified"):
+        bootstrap.validate_bootstrap_target(target)
+
+
+def test_compose_child_accepts_matching_api_container_identity(monkeypatch):
+    from app.cli import bootstrap_admin
+
+    compose_url = (
+        "postgresql+asyncpg://local-user:synthetic-password@postgres:5432/cloud_sentinel"
+    )
+    bootstrap = configure_bootstrap(monkeypatch, database_url=compose_url)
+    target = bootstrap.VerifiedComposeTarget("a" * 64, "172.20.0.4")
+    monkeypatch.setenv("HOSTNAME", "a" * 12)
+
+    resolved = bootstrap.validate_bootstrap_target(target)
+
+    assert resolved.url.host == "postgres"
+    assert resolved.compose_target == target
+
+
+@pytest.mark.asyncio
+async def test_host_bootstrap_hands_off_to_verified_api_container(monkeypatch):
+    from types import SimpleNamespace
+    from app.cli import bootstrap_admin
+
+    compose_url = (
+        "postgresql+asyncpg://local-user:synthetic-password@postgres:5432/cloud_sentinel"
+    )
+    bootstrap = configure_bootstrap(monkeypatch, database_url=compose_url)
+    target = bootstrap.BootstrapTarget(
+        url=bootstrap.make_url(compose_url),
+        compose_target=bootstrap.VerifiedComposeTarget("a" * 64, "172.20.0.4"),
+    )
+    monkeypatch.setattr(
+        bootstrap, "validate_bootstrap_target", lambda _child=None: target
+    )
+
+    class InteractiveStream:
+        def isatty(self):
+            return True
+
+    monkeypatch.setattr(bootstrap.sys, "stdin", InteractiveStream())
+    monkeypatch.setattr(bootstrap.sys, "stderr", InteractiveStream())
+    calls = []
+
+    def fake_run(args, check):
+        calls.append((args, check))
+        return SimpleNamespace(returncode=0)
+
+    monkeypatch.setattr(bootstrap.subprocess, "run", fake_run)
+    await bootstrap.bootstrap_admin()
+
+    assert calls == [
+        (
+            [
+                "docker", "exec", "-it", "sentinel-api-gateway", "python", "-c",
+                "import asyncio,sys; from app.cli.bootstrap_admin import "
+                "_bootstrap_verified_compose_child; "
+                "asyncio.run(_bootstrap_verified_compose_child(sys.argv[1],sys.argv[2]))",
+                "a" * 64,
+                "172.20.0.4",
+            ],
+            False,
+        )
+    ]
+
+
+@pytest.mark.asyncio
+async def test_compose_child_rejects_wrong_database_identity_before_prompt(
+    monkeypatch,
+):
+    from app.cli import bootstrap_admin
+
+    compose_url = (
+        "postgresql+asyncpg://local-user:synthetic-password@postgres:5432/cloud_sentinel"
+    )
+    bootstrap = configure_bootstrap(monkeypatch, database_url=compose_url)
+    target = bootstrap.VerifiedComposeTarget("a" * 64, "172.20.0.4")
+    monkeypatch.setenv("HOSTNAME", "a" * 12)
+    monkeypatch.setattr(
+        bootstrap,
+        "validate_bootstrap_target",
+        lambda _child=None: bootstrap.BootstrapTarget(
+            url=bootstrap.make_url(compose_url), compose_target=target
+        ),
+    )
+
+    class InteractiveStream:
+        def isatty(self):
+            return True
+
+    class Result:
+        def one(self):
+            return ("unexpected_db", "local-user", "172.20.0.4/32")
+
+    class Session:
+        async def __aenter__(self):
+            return self
+
+        async def __aexit__(self, *_args):
+            return False
+
+        async def execute(self, _query):
+            return Result()
+
+    monkeypatch.setattr(bootstrap.sys, "stdin", InteractiveStream())
+    monkeypatch.setattr(bootstrap.sys, "stderr", InteractiveStream())
+    monkeypatch.setattr(bootstrap, "SessionLocal", Session)
+    monkeypatch.setattr(
+        "builtins.input", lambda _prompt: pytest.fail("prompted before identity check")
+    )
+
+    with pytest.raises(SystemExit, match="database identity did not match"):
+        await bootstrap.bootstrap_admin(target)
 
 
 @pytest.mark.asyncio

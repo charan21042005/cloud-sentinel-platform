@@ -19,6 +19,8 @@ function messageFor(error: unknown): string {
   if (status === 401) return 'Your session has expired. Sign in again.';
   if (status === 403) return 'Only administrators can manage users.';
   if (status === 422) return 'Check the user details and password requirements.';
+  if (!response) return 'Could not reach the API. Check the connection and retry.';
+  if (status && status >= 500) return 'The service could not load users. Please retry.';
   return 'The request could not be completed. Please try again.';
 }
 
@@ -136,12 +138,21 @@ export default function UsersPage() {
       </header>
 
       {error && (
-        <p
-          className="rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-200"
+        <div
+          className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-200"
           role="alert"
         >
-          {error}
-        </p>
+          <span>{error}</span>
+          {!loadingUsers && (
+            <button
+              type="button"
+              onClick={() => void loadUsers()}
+              className="rounded-md border border-red-300/30 px-3 py-1.5 font-medium hover:bg-red-500/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-200"
+            >
+              Retry user list
+            </button>
+          )}
+        </div>
       )}
       {notice && (
         <p
@@ -220,7 +231,7 @@ export default function UsersPage() {
         </div>
         {loadingUsers ? (
           <p className="p-6 text-sm text-zinc-400">Loading users…</p>
-        ) : users.length === 0 ? (
+        ) : error ? null : users.length === 0 ? (
           <p className="p-6 text-sm text-zinc-400">No users found.</p>
         ) : (
           <div className="overflow-x-auto">

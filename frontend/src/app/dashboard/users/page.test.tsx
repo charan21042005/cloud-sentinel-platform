@@ -56,6 +56,32 @@ describe('UsersPage', () => {
     expect(screen.getByText(/administrator access required/i)).toBeInTheDocument();
   });
 
+  it('shows a retryable error instead of a false empty state when listing fails', async () => {
+    vi.mocked(usersApi.list).mockRejectedValue({ response: { status: 503 } });
+
+    render(<UsersPage />);
+
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      'The service could not load users. Please retry.',
+    );
+    expect(screen.queryByText('No users found.')).not.toBeInTheDocument();
+
+    vi.mocked(usersApi.list).mockResolvedValue([admin]);
+    fireEvent.click(screen.getByRole('button', { name: 'Retry user list' }));
+
+    expect(await screen.findByText(/site-admin/)).toBeInTheDocument();
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+  });
+
+  it('shows an empty state only after a successful empty response', async () => {
+    vi.mocked(usersApi.list).mockResolvedValue([]);
+
+    render(<UsersPage />);
+
+    expect(await screen.findByText('No users found.')).toBeInTheDocument();
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+  });
+
   it('lets an admin create a selected role and renders user-safe fields', async () => {
     render(<UsersPage />);
     expect(await screen.findByText(/site-admin/)).toBeInTheDocument();
