@@ -41,6 +41,12 @@ export default function MetricsDashboard() {
   }
 
   const isPrometheus = data.source === 'prometheus';
+  const isSimulated = data.source === 'simulated';
+  const sourceLabel = isPrometheus
+    ? 'PROMETHEUS (LIVE)'
+    : isSimulated
+      ? 'SIMULATED (DEMO FALLBACK)'
+      : 'SOURCE UNKNOWN';
 
   return (
     <div className="space-y-4">
@@ -55,16 +61,18 @@ export default function MetricsDashboard() {
             "inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold tracking-wide border transition-all duration-300",
             isPrometheus
               ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400 shadow-sm shadow-emerald-500/10"
-              : "border-amber-500/30 bg-amber-500/10 text-amber-400 shadow-sm shadow-amber-500/10"
+              : isSimulated
+                ? "border-amber-500/30 bg-amber-500/10 text-amber-400 shadow-sm shadow-amber-500/10"
+                : "border-zinc-500/30 bg-zinc-500/10 text-zinc-300 shadow-sm shadow-zinc-500/10"
           )}
         >
           <span
             className={cn(
               "h-1.5 w-1.5 rounded-full",
-              isPrometheus ? "bg-emerald-400 animate-pulse" : "bg-amber-400"
+              isPrometheus ? "bg-emerald-400 animate-pulse" : isSimulated ? "bg-amber-400" : "bg-zinc-400"
             )}
           />
-          <span>{isPrometheus ? "PROMETHEUS (LIVE)" : "SIMULATED (DEMO FALLBACK)"}</span>
+          <span>{sourceLabel}</span>
         </div>
       </div>
 
