@@ -16,7 +16,10 @@ const registrationSchema = z
       .min(3, 'Use at least 3 characters.')
       .max(50, 'Use no more than 50 characters.'),
     email: z.string().email('Enter a valid email address.'),
-    password: z.string().min(8, 'Use at least 8 characters.'),
+    password: z
+      .string()
+      .min(8, 'Use at least 8 characters.')
+      .max(72, 'Use no more than 72 characters.'),
     confirmPassword: z.string().min(1, 'Confirm your password.'),
   })
   .refine((values) => values.password === values.confirmPassword, {

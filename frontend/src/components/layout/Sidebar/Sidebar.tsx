@@ -5,11 +5,8 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { 
   LayoutDashboard, 
-  AlertCircle, 
   ShieldAlert,
-  BarChart3, 
   Users, 
-  Settings, 
   Shield,
   ChevronRight
 } from 'lucide-react';
@@ -33,9 +30,7 @@ interface NavItem {
 const navigation: NavItem[] = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
   { name: 'Incidents', href: '/dashboard/incidents', icon: ShieldAlert, permission: 'incident:view' },
-  { name: 'Metrics', href: '/dashboard/metrics', icon: BarChart3, permission: 'metrics:view' },
-  { name: 'Sentinels', href: '/dashboard/sentinels', icon: Users, permission: 'users:manage' },
-  { name: 'Settings', href: '/dashboard/settings', icon: Settings, permission: 'settings:view' },
+  { name: 'Users', href: '/dashboard/users', icon: Users, permission: 'users:manage' },
 ];
 
 export default function Sidebar() {

@@ -1,8 +1,9 @@
 import React from 'react';
-import { X, Clock, Shield, User, Layers, ShieldAlert, CheckCircle, Flame, Eye, Terminal } from 'lucide-react';
+import { X, Clock, User, ShieldAlert, CheckCircle, Flame, Terminal } from 'lucide-react';
 import { Incident } from '../types';
 import StatusBadge from '@/components/ui/StatusBadge';
 import { useAcknowledgeIncident, useResolveIncident } from '../hooks/useIncidents';
+import PermissionGuard from '@/features/rbac/guards/PermissionGuard';
 
 interface IncidentDetailProps {
   incident: Incident | null;
@@ -42,6 +43,7 @@ export default function IncidentDetail({ incident, isOpen, onClose }: IncidentDe
         {/* Core Forensic Data Drawer */}
         <div className="flex-1 overflow-y-auto p-8 space-y-8">
           {/* Action Control Panel */}
+          <PermissionGuard permission="incident:update_status">
           <div className="flex items-center space-x-3 bg-zinc-900/60 p-2 rounded-2xl border border-zinc-800">
             <button 
               onClick={() => acknowledgeMutation.mutate(incident.id)}
@@ -60,6 +62,7 @@ export default function IncidentDetail({ incident, isOpen, onClose }: IncidentDe
               <span>{resolveMutation.isPending ? 'Terminating...' : incident.status === 'resolved' ? 'Resolved' : 'Resolve Incident'}</span>
             </button>
           </div>
+          </PermissionGuard>
 
           {/* Operational Topology Metrics */}
           <div className="grid grid-cols-3 gap-3">

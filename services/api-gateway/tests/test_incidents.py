@@ -4,7 +4,7 @@ from httpx import AsyncClient
 
 
 @pytest.mark.asyncio
-async def test_alertmanager_webhook(client: AsyncClient):
+async def test_alertmanager_webhook(client: AsyncClient, db_session):
     """
     Validate that the internal webhook sink ingests Alertmanager arrays correctly.
     """
@@ -27,7 +27,25 @@ async def test_alertmanager_webhook(client: AsyncClient):
         "commonAnnotations": {},
     }
 
-    response = await client.post("/api/v1/incidents/webhook", json=webhook_payload)
+    await client.post(
+        "/api/v1/auth/register",
+        json={"username": "webhook_operator", "email": "webhook@example.com", "password": "webhook-password"},
+    )
+    login = await client.post(
+        "/api/v1/auth/login",
+        json={"username": "webhook_operator", "password": "webhook-password"},
+    )
+    from sqlalchemy import select
+    from app.db.models.user import User
+
+    user = (await db_session.execute(select(User).where(User.username == "webhook_operator"))).scalar_one()
+    user.role = "operator"
+    await db_session.commit()
+    response = await client.post(
+        "/api/v1/incidents/webhook",
+        json=webhook_payload,
+        headers={"Authorization": f"Bearer {login.json()['access_token']}"},
+    )
     assert response.status_code == status.HTTP_200_OK
     data = response.json()
     assert data["status"] == "success"
@@ -50,4 +68,10 @@ async def test_incident_access_unauthorized(client: AsyncClient):
     Ensure operational views are strictly blocked for unauthenticated packets.
     """
     response = await client.get("/api/v1/incidents/")
+    assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+
+@pytest.mark.asyncio
+async def test_telemetry_requires_authentication(client: AsyncClient):
+    response = await client.get("/api/v1/telemetry/system/live")
     assert response.status_code == status.HTTP_401_UNAUTHORIZED

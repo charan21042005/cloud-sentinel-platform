@@ -22,7 +22,7 @@ describe('RequireRole Component', () => {
   it('renders children when user has required role clearance', () => {
     setupMock(true);
     render(
-      <RequireRole role="analyst">
+      <RequireRole role="operator">
         <div data-testid="protected-content">Secret Tactical Data</div>
       </RequireRole>
     );
@@ -32,7 +32,7 @@ describe('RequireRole Component', () => {
   it('hides children entirely when fallback is "hidden"', () => {
     setupMock(false);
     render(
-      <RequireRole role="analyst" fallback="hidden">
+      <RequireRole role="operator" fallback="hidden">
         <div data-testid="hidden-content">Should Not Render</div>
       </RequireRole>
     );
@@ -42,7 +42,7 @@ describe('RequireRole Component', () => {
   it('renders disabled container when fallback is "disabled"', () => {
     setupMock(false);
     render(
-      <RequireRole role="analyst" fallback="disabled">
+      <RequireRole role="operator" fallback="disabled">
         <button data-testid="disabled-btn">Launch Nuke</button>
       </RequireRole>
     );

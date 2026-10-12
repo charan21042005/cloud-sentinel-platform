@@ -88,12 +88,29 @@ async def test_registration_persists_only_a_password_hash(client: AsyncClient, d
 
 
 @pytest.mark.asyncio
+async def test_public_registration_ignores_attempted_role_escalation(client: AsyncClient):
+    response = await client.post(
+        "/api/v1/auth/register",
+        json={
+            "username": "role_spoof_user",
+            "email": "role-spoof@example.com",
+            "password": "test-only-password-483",
+            "role": "admin",
+        },
+    )
+    assert response.status_code == status.HTTP_201_CREATED
+    assert response.json()["role"] == "viewer"
+    assert "hashed_password" not in response.json()
+
+
+@pytest.mark.asyncio
 @pytest.mark.parametrize(
     "payload",
     [
         {"username": "ab", "email": "valid@example.com", "password": "long-enough-password"},
         {"username": "valid_user", "email": "invalid-email", "password": "long-enough-password"},
         {"username": "valid_user", "email": "valid@example.com", "password": "short"},
+        {"username": "valid_user", "email": "valid@example.com", "password": "😀" * 19},
     ],
 )
 async def test_registration_rejects_invalid_fields(client: AsyncClient, payload):

@@ -10,6 +10,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (credentials: LoginCredentials) => Promise<void>;
+  refreshUser: () => Promise<User>;
   logout: () => void;
 }
 
@@ -27,7 +28,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         try {
           const userData = await authApi.getMe();
           setUser(userData);
-        } catch (error) {
+        } catch {
           localStorage.removeItem('token');
         }
       }
@@ -44,6 +45,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     router.push('/dashboard');
   };
 
+  const refreshUser = async () => {
+    const userData = await authApi.getMe();
+    setUser(userData);
+    return userData;
+  };
+
   const logout = () => {
     localStorage.removeItem('token');
     setUser(null);
@@ -57,6 +64,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         isAuthenticated: !!user,
         isLoading,
         login,
+        refreshUser,
         logout,
       }}
     >

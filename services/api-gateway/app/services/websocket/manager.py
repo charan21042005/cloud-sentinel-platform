@@ -4,11 +4,15 @@ from typing import Dict, Set, Optional, Any
 from fastapi import WebSocket, WebSocketDisconnect, status
 from jose import JWTError, jwt
 from pydantic import ValidationError
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 from prometheus_client import Gauge, Counter, Histogram
 
 from app.core.config import settings
 from app.core.logging import logger
 from app.schemas.auth import TokenPayload
+from app.db.models.user import User
+from app.db.session import SessionLocal
 
 # --- Transport Observability Telemetry Metrics ---
 ws_active_connections = Gauge(
@@ -45,10 +49,8 @@ ws_broadcast_latency = Histogram(
 
 class ConnectionManager:
     """
-    Hardened Enterprise Real-Time Event Fabric Connection Manager (Phase 9).
-    Engineered with graceful fallback authorization mechanisms, native Prometheus
-    transport observability instrumentation, backpressure handling, and non-blocking
-    asynchronous fanout routing to completely eliminate connection dropout storms.
+    Real-time event transport with database-checked JWT sessions, Prometheus
+    instrumentation, backpressure handling, and asynchronous fanout.
     """
 
     def __init__(self):
@@ -61,8 +63,10 @@ class ConnectionManager:
         # Track active authenticated scopes vs anonymous dashboard fallback clients
         self.user_connections: Dict[WebSocket, str] = {}
 
-    async def authenticate_token(self, token: Optional[str]) -> Optional[str]:
-        """Validates incoming JWT token payloads during connection handshake."""
+    async def authenticate_token(
+        self, token: Optional[str], db: Optional[AsyncSession] = None
+    ) -> Optional[str]:
+        """Validates a JWT and confirms its active user still exists."""
         if not token or token == "null":
             return None
         try:
@@ -70,37 +74,48 @@ class ConnectionManager:
                 token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM]
             )
             token_data = TokenPayload(**payload)
-            return token_data.sub
-        except (JWTError, ValidationError, Exception) as e:
-            logger.warning(
-                f"[WebSocket Transport] Token handshake validation dropped: {e}"
+            from uuid import UUID
+
+            user_id = UUID(token_data.sub)
+            query = select(User.id).where(
+                User.id == user_id, User.is_active.is_(True)
             )
+            if db is None:
+                async with SessionLocal() as session:
+                    result = await session.execute(query)
+                    active_user = result.scalar_one_or_none()
+            else:
+                result = await db.execute(query)
+                active_user = result.scalar_one_or_none()
+            if active_user is not None:
+                return str(user_id)
+        except (JWTError, ValidationError, ValueError, TypeError):
+            logger.info("[WebSocket Transport] Rejected an invalid authentication session.")
+        except Exception:
+            logger.warning("[WebSocket Transport] Authentication check failed.")
             return None
+        return None
 
     async def connect(
-        self, websocket: WebSocket, channel: str, token: Optional[str] = None
+        self,
+        websocket: WebSocket,
+        channel: str,
+        token: Optional[str],
+        db: Optional[AsyncSession] = None,
     ) -> bool:
         """
-        Accepts WebSocket requests, executes hardened JWT session validation,
-        applies graceful authorization fallback, and increments live transport gauges.
+        Accepts only active database users with a valid JWT session.
         """
         # Ensure target channel domain exists
         if channel not in self.active_connections:
             self.active_connections[channel] = set()
 
-        # Execute Protocol Handshake
-        await websocket.accept()
-
-        # Phase 9 Hardened Fallback: IF token is absent or invalid, fallback gracefully
-        # to read-only anonymous viewer ingestion mode rather than abruptly dropping channels
-        user_id = await self.authenticate_token(token)
-        auth_status = "authenticated"
+        user_id = await self.authenticate_token(token, db)
         if not user_id:
-            user_id = "anonymous_viewer"
-            auth_status = "fallback_readonly"
-            logger.info(
-                f"🛡️ [WebSocket Transport] Token absent for channel '{channel}'. Gracefully assigning '{user_id}' access context."
-            )
+            await websocket.close(code=1008, reason="Authentication required")
+            return False
+
+        await websocket.accept()
 
         self.active_connections[channel].add(websocket)
         self.user_connections[websocket] = user_id
@@ -118,7 +133,7 @@ class ConnectionManager:
                 {
                     "event": "connection_established",
                     "channel": channel,
-                    "status": auth_status,
+                    "status": "authenticated",
                     "message": f"Successfully subscribed to real-time '{channel}' stream fabric.",
                 }
             )

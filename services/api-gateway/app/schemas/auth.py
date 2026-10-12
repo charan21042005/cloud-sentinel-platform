@@ -1,6 +1,6 @@
 from typing import Optional
 
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr, Field, field_validator
 
 
 class UserRegister(BaseModel):
@@ -8,7 +8,14 @@ class UserRegister(BaseModel):
 
     username: str = Field(..., min_length=3, max_length=50)
     email: EmailStr
-    password: str = Field(..., min_length=8)
+    password: str = Field(..., min_length=8, max_length=72)
+
+    @field_validator("password")
+    @classmethod
+    def password_fits_bcrypt(cls, value: str) -> str:
+        if len(value.encode("utf-8")) > 72:
+            raise ValueError("Password exceeds the supported length")
+        return value
 
 
 class UserLogin(BaseModel):

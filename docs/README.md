@@ -60,7 +60,7 @@ This repository is more than just a code dump; it is a **Structured Engineering 
 ### 📊 [Phase 04] — Operations & Security
 *Hardening the platform and implementing SRE observability.*
 *   **10 Observability:** [Prometheus, Grafana, & Loki](10_observability/Monitoring_Observability.md)
-*   **11 Security:** [DevSecOps & Threat Defense](11_security/Security_DevSecOps.md)
+*   **11 Security:** [DevSecOps & Threat Defense](11_security/Security_DevSecOps.md) • [Application roles and access control](11_security/Role_Based_Access_Control.md)
 *   **12 Strategy:** [High-Availability Deployment](12_deployment/Deployment_Strategy.md)
 *   **13 Quality:** [Production Testing Frameworks](13_testing/Testing_Strategy.md)
 

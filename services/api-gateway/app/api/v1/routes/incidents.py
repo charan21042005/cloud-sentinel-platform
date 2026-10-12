@@ -3,7 +3,7 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException, status
 
 from app.db.models.user import User
-from app.dependencies.auth import get_current_user
+from app.dependencies.auth import require_operator, require_viewer
 from app.dependencies.services import get_incident_service
 from app.schemas.incident import (
     AlertmanagerWebhookPayload,
@@ -18,6 +18,7 @@ router = APIRouter()
 async def alertmanager_webhook(
     payload: AlertmanagerWebhookPayload,
     service: IncidentService = Depends(get_incident_service),
+    _operator: User = Depends(require_operator),
 ) -> Dict[str, Any]:
     """
     Enterprise Alertmanager Webhook Receiver.
@@ -38,7 +39,7 @@ async def list_active_incidents(
     skip: int = 0,
     limit: int = 100,
     service: IncidentService = Depends(get_incident_service),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_viewer),
 ):
     """
     SRE Control Plane Operational API.
@@ -53,7 +54,7 @@ async def list_active_incidents(
 async def acknowledge_incident(
     incident_id: UUID,
     service: IncidentService = Depends(get_incident_service),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_operator),
 ):
     """
     Operator Manual Override.
@@ -75,7 +76,7 @@ async def acknowledge_incident(
 async def resolve_incident(
     incident_id: UUID,
     service: IncidentService = Depends(get_incident_service),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_operator),
 ):
     """
     Operator Manual Override.

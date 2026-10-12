@@ -1,7 +1,8 @@
 from fastapi import APIRouter, Depends
+from app.db.models.user import User
 from app.schemas.telemetry import SystemTelemetryResponse
 from app.services.telemetry.aggregator import TelemetryAggregator
-from app.dependencies.auth import get_current_user
+from app.dependencies.auth import require_viewer
 
 router = APIRouter()
 
@@ -10,7 +11,7 @@ aggregator = TelemetryAggregator()
 
 
 @router.get("/system/live", response_model=SystemTelemetryResponse)
-async def get_live_telemetry():
+async def get_live_telemetry(_user: User = Depends(require_viewer)):
     """
     Enterprise Telemetry Control Plane Endpoint.
     Returns sanitized, normalized, and unified DTOs directly to the frontend.

@@ -53,6 +53,9 @@ async def db_session() -> AsyncGenerator[AsyncSession, None]:
     Rolls back changes after the test is complete.
     """
     async with TestingSessionLocal() as session:
+        for table in reversed(Base.metadata.sorted_tables):
+            await session.execute(table.delete())
+        await session.commit()
         yield session
         await session.rollback()
 

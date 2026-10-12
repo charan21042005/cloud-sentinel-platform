@@ -7,7 +7,7 @@ import IncidentDetail from '@/features/incidents/components/IncidentDetail';
 import { useIncidents } from '@/features/incidents/hooks/useIncidents';
 import { useWebSocket } from '@/features/incidents/hooks/useWebSocket';
 import { IncidentSeverity, IncidentStatus, Incident } from '@/features/incidents/types';
-import { Plus, Radio } from 'lucide-react';
+import { Radio } from 'lucide-react';
 
 export default function IncidentsPage() {
   const [filters, setFilters] = useState({
@@ -63,10 +63,6 @@ export default function IncidentsPage() {
           <p className="mt-2 text-zinc-400">Real-time SRE telemetry orchestration, zero-polling WebSocket threat streams, and collaborative SOC workflows.</p>
         </div>
 
-        <button className="flex items-center space-x-2 rounded-xl bg-zinc-100 px-5 py-3 text-sm font-bold text-zinc-950 transition-all hover:bg-zinc-200">
-          <Plus className="h-5 w-5" />
-          <span>Manual Alert Injector</span>
-        </button>
       </div>
 
       <IncidentFilters 

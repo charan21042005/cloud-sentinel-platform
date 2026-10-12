@@ -1,8 +1,9 @@
 from datetime import datetime
 
-from sqlalchemy import Boolean, DateTime, String
+from sqlalchemy import Boolean, CheckConstraint, DateTime, String
 from sqlalchemy.orm import Mapped, mapped_column
 
+from app.core.roles import ALL_ROLES
 from app.db.base import Base
 from app.db.mixins import TimestampMixin, UUIDPrimaryKeyMixin
 
@@ -13,6 +14,12 @@ class User(Base, UUIDPrimaryKeyMixin, TimestampMixin):
     """
 
     __tablename__ = "users"
+    __table_args__ = (
+        CheckConstraint(
+            "role IN (" + ", ".join(f"'{role.value}'" for role in ALL_ROLES) + ")",
+            name="ck_users_role",
+        ),
+    )
 
     username: Mapped[str] = mapped_column(
         String(50), unique=True, index=True, nullable=False

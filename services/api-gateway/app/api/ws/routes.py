@@ -1,4 +1,3 @@
-import asyncio
 from typing import Optional
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Query
 
@@ -9,7 +8,10 @@ ws_router = APIRouter()
 
 
 @ws_router.websocket("/incidents")
-async def websocket_incidents(websocket: WebSocket, token: Optional[str] = Query(None)):
+async def websocket_incidents(
+    websocket: WebSocket,
+    token: Optional[str] = Query(None),
+):
     """Real-time operational stream delivering incident lifecycle mutations without polling."""
     connected = await websocket_manager.connect(
         websocket, channel="incidents", token=token
@@ -31,7 +33,10 @@ async def websocket_incidents(websocket: WebSocket, token: Optional[str] = Query
 
 
 @ws_router.websocket("/telemetry")
-async def websocket_telemetry(websocket: WebSocket, token: Optional[str] = Query(None)):
+async def websocket_telemetry(
+    websocket: WebSocket,
+    token: Optional[str] = Query(None),
+):
     """Real-time stream delivering live CPU/RAM/Network telemetry streams."""
     connected = await websocket_manager.connect(
         websocket, channel="telemetry", token=token
@@ -53,7 +58,8 @@ async def websocket_telemetry(websocket: WebSocket, token: Optional[str] = Query
 
 @ws_router.websocket("/system-events")
 async def websocket_system_events(
-    websocket: WebSocket, token: Optional[str] = Query(None)
+    websocket: WebSocket,
+    token: Optional[str] = Query(None),
 ):
     """Real-time stream delivering global audit activity and collaborative responder presence feeds."""
     connected = await websocket_manager.connect(

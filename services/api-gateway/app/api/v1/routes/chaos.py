@@ -1,10 +1,12 @@
 import asyncio
-from typing import Optional, List
-from fastapi import APIRouter, HTTPException, status, Query
+from typing import Optional
+from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel, Field
 
 from app.services.websocket.manager import websocket_manager
 from app.core.logging import logger
+from app.db.models.user import User
+from app.dependencies.auth import require_admin
 
 router = APIRouter()
 
@@ -40,7 +42,9 @@ class ChaosInjectionResponse(BaseModel):
     status_code=status.HTTP_200_OK,
     summary="Simulate SRE cluster disruption arrays for automated failover benchmarking.",
 )
-async def inject_chaos_fault(request: ChaosInjectionRequest):
+async def inject_chaos_fault(
+    request: ChaosInjectionRequest, _admin: User = Depends(require_admin)
+):
     """
     Enterprise Chaos Engineering Control Plane (Phase 10A).
     Injects deterministic faults into the operational pipeline to score reconnect storms,

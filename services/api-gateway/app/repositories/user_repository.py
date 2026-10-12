@@ -22,3 +22,21 @@ class UserRepository(BaseRepository[User]):
     async def get_by_username(self, username: str) -> Optional[User]:
         result = await self.db.execute(select(User).where(User.username == username))
         return result.scalars().first()
+
+    async def list_users(self) -> list[User]:
+        result = await self.db.execute(select(User).order_by(User.created_at, User.id))
+        return list(result.scalars().all())
+
+    async def count_active_admins(self) -> int:
+        result = await self.db.execute(
+            select(User.id)
+            .where(User.role == "admin", User.is_active.is_(True))
+            .with_for_update()
+        )
+        return len(result.scalars().all())
+
+    async def save(self, user: User) -> User:
+        self.db.add(user)
+        await self.db.commit()
+        await self.db.refresh(user)
+        return user
