@@ -72,6 +72,25 @@ describe('MetricsDashboard Component', () => {
     expect(badge).toHaveTextContent('SIMULATED (DEMO FALLBACK)');
   });
 
+  it('does not guess a telemetry source when the API omits it', () => {
+    vi.spyOn(useMetricsHook, 'useSystemMetrics').mockReturnValue({
+      data: {
+        cpu_usage: 20.0,
+        memory_usage: 30.0,
+        active_requests: 1,
+        latency_ms: 2.0,
+        history: { cpu: [], memory: [] },
+      },
+      isLoading: false,
+      error: null,
+      refetch: vi.fn(),
+    } as any);
+
+    render(<MetricsDashboard />);
+
+    expect(screen.getByTestId('telemetry-source-badge')).toHaveTextContent('SOURCE UNKNOWN');
+  });
+
   it('handles empty histories gracefully without crashing', () => {
     vi.spyOn(useMetricsHook, 'useSystemMetrics').mockReturnValue({
       data: {
