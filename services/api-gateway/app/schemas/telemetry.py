@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import List
+from typing import List, Optional
 
 
 class TimeSeriesPoint(BaseModel):
@@ -23,8 +23,8 @@ class SystemTelemetryResponse(BaseModel):
     """
 
     source: str = "prometheus"
-    cpu_usage: float
-    memory_usage: float
-    active_requests: int
-    latency_ms: float
+    cpu_usage: Optional[float]
+    memory_usage: Optional[float]
+    request_rate_per_second: Optional[float]
+    latency_ms: Optional[float]
     history: SystemMetricsHistory

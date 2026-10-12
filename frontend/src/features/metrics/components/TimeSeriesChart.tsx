@@ -17,18 +17,28 @@ interface TimeSeriesChartProps {
   color: string;
   dataKey?: string;
   valueSuffix?: string;
+  isStale?: boolean;
 }
 
 export default function TimeSeriesChart({ 
   data, 
   color, 
   dataKey = 'value',
-  valueSuffix = ''
+  valueSuffix = '',
+  isStale = false,
 }: TimeSeriesChartProps) {
+  if (isStale && data?.length) {
+    return (
+      <div className="flex h-full w-full min-h-[100px] items-center justify-center rounded-lg border border-dashed border-amber-800/80 bg-amber-950/20 px-4 text-center text-xs text-amber-300">
+        Telemetry samples are stale. Waiting for fresh data.
+      </div>
+    );
+  }
+
   if (!data || data.length === 0) {
     return (
       <div className="flex h-full w-full min-h-[100px] items-center justify-center rounded-lg border border-dashed border-zinc-800/80 bg-zinc-950/30 text-xs text-zinc-500">
-        <span>No historical data points available</span>
+        <span>Waiting for timestamped telemetry samples</span>
       </div>
     );
   }
@@ -68,7 +78,7 @@ export default function TimeSeriesChart({
           }}
           itemStyle={{ color: '#fafafa' }}
           labelStyle={{ color: '#a1a1aa', marginBottom: '4px' }}
-          formatter={(value: any) => [`${value}${valueSuffix}`, 'Value']}
+          formatter={(value) => [`${String(value ?? '')}${valueSuffix}`, 'Value']}
           labelFormatter={(label) => new Date(label).toLocaleTimeString()}
         />
         <Area 

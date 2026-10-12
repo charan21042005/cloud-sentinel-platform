@@ -10,6 +10,8 @@ services:
       - "8000:8000"
     env_file:
       - ../../services/api-gateway/.env
+    environment:
+      PROMETHEUS_URL: http://prometheus:9090/api/v1
     volumes:
       - ../../services/api-gateway:/app
     depends_on:

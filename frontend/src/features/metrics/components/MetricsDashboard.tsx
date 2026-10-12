@@ -9,12 +9,33 @@ import TimeSeriesChart from './TimeSeriesChart';
 import { useSystemMetrics } from '../hooks/useMetrics';
 import Skeleton from '@/components/ui/Skeleton';
 
+const STALE_AFTER_MS = 45_000;
+
+function latestSampleTime(data: { timestamp: string }[]): number | null {
+  const timestamps = data
+    .map((point) => Date.parse(point.timestamp))
+    .filter(Number.isFinite);
+  return timestamps.length ? Math.max(...timestamps) : null;
+}
+
+function metricValue(value: number | null, suffix: string, stale: boolean): string {
+  return value === null || stale ? 'Unavailable' : `${value}${suffix}`;
+}
+
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
 export default function MetricsDashboard() {
   const { data, isLoading, error } = useSystemMetrics();
+  const [now, setNow] = React.useState<number | null>(null);
+
+  React.useEffect(() => {
+    const updateClock = () => setNow(Date.now());
+    updateClock();
+    const timer = setInterval(updateClock, 10_000);
+    return () => clearInterval(timer);
+  }, []);
 
   if (error) {
     return (
@@ -42,10 +63,16 @@ export default function MetricsDashboard() {
 
   const isPrometheus = data.source === 'prometheus';
   const isSimulated = data.source === 'simulated';
+  const newestSample = latestSampleTime([...data.history.cpu, ...data.history.memory]);
+  const isStale =
+    now === null ||
+    newestSample === null ||
+    now - newestSample > STALE_AFTER_MS ||
+    newestSample > now;
   const sourceLabel = isPrometheus
-    ? 'PROMETHEUS (LIVE)'
+    ? isStale ? 'PROMETHEUS (STALE)' : 'PROMETHEUS (LIVE)'
     : isSimulated
-      ? 'SIMULATED (DEMO FALLBACK)'
+      ? isStale ? 'SIMULATED (STALE)' : 'SIMULATED (DEMO FALLBACK)'
       : 'SOURCE UNKNOWN';
 
   return (
@@ -79,42 +106,42 @@ export default function MetricsDashboard() {
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
         <MetricCard 
           title="Compute (CPU)" 
-          value={`${data.cpu_usage}%`} 
+          value={metricValue(data.cpu_usage, '%', isStale)}
           icon={Cpu}
-          trend={{ value: 2.4, isPositive: false }}
           className="col-span-1 lg:col-span-2"
         >
           <TimeSeriesChart 
             data={data.history.cpu} 
             color="#3b82f6" // blue-500
             valueSuffix="%" 
+            isStale={isStale}
           />
         </MetricCard>
 
         <MetricCard 
           title="Memory Allocation" 
-          value={`${data.memory_usage}%`} 
+          value={metricValue(data.memory_usage, '%', isStale)}
           icon={MemoryStick}
-          trend={{ value: 0.8, isPositive: true }}
           className="col-span-1 lg:col-span-2"
         >
           <TimeSeriesChart 
             data={data.history.memory} 
             color="#8b5cf6" // violet-500
             valueSuffix="%" 
+            isStale={isStale}
           />
         </MetricCard>
 
         <MetricCard 
-          title="Active Requests" 
-          value={data.active_requests.toLocaleString()} 
+          title="Request Throughput"
+          value={metricValue(data.request_rate_per_second, ' req/s', isStale)}
           icon={Activity}
           className="col-span-1 lg:col-span-2"
         />
 
         <MetricCard 
           title="Global Latency" 
-          value={`${data.latency_ms}ms`} 
+          value={metricValue(data.latency_ms, 'ms', isStale)}
           icon={Network}
           className="col-span-1 lg:col-span-2"
         />

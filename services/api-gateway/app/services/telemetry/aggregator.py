@@ -77,10 +77,10 @@ class TelemetryAggregator:
             return await self.simulator.get_simulated_telemetry()
 
         # Real Prometheus data is available -> normalize and return with source="prometheus"
-        cpu_val = round(raw_cpu, 1) if raw_cpu is not None else 0.0
-        mem_val = round(raw_memory, 1) if raw_memory is not None else 0.0
-        req_val = int(raw_requests) if raw_requests is not None else 0
-        lat_val = round(raw_latency, 1) if raw_latency is not None else 0.0
+        cpu_val = round(raw_cpu, 1) if raw_cpu is not None else None
+        mem_val = round(raw_memory, 1) if raw_memory is not None else None
+        req_val = round(raw_requests, 2) if raw_requests is not None else None
+        lat_val = round(raw_latency, 1) if raw_latency is not None else None
 
         cpu_series = TelemetryTransformer.normalize_time_series(raw_cpu_history or [])
         mem_series = TelemetryTransformer.normalize_time_series(raw_memory_history or [])
@@ -89,7 +89,7 @@ class TelemetryAggregator:
             source="prometheus",
             cpu_usage=cpu_val,
             memory_usage=mem_val,
-            active_requests=req_val,
+            request_rate_per_second=req_val,
             latency_ms=lat_val,
             history=SystemMetricsHistory(
                 cpu=cpu_series,

@@ -1,4 +1,5 @@
 from datetime import datetime, timezone
+import math
 from typing import List, Any
 from app.schemas.telemetry import TimeSeriesPoint
 
@@ -28,6 +29,8 @@ class TelemetryTransformer:
 
                 # Format to 1 decimal place to prevent React re-render thrashing
                 val = round(float(string_val), 1)
+                if not math.isfinite(val):
+                    continue
 
                 normalized.append(TimeSeriesPoint(timestamp=iso_time, value=val))
             except (ValueError, TypeError):

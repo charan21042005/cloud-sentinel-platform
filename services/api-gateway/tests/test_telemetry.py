@@ -8,6 +8,7 @@ from app.schemas.telemetry import SystemTelemetryResponse
 from app.services.telemetry.aggregator import TelemetryAggregator
 from app.services.telemetry.prometheus_client import PrometheusAsyncClient
 from app.services.telemetry.simulation import TelemetrySimulator
+from app.services.telemetry.transformers import TelemetryTransformer
 
 
 @pytest.mark.asyncio
@@ -40,7 +41,7 @@ async def test_prometheus_returns_valid_data():
     assert res.source == "prometheus"
     assert res.cpu_usage == 25.5
     assert res.memory_usage == 64.2
-    assert res.active_requests == 120
+    assert res.request_rate_per_second == 120.0
     assert res.latency_ms == 15.4
     assert len(res.history.cpu) == 2
     assert res.history.cpu[0].value == 25.0
@@ -62,8 +63,10 @@ async def test_prometheus_connection_failure():
     assert res.source == "simulated"
     assert 10.0 <= res.cpu_usage <= 90.0
     assert 30.0 <= res.memory_usage <= 90.0
-    assert len(res.history.cpu) == 20
-    assert len(res.history.memory) == 20
+    assert res.request_rate_per_second is None
+    assert res.latency_ms is None
+    assert len(res.history.cpu) == 1
+    assert len(res.history.memory) == 1
 
 
 @pytest.mark.asyncio
@@ -80,6 +83,8 @@ async def test_prometheus_timeout():
     assert res.source == "simulated"
     assert res.cpu_usage > 0.0
     assert res.memory_usage > 0.0
+    assert res.request_rate_per_second is None
+    assert res.latency_ms is None
 
 
 @pytest.mark.asyncio
@@ -96,7 +101,7 @@ async def test_prometheus_empty_series():
 
     assert res.source == "simulated"
     assert res.cpu_usage > 0.0
-    assert len(res.history.cpu) == 20
+    assert len(res.history.cpu) == 1
 
 
 @pytest.mark.asyncio
@@ -116,24 +121,64 @@ async def test_prometheus_malformed_or_error_response():
 
 @pytest.mark.asyncio
 async def test_simulated_history_structure_and_bounds():
-    """6. Simulated history contains valid timestamps and bounded values."""
+    """Simulator history starts at collection and remains bounded."""
     simulator = TelemetrySimulator(history_points=20, step_seconds=15)
     res = await simulator.get_simulated_telemetry()
 
     assert res.source == "simulated"
-    assert len(res.history.cpu) == 20
-    assert len(res.history.memory) == 20
+    assert len(res.history.cpu) == 1
+    assert len(res.history.memory) == 1
 
     for point in res.history.cpu:
         assert 0.0 <= point.value <= 100.0
         # Valid ISO timestamp parsing
         dt = datetime.fromisoformat(point.timestamp)
         assert dt is not None
+        assert abs((datetime.now(dt.tzinfo) - dt).total_seconds()) < 2
 
     for point in res.history.memory:
         assert 0.0 <= point.value <= 100.0
         dt = datetime.fromisoformat(point.timestamp)
         assert dt is not None
+
+    for _ in range(22):
+        res = await simulator.get_simulated_telemetry()
+    assert len(res.history.cpu) == 20
+    assert len(res.history.memory) == 20
+
+
+@pytest.mark.asyncio
+async def test_prometheus_missing_metrics_are_unavailable_not_zero():
+    mock_client = MagicMock(spec=PrometheusAsyncClient)
+    mock_client.is_cooling_down = False
+    mock_client.query = AsyncMock(side_effect=[18.4, None, 0.4, None])
+    mock_client.query_range = AsyncMock(
+        side_effect=[[[int(time.time()), "18.4"]], None]
+    )
+
+    result = await TelemetryAggregator(client=mock_client).get_system_telemetry()
+
+    assert result.source == "prometheus"
+    assert result.cpu_usage == 18.4
+    assert result.memory_usage is None
+    assert result.request_rate_per_second == 0.4
+    assert result.latency_ms is None
+    assert result.history.memory == []
+
+
+def test_time_series_transformer_skips_invalid_and_non_finite_samples():
+    samples = TelemetryTransformer.normalize_time_series(
+        [
+            [time.time(), "21.4"],
+            [time.time(), "NaN"],
+            [time.time(), "Infinity"],
+            [time.time(), "not-a-number"],
+            [time.time()],
+        ]
+    )
+
+    assert len(samples) == 1
+    assert samples[0].value == 21.4
 
 
 @pytest.mark.asyncio

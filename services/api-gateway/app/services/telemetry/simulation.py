@@ -1,5 +1,5 @@
 import asyncio
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timezone
 import random
 from typing import List
 from app.schemas.telemetry import (
@@ -24,29 +24,11 @@ class TelemetrySimulator:
         # Seed initial stable state
         self.current_cpu = 42.4
         self.current_memory = 58.7
-        self.current_requests = 68
-        self.current_latency = 24.2
         self.last_timestamp = datetime.now(timezone.utc)
 
-        # Generate initial coherent historical series
-        self.cpu_history: List[TimeSeriesPoint] = self._generate_initial_history(
-            base=40.0, volatility=5.0
-        )
-        self.memory_history: List[TimeSeriesPoint] = self._generate_initial_history(
-            base=58.0, volatility=2.5
-        )
-
-    def _generate_initial_history(
-        self, base: float, volatility: float
-    ) -> List[TimeSeriesPoint]:
-        now = datetime.now(timezone.utc)
-        points = []
-        val = base
-        for i in range(self.history_points, 0, -1):
-            ts = (now - timedelta(seconds=i * self.step_seconds)).isoformat()
-            val = max(10.0, min(90.0, val + random.uniform(-volatility, volatility)))
-            points.append(TimeSeriesPoint(timestamp=ts, value=round(val, 1)))
-        return points
+        # History begins with the first observed simulator sample; never backfill.
+        self.cpu_history: List[TimeSeriesPoint] = []
+        self.memory_history: List[TimeSeriesPoint] = []
 
     async def get_simulated_telemetry(self) -> SystemTelemetryResponse:
         """
@@ -64,13 +46,6 @@ class TelemetrySimulator:
             self.current_memory = max(
                 35.0, min(82.0, self.current_memory + random.uniform(-1.5, 1.5))
             )
-            self.current_requests = max(
-                15, min(250, int(self.current_requests + random.randint(-12, 12)))
-            )
-            self.current_latency = max(
-                8.0, min(65.0, self.current_latency + random.uniform(-2.0, 2.0))
-            )
-
             cpu_val = round(self.current_cpu, 1)
             mem_val = round(self.current_memory, 1)
 
@@ -88,8 +63,8 @@ class TelemetrySimulator:
                 source="simulated",
                 cpu_usage=cpu_val,
                 memory_usage=mem_val,
-                active_requests=self.current_requests,
-                latency_ms=round(self.current_latency, 1),
+                request_rate_per_second=None,
+                latency_ms=None,
                 history=SystemMetricsHistory(
                     cpu=list(self.cpu_history),
                     memory=list(self.memory_history),

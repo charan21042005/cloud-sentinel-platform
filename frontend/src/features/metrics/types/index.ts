@@ -5,10 +5,10 @@ export interface TimeSeriesDataPoint {
 
 export interface SystemMetrics {
   source?: 'prometheus' | 'simulated';
-  cpu_usage: number;
-  memory_usage: number;
-  active_requests: number;
-  latency_ms: number;
+  cpu_usage: number | null;
+  memory_usage: number | null;
+  request_rate_per_second: number | null;
+  latency_ms: number | null;
   history: {
     cpu: TimeSeriesDataPoint[];
     memory: TimeSeriesDataPoint[];

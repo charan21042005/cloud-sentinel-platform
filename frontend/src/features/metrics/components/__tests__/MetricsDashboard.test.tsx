@@ -14,17 +14,19 @@ vi.mock('recharts', async () => {
 });
 
 describe('MetricsDashboard Component', () => {
+  const recentTimestamp = new Date().toISOString();
+
   it('renders PROMETHEUS (LIVE) source badge when source is prometheus', () => {
     vi.spyOn(useMetricsHook, 'useSystemMetrics').mockReturnValue({
       data: {
         source: 'prometheus',
         cpu_usage: 24.5,
         memory_usage: 62.1,
-        active_requests: 120,
+        request_rate_per_second: 1.2,
         latency_ms: 18.2,
         history: {
-          cpu: [{ timestamp: '2026-10-11T05:00:00Z', value: 24.5 }],
-          memory: [{ timestamp: '2026-10-11T05:00:00Z', value: 62.1 }],
+          cpu: [{ timestamp: recentTimestamp, value: 24.5 }],
+          memory: [{ timestamp: recentTimestamp, value: 62.1 }],
         },
       },
       isLoading: false,
@@ -47,16 +49,16 @@ describe('MetricsDashboard Component', () => {
         source: 'simulated',
         cpu_usage: 45.0,
         memory_usage: 55.0,
-        active_requests: 65,
+        request_rate_per_second: 65,
         latency_ms: 22.0,
         history: {
           cpu: [
-            { timestamp: '2026-10-11T05:00:00Z', value: 44.0 },
-            { timestamp: '2026-10-11T05:00:15Z', value: 45.0 },
+            { timestamp: recentTimestamp, value: 44.0 },
+            { timestamp: recentTimestamp, value: 45.0 },
           ],
           memory: [
-            { timestamp: '2026-10-11T05:00:00Z', value: 54.0 },
-            { timestamp: '2026-10-11T05:00:15Z', value: 55.0 },
+            { timestamp: recentTimestamp, value: 54.0 },
+            { timestamp: recentTimestamp, value: 55.0 },
           ],
         },
       },
@@ -77,7 +79,7 @@ describe('MetricsDashboard Component', () => {
       data: {
         cpu_usage: 20.0,
         memory_usage: 30.0,
-        active_requests: 1,
+        request_rate_per_second: 1,
         latency_ms: 2.0,
         history: { cpu: [], memory: [] },
       },
@@ -97,7 +99,7 @@ describe('MetricsDashboard Component', () => {
         source: 'simulated',
         cpu_usage: 0,
         memory_usage: 0,
-        active_requests: 0,
+        request_rate_per_second: null,
         latency_ms: 0,
         history: {
           cpu: [],
@@ -111,7 +113,32 @@ describe('MetricsDashboard Component', () => {
 
     render(<MetricsDashboard />);
 
-    expect(screen.getAllByText('No historical data points available').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Waiting for timestamped telemetry samples').length).toBeGreaterThan(0);
+  });
+
+  it('shows unavailable for missing metrics and labels old samples stale', () => {
+    vi.spyOn(useMetricsHook, 'useSystemMetrics').mockReturnValue({
+      data: {
+        source: 'prometheus',
+        cpu_usage: null,
+        memory_usage: null,
+        request_rate_per_second: null,
+        latency_ms: null,
+        history: {
+          cpu: [{ timestamp: new Date(Date.now() - 60_000).toISOString(), value: 20 }],
+          memory: [{ timestamp: new Date(Date.now() - 60_000).toISOString(), value: 30 }],
+        },
+      },
+      isLoading: false,
+      error: null,
+      refetch: vi.fn(),
+    } as any);
+
+    render(<MetricsDashboard />);
+
+    expect(screen.getByTestId('telemetry-source-badge')).toHaveTextContent('PROMETHEUS (STALE)');
+    expect(screen.getAllByText('Unavailable')).toHaveLength(4);
+    expect(screen.getAllByText('Telemetry samples are stale. Waiting for fresh data.')).toHaveLength(2);
   });
 
   it('renders error state when telemetry fetch fails', () => {
