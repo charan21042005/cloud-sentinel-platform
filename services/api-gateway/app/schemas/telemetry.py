@@ -38,3 +38,6 @@ class SystemTelemetryResponse(BaseModel):
     latency_ms: Optional[float]
     history: SystemMetricsHistory
     metric_timestamps: MetricTimestamps = Field(default_factory=MetricTimestamps)
+    source_reachable: Optional[bool] = None
+    source_checked_at: Optional[str] = None
+    response_started_at: Optional[str] = None

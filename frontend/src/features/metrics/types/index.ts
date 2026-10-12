@@ -15,6 +15,9 @@ export interface SystemMetrics {
     request_rate_per_second?: string | null;
     latency_ms?: string | null;
   };
+  source_reachable?: boolean | null;
+  source_checked_at?: string | null;
+  response_started_at?: string | null;
   history: {
     cpu: TimeSeriesDataPoint[];
     memory: TimeSeriesDataPoint[];

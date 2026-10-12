@@ -25,6 +25,8 @@ describe('MetricsDashboard Component', () => {
         request_rate_per_second: 1.2,
         latency_ms: 18.2,
         metric_timestamps: { cpu_usage: recentTimestamp, memory_usage: recentTimestamp, request_rate_per_second: recentTimestamp, latency_ms: recentTimestamp },
+        source_reachable: true,
+        source_checked_at: recentTimestamp,
         history: {
           cpu: [{ timestamp: recentTimestamp, value: 24.5 }],
           memory: [{ timestamp: recentTimestamp, value: 62.1 }],
@@ -131,6 +133,8 @@ describe('MetricsDashboard Component', () => {
           cpu_usage: new Date(Date.now() - 60_000).toISOString(),
           memory_usage: new Date(Date.now() - 60_000).toISOString(),
         },
+        source_reachable: true,
+        source_checked_at: recentTimestamp,
         history: {
           cpu: [{ timestamp: new Date(Date.now() - 60_000).toISOString(), value: 20 }],
           memory: [{ timestamp: new Date(Date.now() - 60_000).toISOString(), value: 30 }],
@@ -162,6 +166,8 @@ describe('MetricsDashboard Component', () => {
           request_rate_per_second: null,
           latency_ms: recentTimestamp,
         },
+        source_reachable: true,
+        source_checked_at: recentTimestamp,
         history: {
           cpu: [{ timestamp: recentTimestamp, value: 24.5 }],
           memory: [{ timestamp: recentTimestamp, value: 62.1 }],
@@ -176,7 +182,75 @@ describe('MetricsDashboard Component', () => {
 
     expect(screen.getByText('24.5%')).toBeInTheDocument();
     expect(screen.getAllByText('Unavailable')).toHaveLength(2);
+    expect(screen.getAllByText('Current sample is stale.')).toHaveLength(1);
+    expect(screen.queryByText('Historical memory samples are stale.')).not.toBeInTheDocument();
     expect(screen.getByTestId('telemetry-source-badge')).toHaveTextContent('PROMETHEUS (PARTIAL)');
+  });
+
+  it('does not report LIVE when current metrics are fresh but graph history is stale', () => {
+    const oldTimestamp = new Date(Date.now() - 60_000).toISOString();
+    vi.spyOn(useMetricsHook, 'useSystemMetrics').mockReturnValue({
+      data: {
+        source: 'prometheus',
+        cpu_usage: 24.5,
+        memory_usage: 62.1,
+        request_rate_per_second: 1.2,
+        latency_ms: 18.2,
+        metric_timestamps: {
+          cpu_usage: recentTimestamp,
+          memory_usage: recentTimestamp,
+          request_rate_per_second: recentTimestamp,
+          latency_ms: recentTimestamp,
+        },
+        source_reachable: true,
+        source_checked_at: recentTimestamp,
+        history: {
+          cpu: [{ timestamp: oldTimestamp, value: 24.5 }],
+          memory: [{ timestamp: oldTimestamp, value: 62.1 }],
+        },
+      },
+      isLoading: false,
+      error: null,
+      refetch: vi.fn(),
+    } as unknown as ReturnType<typeof useMetricsHook.useSystemMetrics>);
+
+    render(<MetricsDashboard />);
+
+    expect(screen.getByTestId('telemetry-source-badge')).toHaveTextContent('PROMETHEUS (PARTIAL)');
+    expect(screen.getByTestId('telemetry-connectivity')).toHaveTextContent('Prometheus reachable');
+    expect(screen.getAllByText('Telemetry samples are stale. Showing the last collected data.')).toHaveLength(2);
+  });
+
+  it('marks Prometheus disconnected separately from sample freshness', () => {
+    vi.spyOn(useMetricsHook, 'useSystemMetrics').mockReturnValue({
+      data: {
+        source: 'prometheus',
+        cpu_usage: 24.5,
+        memory_usage: 62.1,
+        request_rate_per_second: 1.2,
+        latency_ms: 18.2,
+        metric_timestamps: {
+          cpu_usage: recentTimestamp,
+          memory_usage: recentTimestamp,
+          request_rate_per_second: recentTimestamp,
+          latency_ms: recentTimestamp,
+        },
+        source_reachable: false,
+        source_checked_at: recentTimestamp,
+        history: {
+          cpu: [{ timestamp: recentTimestamp, value: 24.5 }],
+          memory: [{ timestamp: recentTimestamp, value: 62.1 }],
+        },
+      },
+      isLoading: false,
+      error: null,
+      refetch: vi.fn(),
+    } as unknown as ReturnType<typeof useMetricsHook.useSystemMetrics>);
+
+    render(<MetricsDashboard />);
+
+    expect(screen.getByTestId('telemetry-source-badge')).toHaveTextContent('PROMETHEUS (DISCONNECTED)');
+    expect(screen.getByTestId('telemetry-connectivity')).toHaveTextContent('Prometheus unreachable');
   });
 
   it('renders error state when telemetry fetch fails', () => {

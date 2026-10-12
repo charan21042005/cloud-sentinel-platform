@@ -17,9 +17,11 @@ interface MetricCardProps {
   };
   children?: React.ReactNode;
   className?: string;
+  statusMessage?: string;
+  statusTone?: 'stale' | 'unavailable';
 }
 
-export default function MetricCard({ title, value, icon: Icon, trend, children, className }: MetricCardProps) {
+export default function MetricCard({ title, value, icon: Icon, trend, children, className, statusMessage, statusTone = 'unavailable' }: MetricCardProps) {
   return (
     <div className={cn("flex flex-col rounded-2xl border border-zinc-800 bg-zinc-900/40 p-6 backdrop-blur-sm overflow-hidden", className)}>
       <div className="flex items-center justify-between mb-4">
@@ -40,6 +42,15 @@ export default function MetricCard({ title, value, icon: Icon, trend, children, 
           </span>
         )}
       </div>
+
+      {statusMessage && (
+        <p className={cn(
+          "mt-2 text-xs",
+          statusTone === 'stale' ? "text-amber-300" : "text-zinc-500",
+        )}>
+          {statusMessage}
+        </p>
+      )}
 
       {children && (
         <div className="mt-6 flex-1 w-full min-h-[120px]">

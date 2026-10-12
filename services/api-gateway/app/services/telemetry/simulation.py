@@ -30,7 +30,12 @@ class TelemetrySimulator:
         self.cpu_history: List[TimeSeriesPoint] = []
         self.memory_history: List[TimeSeriesPoint] = []
 
-    async def get_simulated_telemetry(self) -> SystemTelemetryResponse:
+    async def get_simulated_telemetry(
+        self,
+        source_reachable: bool = False,
+        source_checked_at: str | None = None,
+        response_started_at: str | None = None,
+    ) -> SystemTelemetryResponse:
         """
         Thread/asyncio safe random-walk step.
         Returns a SystemTelemetryResponse with source='simulated'.
@@ -73,4 +78,7 @@ class TelemetrySimulator:
                     "cpu_usage": now_iso,
                     "memory_usage": now_iso,
                 },
+                source_reachable=source_reachable,
+                source_checked_at=source_checked_at,
+                response_started_at=response_started_at or now_iso,
             )

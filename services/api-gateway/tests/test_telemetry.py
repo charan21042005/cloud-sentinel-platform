@@ -35,6 +35,7 @@ async def test_prometheus_returns_valid_data():
         return [[now - 15, "25.0"], [now, "26.0"]]
 
     mock_client.query = AsyncMock(side_effect=mock_query)
+    mock_client.query_with_timestamp = AsyncMock(return_value=(1.0, time.time()))
     mock_client.query_range = AsyncMock(side_effect=mock_query_range)
 
     aggregator = TelemetryAggregator(client=mock_client)
@@ -52,6 +53,9 @@ async def test_prometheus_returns_valid_data():
     assert res.metric_timestamps.memory_usage is not None
     assert res.metric_timestamps.request_rate_per_second is not None
     assert res.metric_timestamps.latency_ms is not None
+    assert res.source_reachable is True
+    assert res.source_checked_at is not None
+    assert res.response_started_at is not None
 
 
 @pytest.mark.asyncio
@@ -59,6 +63,7 @@ async def test_metric_freshness_timestamps_are_independent():
     mock_client = MagicMock(spec=PrometheusAsyncClient)
     mock_client.is_cooling_down = False
     mock_client.query = AsyncMock(side_effect=[10.0, 20.0, 1.0, 3.0, time.time(), None, time.time(), time.time()])
+    mock_client.query_with_timestamp = AsyncMock(return_value=(1.0, time.time()))
     mock_client.query_range = AsyncMock(return_value=[])
 
     response = await TelemetryAggregator(client=mock_client).get_system_telemetry()
@@ -67,6 +72,22 @@ async def test_metric_freshness_timestamps_are_independent():
     assert response.metric_timestamps.memory_usage is None
     assert response.metric_timestamps.request_rate_per_second is not None
     assert response.metric_timestamps.latency_ms is not None
+    assert response.source_reachable is True
+
+
+@pytest.mark.asyncio
+async def test_prometheus_connectivity_is_separate_from_missing_metrics():
+    mock_client = MagicMock(spec=PrometheusAsyncClient)
+    mock_client.is_cooling_down = False
+    mock_client.query = AsyncMock(return_value=None)
+    mock_client.query_range = AsyncMock(return_value=None)
+    mock_client.query_with_timestamp = AsyncMock(return_value=(1.0, time.time()))
+
+    response = await TelemetryAggregator(client=mock_client).get_system_telemetry()
+
+    assert response.source == "simulated"
+    assert response.source_reachable is True
+    assert response.source_checked_at is not None
 
 
 @pytest.mark.asyncio
@@ -76,6 +97,7 @@ async def test_prometheus_connection_failure():
     mock_client.is_cooling_down = False
     mock_client.query = AsyncMock(side_effect=httpx.ConnectError("Connection refused"))
     mock_client.query_range = AsyncMock(side_effect=httpx.ConnectError("Connection refused"))
+    mock_client.query_with_timestamp = AsyncMock(side_effect=httpx.ConnectError("Connection refused"))
 
     simulator = TelemetrySimulator()
     aggregator = TelemetryAggregator(client=mock_client, simulator=simulator)
@@ -86,6 +108,7 @@ async def test_prometheus_connection_failure():
     assert 30.0 <= res.memory_usage <= 90.0
     assert res.request_rate_per_second is None
     assert res.latency_ms is None
+    assert res.source_reachable is False
     assert len(res.history.cpu) == 1
     assert len(res.history.memory) == 1
 
@@ -97,6 +120,7 @@ async def test_prometheus_timeout():
     mock_client.is_cooling_down = False
     mock_client.query = AsyncMock(side_effect=httpx.ReadTimeout("Timeout querying Prometheus"))
     mock_client.query_range = AsyncMock(side_effect=httpx.ReadTimeout("Timeout"))
+    mock_client.query_with_timestamp = AsyncMock(side_effect=httpx.ReadTimeout("Timeout"))
 
     aggregator = TelemetryAggregator(client=mock_client)
     res = await aggregator.get_system_telemetry()
@@ -116,6 +140,7 @@ async def test_prometheus_empty_series():
     # When query returns None (empty result set in Prometheus)
     mock_client.query = AsyncMock(return_value=None)
     mock_client.query_range = AsyncMock(return_value=None)
+    mock_client.query_with_timestamp = AsyncMock(return_value=None)
 
     aggregator = TelemetryAggregator(client=mock_client)
     res = await aggregator.get_system_telemetry()
@@ -132,6 +157,7 @@ async def test_prometheus_malformed_or_error_response():
     mock_client.is_cooling_down = False
     mock_client.query = AsyncMock(side_effect=ValueError("Invalid JSON"))
     mock_client.query_range = AsyncMock(side_effect=RuntimeError("Corrupted response"))
+    mock_client.query_with_timestamp = AsyncMock(side_effect=ValueError("Invalid JSON"))
 
     aggregator = TelemetryAggregator(client=mock_client)
     res = await aggregator.get_system_telemetry()
@@ -173,6 +199,7 @@ async def test_prometheus_missing_metrics_are_unavailable_not_zero():
     mock_client = MagicMock(spec=PrometheusAsyncClient)
     mock_client.is_cooling_down = False
     mock_client.query = AsyncMock(side_effect=[18.4, None, 0.4, None, time.time(), None, time.time(), None])
+    mock_client.query_with_timestamp = AsyncMock(return_value=(1.0, time.time()))
     mock_client.query_range = AsyncMock(
         side_effect=[[[int(time.time()), "18.4"]], None]
     )

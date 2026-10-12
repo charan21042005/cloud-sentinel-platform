@@ -32,6 +32,12 @@ function metricValue(value: number | null, suffix: string, fresh: boolean): stri
   return value === null || !fresh ? 'Unavailable' : `${value}${suffix}`;
 }
 
+function metricStatus(value: number | null, timestamp: string | null | undefined, fresh: boolean) {
+  if (timestamp && !fresh) return { message: 'Current sample is stale.', tone: 'stale' as const };
+  if (value === null) return { message: 'Current sample unavailable.', tone: 'unavailable' as const };
+  return undefined;
+}
+
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
@@ -55,7 +61,7 @@ export default function MetricsDashboard() {
     );
   }
 
-  if (isLoading || !data) {
+  if (isLoading || !data || now === null) {
     return (
       <div className="space-y-4">
         <div className="flex items-center justify-between">
@@ -79,24 +85,40 @@ export default function MetricsDashboard() {
     requests: isFresh(data.metric_timestamps?.request_rate_per_second, now),
     latency: isFresh(data.metric_timestamps?.latency_ms, now),
   };
-  const availableMetrics = [
-    [data.cpu_usage, metricFreshness.cpu],
-    [data.memory_usage, metricFreshness.memory],
-    [data.request_rate_per_second, metricFreshness.requests],
-    [data.latency_ms, metricFreshness.latency],
-  ] as const;
-  const hasFreshMetric = availableMetrics.some(([value, fresh]) => value !== null && fresh);
-  const hasStaleMetric = availableMetrics.some(([value, fresh]) => value !== null && !fresh);
-  const isStale = !hasFreshMetric;
-  const isPrometheusLive = isPrometheus && !isStale && !hasStaleMetric;
-  const isPrometheusPartial = isPrometheus && !isStale && hasStaleMetric;
-  const cpuHistoryStale = !isFreshSampleTime(latestSampleTime(data.history.cpu), now);
-  const memoryHistoryStale = !isFreshSampleTime(latestSampleTime(data.history.memory), now);
+  const cpuHistoryTime = latestSampleTime(data.history.cpu);
+  const memoryHistoryTime = latestSampleTime(data.history.memory);
+  const cpuHistoryStale = !isFreshSampleTime(cpuHistoryTime, now);
+  const memoryHistoryStale = !isFreshSampleTime(memoryHistoryTime, now);
+  const sourceConnected = data.source_reachable === true && isFresh(data.source_checked_at, now);
+  const cpuReady = data.cpu_usage !== null && metricFreshness.cpu && !cpuHistoryStale;
+  const memoryReady = data.memory_usage !== null && metricFreshness.memory && !memoryHistoryStale;
+  const requestsReady = data.request_rate_per_second !== null && metricFreshness.requests;
+  const latencyReady = data.latency_ms !== null && metricFreshness.latency;
+  const requiredMetricsReady = cpuReady && memoryReady && requestsReady && latencyReady;
+  const hasAnyReadyMetric = cpuReady || memoryReady || requestsReady || latencyReady;
+  const isPrometheusLive = isPrometheus && sourceConnected && requiredMetricsReady;
   const sourceLabel = isPrometheus
-    ? isStale ? 'PROMETHEUS (STALE)' : hasStaleMetric ? 'PROMETHEUS (PARTIAL)' : 'PROMETHEUS (LIVE)'
+    ? data.source_reachable === false
+      ? 'PROMETHEUS (DISCONNECTED)'
+      : !sourceConnected
+        ? 'PROMETHEUS (CONNECTION UNKNOWN)'
+        : isPrometheusLive
+          ? 'PROMETHEUS (LIVE)'
+          : hasAnyReadyMetric
+            ? 'PROMETHEUS (PARTIAL)'
+            : 'PROMETHEUS (STALE)'
     : isSimulated
-      ? isStale ? 'SIMULATED (STALE)' : 'SIMULATED (DEMO FALLBACK)'
+      ? 'SIMULATED (DEMO FALLBACK)'
       : 'SOURCE UNKNOWN';
+  const connectionLabel = data.source_reachable === true && isFresh(data.source_checked_at, now)
+    ? 'Prometheus reachable'
+    : data.source_reachable === false
+      ? 'Prometheus unreachable'
+      : 'Prometheus status unknown';
+  const cpuStatus = metricStatus(data.cpu_usage, data.metric_timestamps?.cpu_usage, metricFreshness.cpu);
+  const memoryStatus = metricStatus(data.memory_usage, data.metric_timestamps?.memory_usage, metricFreshness.memory);
+  const requestsStatus = metricStatus(data.request_rate_per_second, data.metric_timestamps?.request_rate_per_second, metricFreshness.requests);
+  const latencyStatus = metricStatus(data.latency_ms, data.metric_timestamps?.latency_ms, metricFreshness.latency);
 
   return (
     <div className="space-y-4">
@@ -111,7 +133,7 @@ export default function MetricsDashboard() {
             "inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold tracking-wide border transition-all duration-300",
             isPrometheusLive
               ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400 shadow-sm shadow-emerald-500/10"
-              : isPrometheusPartial || isPrometheus
+              : isPrometheus
                 ? "border-amber-500/30 bg-amber-500/10 text-amber-400 shadow-sm shadow-amber-500/10"
               : isSimulated
                 ? "border-amber-500/30 bg-amber-500/10 text-amber-400 shadow-sm shadow-amber-500/10"
@@ -126,12 +148,17 @@ export default function MetricsDashboard() {
           />
           <span>{sourceLabel}</span>
         </div>
+        <span data-testid="telemetry-connectivity" className="text-xs text-zinc-500">
+          {connectionLabel}
+        </span>
       </div>
 
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
         <MetricCard 
           title="Compute (CPU)" 
           value={metricValue(data.cpu_usage, '%', metricFreshness.cpu)}
+          statusMessage={cpuStatus?.message ?? (cpuHistoryStale && cpuHistoryTime !== null ? 'Historical CPU samples are stale.' : undefined)}
+          statusTone={cpuStatus?.tone ?? (cpuHistoryStale ? 'stale' : 'unavailable')}
           icon={Cpu}
           className="col-span-1 lg:col-span-2"
         >
@@ -146,6 +173,8 @@ export default function MetricsDashboard() {
         <MetricCard 
           title="Memory Allocation" 
           value={metricValue(data.memory_usage, '%', metricFreshness.memory)}
+          statusMessage={memoryStatus?.message ?? (memoryHistoryStale && memoryHistoryTime !== null ? 'Historical memory samples are stale.' : undefined)}
+          statusTone={memoryStatus?.tone ?? (memoryHistoryStale ? 'stale' : 'unavailable')}
           icon={MemoryStick}
           className="col-span-1 lg:col-span-2"
         >
@@ -160,6 +189,8 @@ export default function MetricsDashboard() {
         <MetricCard 
           title="Request Throughput"
           value={metricValue(data.request_rate_per_second, ' req/s', metricFreshness.requests)}
+          statusMessage={requestsStatus?.message}
+          statusTone={requestsStatus?.tone}
           icon={Activity}
           className="col-span-1 lg:col-span-2"
         />
@@ -167,6 +198,8 @@ export default function MetricsDashboard() {
         <MetricCard 
           title="Global Latency" 
           value={metricValue(data.latency_ms, 'ms', metricFreshness.latency)}
+          statusMessage={latencyStatus?.message}
+          statusTone={latencyStatus?.tone}
           icon={Network}
           className="col-span-1 lg:col-span-2"
         />
