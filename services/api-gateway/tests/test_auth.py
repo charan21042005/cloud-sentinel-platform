@@ -1,6 +1,10 @@
 import pytest
 from fastapi import status
 from httpx import AsyncClient
+from sqlalchemy import select
+
+from app.core.security import verify_password
+from app.db.models.user import User
 
 
 @pytest.mark.asyncio
@@ -59,3 +63,39 @@ async def test_auth_login_flow(client: AsyncClient):
     response = await client.post("/api/v1/auth/login", json=bad_login)
     assert response.status_code == status.HTTP_401_UNAUTHORIZED
     assert "Incorrect username or password" in response.json()["detail"]
+
+
+@pytest.mark.asyncio
+async def test_registration_persists_only_a_password_hash(client: AsyncClient, db_session):
+    password = "test-only-password-482"
+    response = await client.post(
+        "/api/v1/auth/register",
+        json={
+            "username": "hash_check_user",
+            "email": "hash-check@example.com",
+            "password": password,
+        },
+    )
+
+    assert response.status_code == status.HTTP_201_CREATED
+    result = await db_session.execute(
+        select(User).where(User.username == "hash_check_user")
+    )
+    user = result.scalar_one()
+    assert user.hashed_password != password
+    assert verify_password(password, user.hashed_password)
+    assert user.role == "viewer"
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "payload",
+    [
+        {"username": "ab", "email": "valid@example.com", "password": "long-enough-password"},
+        {"username": "valid_user", "email": "invalid-email", "password": "long-enough-password"},
+        {"username": "valid_user", "email": "valid@example.com", "password": "short"},
+    ],
+)
+async def test_registration_rejects_invalid_fields(client: AsyncClient, payload):
+    response = await client.post("/api/v1/auth/register", json=payload)
+    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY

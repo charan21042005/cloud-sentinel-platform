@@ -7,6 +7,7 @@ import * as z from 'zod';
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'sonner';
 import { Lock, User, Loader2 } from 'lucide-react';
+import Link from 'next/link';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
@@ -38,8 +39,14 @@ export default function LoginForm() {
     try {
       await login(data);
       toast.success('Access Granted. Welcome back, Sentinel.');
-    } catch (error: any) {
-      toast.error(error.response?.data?.detail || 'Authentication failed. Please check your credentials.');
+    } catch (error: unknown) {
+      const detail = (error as { response?: { data?: { detail?: unknown } } })?.response?.data
+        ?.detail;
+      toast.error(
+        typeof detail === 'string'
+          ? detail
+          : 'Authentication failed. Please check your credentials.',
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -63,13 +70,15 @@ export default function LoginForm() {
               <input
                 {...register('username')}
                 className={cn(
-                  'block w-full rounded-lg border border-zinc-800 bg-zinc-950 py-3 pl-10 pr-3 text-zinc-100 placeholder-zinc-600 focus:border-zinc-600 focus:outline-none focus:ring-1 focus:ring-zinc-600 sm:text-sm',
-                  errors.username && 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                  'block w-full rounded-lg border border-zinc-800 bg-zinc-950 py-3 pr-3 pl-10 text-zinc-100 placeholder-zinc-600 focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600 focus:outline-none sm:text-sm',
+                  errors.username && 'border-red-500 focus:border-red-500 focus:ring-red-500',
                 )}
                 placeholder="sentinel_one"
               />
             </div>
-            {errors.username && <p className="mt-1 text-xs text-red-500">{errors.username.message}</p>}
+            {errors.username && (
+              <p className="mt-1 text-xs text-red-500">{errors.username.message}</p>
+            )}
           </div>
 
           <div>
@@ -82,28 +91,36 @@ export default function LoginForm() {
                 {...register('password')}
                 type="password"
                 className={cn(
-                  'block w-full rounded-lg border border-zinc-800 bg-zinc-950 py-3 pl-10 pr-3 text-zinc-100 placeholder-zinc-600 focus:border-zinc-600 focus:outline-none focus:ring-1 focus:ring-zinc-600 sm:text-sm',
-                  errors.password && 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                  'block w-full rounded-lg border border-zinc-800 bg-zinc-950 py-3 pr-3 pl-10 text-zinc-100 placeholder-zinc-600 focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600 focus:outline-none sm:text-sm',
+                  errors.password && 'border-red-500 focus:border-red-500 focus:ring-red-500',
                 )}
                 placeholder="••••••••"
               />
             </div>
-            {errors.password && <p className="mt-1 text-xs text-red-500">{errors.password.message}</p>}
+            {errors.password && (
+              <p className="mt-1 text-xs text-red-500">{errors.password.message}</p>
+            )}
           </div>
         </div>
 
         <button
           type="submit"
           disabled={isSubmitting}
-          className="group relative flex w-full justify-center rounded-lg border border-transparent bg-zinc-100 py-3 px-4 text-sm font-semibold text-zinc-950 transition-all hover:bg-zinc-200 focus:outline-none focus:ring-2 focus:ring-zinc-500 focus:ring-offset-2 focus:ring-offset-zinc-900 disabled:opacity-50"
+          className="group relative flex w-full justify-center rounded-lg border border-transparent bg-zinc-100 px-4 py-3 text-sm font-semibold text-zinc-950 transition-all hover:bg-zinc-200 focus:ring-2 focus:ring-zinc-500 focus:ring-offset-2 focus:ring-offset-zinc-900 focus:outline-none disabled:opacity-50"
         >
-          {isSubmitting ? (
-            <Loader2 className="h-5 w-5 animate-spin" />
-          ) : (
-            'Authorize Access'
-          )}
+          {isSubmitting ? <Loader2 className="h-5 w-5 animate-spin" /> : 'Authorize Access'}
         </button>
       </form>
+
+      <p className="text-center text-sm text-zinc-400">
+        New to Cloud Sentinel?{' '}
+        <Link
+          href="/auth/register"
+          className="font-medium text-zinc-100 underline decoration-zinc-600 underline-offset-4 hover:text-white focus:ring-2 focus:ring-zinc-400 focus:outline-none"
+        >
+          Create an account
+        </Link>
+      </p>
     </div>
   );
 }
