@@ -5,6 +5,7 @@ from typing import Optional, Sequence, List
 
 from app.core.logging import logger
 from app.db.models.incident import Incident, IncidentEvent
+from app.db.models.audit_log import AuditLog
 from app.repositories.incident_repository import IncidentRepository
 from app.schemas.incident import (
     AlertmanagerWebhookPayload,
@@ -35,7 +36,7 @@ class IncidentService:
         return hashlib.sha256(label_str.encode()).hexdigest()[:16]
 
     async def process_webhook(
-        self, payload: AlertmanagerWebhookPayload
+        self, payload: AlertmanagerWebhookPayload, actor_user_id=None
     ) -> List[Incident]:
         """
         Primary entrypoint for the SRE Observability Control Plane.
@@ -95,6 +96,7 @@ class IncidentService:
                                 "severity_changed",
                                 "Alertmanager",
                                 {"new_severity": "critical"},
+                                actor_user_id,
                             )
 
                         await self.incident_repo.db.commit()
@@ -107,6 +109,7 @@ class IncidentService:
                             "correlation_detected",
                             "Alertmanager",
                             {"fingerprint": fingerprint},
+                            actor_user_id,
                         )
 
                         # Fanout WebSocket broadcast notifying real-time SOC fabric
@@ -138,7 +141,9 @@ class IncidentService:
                         )
                         # Active chain exists but outside correlation window. Resolve old chain.
                         await self.resolve_incident(
-                            active_incident.id, "System Auto-Expiry"
+                            active_incident.id,
+                            "System Auto-Expiry",
+                            actor_user_id,
                         )
 
                 # Create fresh incident chain
@@ -156,7 +161,9 @@ class IncidentService:
                     raw_payload=alert.model_dump(),
                 )
                 new_incident = Incident(**create_dto.model_dump())
-                persisted = await self.incident_repo.create(new_incident)
+                self.incident_repo.db.add(new_incident)
+                await self.incident_repo.db.flush()
+                persisted = new_incident
 
                 # Initialize timeline audit history
                 await self._append_event(
@@ -164,6 +171,7 @@ class IncidentService:
                     "triggered",
                     "Alertmanager",
                     {"initial_severity": severity},
+                    actor_user_id,
                 )
                 processed_incidents.append(persisted)
 
@@ -194,7 +202,9 @@ class IncidentService:
                     f"[Incident Engine] Auto-resolving incident chain [{active_incident.id}]"
                 )
                 resolved = await self.resolve_incident(
-                    active_incident.id, "Alertmanager Auto-Resolve"
+                    active_incident.id,
+                    "Alertmanager Auto-Resolve",
+                    actor_user_id,
                 )
                 if resolved:
                     processed_incidents.append(resolved)
@@ -207,8 +217,9 @@ class IncidentService:
         event_type: str,
         actor: str,
         metadata: Optional[dict] = None,
+        actor_user_id=None,
     ) -> IncidentEvent:
-        """Appends an immutable log event to the forensic timeline."""
+        """Appends an incident timeline event and application audit event."""
         event = IncidentEvent(
             incident_id=incident.id,
             event_type=event_type,
@@ -217,6 +228,16 @@ class IncidentService:
             timestamp=datetime.now(timezone.utc),
         )
         incident.event_count += 1
+        self.incident_repo.db.add(
+            AuditLog(
+                event_type=f"incident.{event_type}",
+                message=f"Incident {event_type.replace('_', ' ')}",
+                actor_user_id=actor_user_id,
+                target_type="incident",
+                target_id=str(incident.id),
+                details={"incident_event_type": event_type},
+            )
+        )
         return await self.incident_repo.create_event(event)
 
     async def list_incidents(
@@ -226,7 +247,7 @@ class IncidentService:
         return await self.incident_repo.list_active(skip=skip, limit=limit)
 
     async def acknowledge_incident(
-        self, incident_id: any, actor: str
+        self, incident_id: any, actor: str, actor_user_id=None
     ) -> Optional[Incident]:
         """Silences notifications and assigns initial SRE ownership."""
         incident = await self.incident_repo.get_with_events(incident_id)
@@ -236,7 +257,7 @@ class IncidentService:
         incident.status = "acknowledged"
         incident.acknowledged_at = datetime.now(timezone.utc)
         await self._append_event(
-            incident, "acknowledged", actor, {"action": "Acknowledged by SRE"}
+            incident, "acknowledged", actor, {"action": "Acknowledged by SRE"}, actor_user_id
         )
         await self.incident_repo.db.commit()
         await self.incident_repo.db.refresh(incident)
@@ -271,7 +292,7 @@ class IncidentService:
         return incident
 
     async def resolve_incident(
-        self, incident_id: any, actor: str
+        self, incident_id: any, actor: str, actor_user_id=None
     ) -> Optional[Incident]:
         """Terminates active chains and closes operational lifecycle."""
         incident = await self.incident_repo.get_with_events(incident_id)
@@ -281,7 +302,7 @@ class IncidentService:
         incident.status = "resolved"
         incident.resolved_at = datetime.now(timezone.utc)
         await self._append_event(
-            incident, "resolved", actor, {"resolution_source": actor}
+            incident, "resolved", actor, {"resolution_source": "operator_or_system"}, actor_user_id
         )
         await self.incident_repo.db.commit()
         await self.incident_repo.db.refresh(incident)

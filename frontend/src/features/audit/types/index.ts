@@ -1,11 +1,18 @@
-export type AuditEventType = 'auth' | 'incident' | 'system' | 'rbac';
-
 export interface AuditLog {
   id: string;
-  event_type: AuditEventType;
-  actor: string; // The user or system that performed the action
-  action: string;
-  target?: string; // e.g., 'Incident-001'
-  timestamp: string;
-  metadata?: Record<string, any>;
+  event_type: string;
+  message: string;
+  actor_user_id?: string | null;
+  outcome?: string | null;
+  target_type?: string | null;
+  target_id?: string | null;
+  details?: Record<string, unknown> | null;
+  created_at: string;
+}
+
+export interface AuditEventPage {
+  items: AuditLog[];
+  skip: number;
+  limit: number;
+  has_more: boolean;
 }

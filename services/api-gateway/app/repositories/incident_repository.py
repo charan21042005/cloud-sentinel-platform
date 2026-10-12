@@ -19,7 +19,7 @@ class IncidentRepository(BaseRepository[Incident]):
     async def get_active_by_fingerprint(self, fingerprint: str) -> Optional[Incident]:
         """
         Retrieves an active (non-resolved) incident matching the unique fingerprint.
-        Eagerly loads the immutable audit event list.
+        Eagerly loads the incident event timeline.
         """
         query = (
             select(Incident)
@@ -55,7 +55,7 @@ class IncidentRepository(BaseRepository[Incident]):
         return result.scalars().all()
 
     async def create_event(self, event: IncidentEvent) -> IncidentEvent:
-        """Appends an immutable timeline event directly to the session."""
+        """Appends an incident timeline event directly to the session."""
         self.db.add(event)
         await self.db.commit()
         await self.db.refresh(event)

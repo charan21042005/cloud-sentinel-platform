@@ -26,7 +26,7 @@ async def create_user(
     service: UserService = Depends(get_user_service),
     _admin: User = Depends(require_admin),
 ):
-    return await service.create_managed_user(user_in)
+    return await service.create_managed_user(user_in, _admin.id)
 
 
 @router.get("/me", response_model=UserResponse)
@@ -57,4 +57,4 @@ async def update_user_role(
     service: UserService = Depends(get_user_service),
     _admin: User = Depends(require_admin),
 ):
-    return await service.update_role(user_id, role_in.role)
+    return await service.update_role(user_id, role_in.role, _admin.id)

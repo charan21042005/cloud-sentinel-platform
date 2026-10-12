@@ -18,6 +18,7 @@ from sqlalchemy.engine import make_url
 
 from app.core.config import settings
 from app.core.security import get_password_hash
+from app.db.models.audit_log import AuditLog
 from app.db.models.user import User
 from app.db.session import SessionLocal
 from app.schemas.auth import UserRegister
@@ -471,13 +472,23 @@ async def bootstrap_admin(
                 "That username or email is already in use; no account was created."
             )
 
+        admin = User(
+            username=credentials.username,
+            email=credentials.email,
+            hashed_password=get_password_hash(credentials.password),
+            role="admin",
+            is_active=True,
+        )
+        session.add(admin)
+        await session.flush()
         session.add(
-            User(
-                username=credentials.username,
-                email=credentials.email,
-                hashed_password=get_password_hash(credentials.password),
-                role="admin",
-                is_active=True,
+            AuditLog(
+                event_type="user.created",
+                message="Initial administrator created through local CLI bootstrap",
+                outcome="success",
+                target_type="user",
+                target_id=str(admin.id),
+                details={"role": "admin", "creation_source": "local_cli_bootstrap"},
             )
         )
         await session.commit()

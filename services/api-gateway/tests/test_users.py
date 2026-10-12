@@ -253,6 +253,18 @@ async def test_bootstrap_creates_hashed_admin_once(db_session, monkeypatch):
     ).scalar_one()
     assert user.role == "admin"
     assert verify_password("synthetic-first-admin-password", user.hashed_password)
+    from app.db.models.audit_log import AuditLog
+
+    bootstrap_event = (
+        await db_session.execute(
+            select(AuditLog).where(AuditLog.event_type == "user.created")
+        )
+    ).scalar_one()
+    assert bootstrap_event.target_id == str(user.id)
+    assert bootstrap_event.details == {
+        "role": "admin",
+        "creation_source": "local_cli_bootstrap",
+    }
 
     monkeypatch.setattr(
         "builtins.input", lambda _prompt: pytest.fail("repeat bootstrap prompted for credentials")

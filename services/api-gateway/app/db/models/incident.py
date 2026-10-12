@@ -62,7 +62,7 @@ class Incident(Base, UUIDPrimaryKeyMixin, TimestampMixin):
     )  # Configurable deduplication expiry (seconds)
     escalation_level: Mapped[int] = mapped_column(Integer, default=0)
 
-    # Relationship to immutable audit events
+    # Relationship to the incident event timeline
     events: Mapped[List["IncidentEvent"]] = relationship(
         "IncidentEvent",
         back_populates="incident",
@@ -73,8 +73,8 @@ class Incident(Base, UUIDPrimaryKeyMixin, TimestampMixin):
 
 class IncidentEvent(Base, UUIDPrimaryKeyMixin):
     """
-    Immutable Forensic Audit Log tracking precise status mutations, escalations,
-    and external triggers.
+    Incident timeline record for status mutations, escalations, and external triggers.
+    The API appends events but the database does not provide tamper-proof storage.
     """
 
     __tablename__ = "incident_events"

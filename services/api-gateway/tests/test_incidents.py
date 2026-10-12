@@ -39,6 +39,7 @@ async def test_alertmanager_webhook(client: AsyncClient, db_session):
     from app.db.models.user import User
 
     user = (await db_session.execute(select(User).where(User.username == "webhook_operator"))).scalar_one()
+    user_id = user.id
     user.role = "operator"
     await db_session.commit()
     response = await client.post(
@@ -50,6 +51,18 @@ async def test_alertmanager_webhook(client: AsyncClient, db_session):
     data = response.json()
     assert data["status"] == "success"
     assert data["correlated_chains"] == 1
+
+    from app.db.models.audit_log import AuditLog
+
+    event = (
+        await db_session.execute(
+            select(AuditLog).where(AuditLog.event_type == "incident.triggered")
+        )
+    ).scalar_one()
+    assert event.outcome == "success"
+    assert event.actor_user_id == user_id
+    assert event.target_type == "incident"
+    assert event.details == {"incident_event_type": "triggered"}
 
 
 @pytest.mark.asyncio

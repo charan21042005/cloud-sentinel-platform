@@ -6,6 +6,7 @@ from app.core.security import create_access_token, get_password_hash, verify_pas
 from app.db.models.user import User
 from app.repositories.user_repository import UserRepository
 from app.schemas.auth import Token, UserLogin, UserRegister
+from app.services.audit_service import AuditService
 
 
 class AuthService:
@@ -13,8 +14,9 @@ class AuthService:
     Business logic for Authentication and Identity Management.
     """
 
-    def __init__(self, user_repo: UserRepository):
+    def __init__(self, user_repo: UserRepository, audit_service: AuditService):
         self.user_repo = user_repo
+        self.audit_service = audit_service
 
     async def register_user(self, user_in: UserRegister) -> User:
         """Register a new user with hashed password."""
@@ -39,15 +41,38 @@ class AuthService:
             hashed_password=get_password_hash(user_in.password),
             role="viewer",  # Default role
         )
-        return await self.user_repo.create(user_obj)
+        self.user_repo.db.add(user_obj)
+        await self.user_repo.db.flush()
+        self.audit_service.stage(
+            "user.created", "Public registration completed", actor_user_id=user_obj.id,
+            target_type="user", target_id=str(user_obj.id),
+            details={"role": "viewer", "registration": "public"},
+        )
+        await self.user_repo.db.commit()
+        await self.user_repo.db.refresh(user_obj)
+        return user_obj
 
     async def authenticate_user(self, login_data: UserLogin) -> Optional[User]:
         """Verify username and password."""
         user = await self.user_repo.get_by_username(login_data.username)
         if not user:
+            await self.audit_service.record(
+                "authentication.login", "Login failed", outcome="failure",
+                details={"reason": "invalid_credentials"},
+            )
             return None
         if not verify_password(login_data.password, user.hashed_password):
+            await self.audit_service.record(
+                "authentication.login", "Login failed", actor_user_id=user.id,
+                outcome="failure", target_type="user", target_id=str(user.id),
+                details={"reason": "invalid_credentials"},
+            )
             return None
+        await self.audit_service.record(
+            "authentication.login", "Login succeeded", actor_user_id=user.id,
+            target_type="user", target_id=str(user.id),
+        )
+        await self.user_repo.db.refresh(user)
         return user
 
     def create_user_token(self, user: User) -> Token:

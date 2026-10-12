@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 from app.api.routes import health, database_health
-from app.api.v1.routes import auth, users, incidents, telemetry, chaos
+from app.api.v1.routes import auth, users, incidents, telemetry, chaos, audit
 
 api_router = APIRouter()
 
@@ -11,6 +11,7 @@ api_router.include_router(database_health.router)
 # API v1 (Domain Level)
 api_router.include_router(auth.router, prefix="/api/v1/auth", tags=["Authentication"])
 api_router.include_router(users.router, prefix="/api/v1/users", tags=["Users"])
+api_router.include_router(audit.router, prefix="/api/v1/audit", tags=["Audit"])
 api_router.include_router(
     incidents.router, prefix="/api/v1/incidents", tags=["Incidents"]
 )
