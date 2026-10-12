@@ -1,7 +1,8 @@
 import time
 import asyncio
+from datetime import datetime, timezone
 from typing import Optional
-from app.schemas.telemetry import SystemTelemetryResponse, SystemMetricsHistory
+from app.schemas.telemetry import SystemTelemetryResponse, SystemMetricsHistory, MetricTimestamps
 from app.services.telemetry.queries import PromQLRegistry
 from app.services.telemetry.prometheus_client import PrometheusAsyncClient
 from app.services.telemetry.transformers import TelemetryTransformer
@@ -42,6 +43,10 @@ class TelemetryAggregator:
                 self.client.query(PromQLRegistry.MEMORY_UTILIZATION),
                 self.client.query(PromQLRegistry.REQUEST_THROUGHPUT),
                 self.client.query(PromQLRegistry.API_LATENCY),
+                self.client.query(PromQLRegistry.CPU_SAMPLE_TIMESTAMP),
+                self.client.query(PromQLRegistry.MEMORY_SAMPLE_TIMESTAMP),
+                self.client.query(PromQLRegistry.REQUEST_SAMPLE_TIMESTAMP),
+                self.client.query(PromQLRegistry.LATENCY_SAMPLE_TIMESTAMP),
                 self.client.query_range(PromQLRegistry.CPU_HISTORY, start, now, step),
                 self.client.query_range(PromQLRegistry.MEMORY_HISTORY, start, now, step),
                 return_exceptions=True,
@@ -61,8 +66,12 @@ class TelemetryAggregator:
         raw_memory = extract_result(1)
         raw_requests = extract_result(2)
         raw_latency = extract_result(3)
-        raw_cpu_history = extract_result(4)
-        raw_memory_history = extract_result(5)
+        raw_cpu_timestamp = extract_result(4)
+        raw_memory_timestamp = extract_result(5)
+        raw_requests_timestamp = extract_result(6)
+        raw_latency_timestamp = extract_result(7)
+        raw_cpu_history = extract_result(8)
+        raw_memory_history = extract_result(9)
 
         # Determine if we have usable real telemetry data.
         # If Prometheus returned no usable data across all metrics (e.g. no nodes/pods scraped yet),
@@ -85,6 +94,14 @@ class TelemetryAggregator:
         cpu_series = TelemetryTransformer.normalize_time_series(raw_cpu_history or [])
         mem_series = TelemetryTransformer.normalize_time_series(raw_memory_history or [])
 
+        def iso_timestamp(value):
+            if value is None:
+                return None
+            try:
+                return datetime.fromtimestamp(float(value), tz=timezone.utc).isoformat()
+            except (OverflowError, OSError, TypeError, ValueError):
+                return None
+
         return SystemTelemetryResponse(
             source="prometheus",
             cpu_usage=cpu_val,
@@ -94,5 +111,11 @@ class TelemetryAggregator:
             history=SystemMetricsHistory(
                 cpu=cpu_series,
                 memory=mem_series,
+            ),
+            metric_timestamps=MetricTimestamps(
+                cpu_usage=iso_timestamp(raw_cpu_timestamp),
+                memory_usage=iso_timestamp(raw_memory_timestamp),
+                request_rate_per_second=iso_timestamp(raw_requests_timestamp),
+                latency_ms=iso_timestamp(raw_latency_timestamp),
             ),
         )

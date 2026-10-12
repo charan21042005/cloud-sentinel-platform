@@ -18,8 +18,18 @@ function latestSampleTime(data: { timestamp: string }[]): number | null {
   return timestamps.length ? Math.max(...timestamps) : null;
 }
 
-function metricValue(value: number | null, suffix: string, stale: boolean): string {
-  return value === null || stale ? 'Unavailable' : `${value}${suffix}`;
+function isFresh(timestamp: string | null | undefined, now: number | null): boolean {
+  if (now === null || !timestamp) return false;
+  const sampleTime = Date.parse(timestamp);
+  return Number.isFinite(sampleTime) && sampleTime <= now && now - sampleTime <= STALE_AFTER_MS;
+}
+
+function isFreshSampleTime(sampleTime: number | null, now: number | null): boolean {
+  return sampleTime !== null && now !== null && sampleTime <= now && now - sampleTime <= STALE_AFTER_MS;
+}
+
+function metricValue(value: number | null, suffix: string, fresh: boolean): string {
+  return value === null || !fresh ? 'Unavailable' : `${value}${suffix}`;
 }
 
 function cn(...inputs: ClassValue[]) {
@@ -63,14 +73,27 @@ export default function MetricsDashboard() {
 
   const isPrometheus = data.source === 'prometheus';
   const isSimulated = data.source === 'simulated';
-  const newestSample = latestSampleTime([...data.history.cpu, ...data.history.memory]);
-  const isStale =
-    now === null ||
-    newestSample === null ||
-    now - newestSample > STALE_AFTER_MS ||
-    newestSample > now;
+  const metricFreshness = {
+    cpu: isFresh(data.metric_timestamps?.cpu_usage, now),
+    memory: isFresh(data.metric_timestamps?.memory_usage, now),
+    requests: isFresh(data.metric_timestamps?.request_rate_per_second, now),
+    latency: isFresh(data.metric_timestamps?.latency_ms, now),
+  };
+  const availableMetrics = [
+    [data.cpu_usage, metricFreshness.cpu],
+    [data.memory_usage, metricFreshness.memory],
+    [data.request_rate_per_second, metricFreshness.requests],
+    [data.latency_ms, metricFreshness.latency],
+  ] as const;
+  const hasFreshMetric = availableMetrics.some(([value, fresh]) => value !== null && fresh);
+  const hasStaleMetric = availableMetrics.some(([value, fresh]) => value !== null && !fresh);
+  const isStale = !hasFreshMetric;
+  const isPrometheusLive = isPrometheus && !isStale && !hasStaleMetric;
+  const isPrometheusPartial = isPrometheus && !isStale && hasStaleMetric;
+  const cpuHistoryStale = !isFreshSampleTime(latestSampleTime(data.history.cpu), now);
+  const memoryHistoryStale = !isFreshSampleTime(latestSampleTime(data.history.memory), now);
   const sourceLabel = isPrometheus
-    ? isStale ? 'PROMETHEUS (STALE)' : 'PROMETHEUS (LIVE)'
+    ? isStale ? 'PROMETHEUS (STALE)' : hasStaleMetric ? 'PROMETHEUS (PARTIAL)' : 'PROMETHEUS (LIVE)'
     : isSimulated
       ? isStale ? 'SIMULATED (STALE)' : 'SIMULATED (DEMO FALLBACK)'
       : 'SOURCE UNKNOWN';
@@ -86,8 +109,10 @@ export default function MetricsDashboard() {
           data-testid="telemetry-source-badge"
           className={cn(
             "inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold tracking-wide border transition-all duration-300",
-            isPrometheus
+            isPrometheusLive
               ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400 shadow-sm shadow-emerald-500/10"
+              : isPrometheusPartial || isPrometheus
+                ? "border-amber-500/30 bg-amber-500/10 text-amber-400 shadow-sm shadow-amber-500/10"
               : isSimulated
                 ? "border-amber-500/30 bg-amber-500/10 text-amber-400 shadow-sm shadow-amber-500/10"
                 : "border-zinc-500/30 bg-zinc-500/10 text-zinc-300 shadow-sm shadow-zinc-500/10"
@@ -96,7 +121,7 @@ export default function MetricsDashboard() {
           <span
             className={cn(
               "h-1.5 w-1.5 rounded-full",
-              isPrometheus ? "bg-emerald-400 animate-pulse" : isSimulated ? "bg-amber-400" : "bg-zinc-400"
+              isPrometheusLive ? "bg-emerald-400 animate-pulse" : isPrometheus || isSimulated ? "bg-amber-400" : "bg-zinc-400"
             )}
           />
           <span>{sourceLabel}</span>
@@ -106,7 +131,7 @@ export default function MetricsDashboard() {
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
         <MetricCard 
           title="Compute (CPU)" 
-          value={metricValue(data.cpu_usage, '%', isStale)}
+          value={metricValue(data.cpu_usage, '%', metricFreshness.cpu)}
           icon={Cpu}
           className="col-span-1 lg:col-span-2"
         >
@@ -114,13 +139,13 @@ export default function MetricsDashboard() {
             data={data.history.cpu} 
             color="#3b82f6" // blue-500
             valueSuffix="%" 
-            isStale={isStale}
+            isStale={cpuHistoryStale}
           />
         </MetricCard>
 
         <MetricCard 
           title="Memory Allocation" 
-          value={metricValue(data.memory_usage, '%', isStale)}
+          value={metricValue(data.memory_usage, '%', metricFreshness.memory)}
           icon={MemoryStick}
           className="col-span-1 lg:col-span-2"
         >
@@ -128,20 +153,20 @@ export default function MetricsDashboard() {
             data={data.history.memory} 
             color="#8b5cf6" // violet-500
             valueSuffix="%" 
-            isStale={isStale}
+            isStale={memoryHistoryStale}
           />
         </MetricCard>
 
         <MetricCard 
           title="Request Throughput"
-          value={metricValue(data.request_rate_per_second, ' req/s', isStale)}
+          value={metricValue(data.request_rate_per_second, ' req/s', metricFreshness.requests)}
           icon={Activity}
           className="col-span-1 lg:col-span-2"
         />
 
         <MetricCard 
           title="Global Latency" 
-          value={metricValue(data.latency_ms, 'ms', isStale)}
+          value={metricValue(data.latency_ms, 'ms', metricFreshness.latency)}
           icon={Network}
           className="col-span-1 lg:col-span-2"
         />

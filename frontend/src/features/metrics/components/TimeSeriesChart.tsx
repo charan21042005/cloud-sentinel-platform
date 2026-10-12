@@ -27,14 +27,6 @@ export default function TimeSeriesChart({
   valueSuffix = '',
   isStale = false,
 }: TimeSeriesChartProps) {
-  if (isStale && data?.length) {
-    return (
-      <div className="flex h-full w-full min-h-[100px] items-center justify-center rounded-lg border border-dashed border-amber-800/80 bg-amber-950/20 px-4 text-center text-xs text-amber-300">
-        Telemetry samples are stale. Waiting for fresh data.
-      </div>
-    );
-  }
-
   if (!data || data.length === 0) {
     return (
       <div className="flex h-full w-full min-h-[100px] items-center justify-center rounded-lg border border-dashed border-zinc-800/80 bg-zinc-950/30 text-xs text-zinc-500">
@@ -44,8 +36,14 @@ export default function TimeSeriesChart({
   }
 
   return (
-    <ResponsiveContainer width="100%" height="100%">
-      <AreaChart data={data} margin={{ top: 5, right: 0, left: 0, bottom: 0 }}>
+    <div className="h-full w-full">
+      {isStale && (
+        <div className="mb-2 rounded border border-amber-800/80 bg-amber-950/20 px-2 py-1 text-center text-xs text-amber-300">
+          Telemetry samples are stale. Showing the last collected data.
+        </div>
+      )}
+      <ResponsiveContainer width="100%" height="100%">
+        <AreaChart data={data} margin={{ top: 5, right: 0, left: 0, bottom: 0 }}>
         <defs>
           <linearGradient id={`color-${color}`} x1="0" y1="0" x2="0" y2="1">
             <stop offset="5%" stopColor={color} stopOpacity={0.3} />
@@ -90,7 +88,8 @@ export default function TimeSeriesChart({
           fill={`url(#color-${color})`} 
           isAnimationActive={false} // Disable animation for high-frequency polling to prevent stuttering
         />
-      </AreaChart>
-    </ResponsiveContainer>
+        </AreaChart>
+      </ResponsiveContainer>
+    </div>
   );
 }

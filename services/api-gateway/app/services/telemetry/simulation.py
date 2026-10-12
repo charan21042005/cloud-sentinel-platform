@@ -69,4 +69,8 @@ class TelemetrySimulator:
                     cpu=list(self.cpu_history),
                     memory=list(self.memory_history),
                 ),
+                metric_timestamps={
+                    "cpu_usage": now_iso,
+                    "memory_usage": now_iso,
+                },
             )

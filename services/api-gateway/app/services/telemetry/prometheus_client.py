@@ -1,6 +1,6 @@
 import time
 import math
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any, List, Optional, Tuple
 import httpx
 from app.core.config import settings
 from app.core.logging import logger
@@ -36,6 +36,11 @@ class PrometheusAsyncClient:
         Executes a PromQL instant query.
         Returns float value if valid data exists, or None if unavailable/empty/error.
         """
+        sample = await self.query_with_timestamp(query_str)
+        return sample[0] if sample is not None else None
+
+    async def query_with_timestamp(self, query_str: str) -> Optional[Tuple[float, float]]:
+        """Return the finite value and Prometheus result timestamp for an instant query."""
         if self.is_cooling_down:
             return None
 
@@ -59,13 +64,17 @@ class PrometheusAsyncClient:
                     return None
 
                 # result[0]["value"] -> [unix_timestamp, "value_str"]
-                value_str = result[0].get("value", [0, "0"])[1]
+                sample = result[0].get("value", [])
+                if len(sample) != 2:
+                    return None
+                timestamp = float(sample[0])
+                value_str = sample[1]
                 parsed = float(value_str)
-                if math.isnan(parsed) or math.isinf(parsed):
+                if not math.isfinite(timestamp) or not math.isfinite(parsed):
                     return None
 
                 self._reset_circuit()
-                return parsed
+                return parsed, timestamp
         except (httpx.ConnectError, httpx.ConnectTimeout, httpx.ReadTimeout) as e:
             self._trip_circuit(f"Connection failure: {e.__class__.__name__}")
             return None

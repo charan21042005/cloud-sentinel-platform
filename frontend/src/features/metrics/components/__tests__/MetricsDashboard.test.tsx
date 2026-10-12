@@ -6,10 +6,10 @@ import * as useMetricsHook from '../../hooks/useMetrics';
 
 // Mock recharts responsive container for jsdom
 vi.mock('recharts', async () => {
-  const original = await vi.importActual<any>('recharts');
+  const original = await vi.importActual<typeof import('recharts')>('recharts');
   return {
     ...original,
-    ResponsiveContainer: ({ children }: any) => <div style={{ width: 400, height: 200 }}>{children}</div>,
+    ResponsiveContainer: ({ children }: { children: React.ReactNode }) => <div style={{ width: 400, height: 200 }}>{children}</div>,
   };
 });
 
@@ -24,6 +24,7 @@ describe('MetricsDashboard Component', () => {
         memory_usage: 62.1,
         request_rate_per_second: 1.2,
         latency_ms: 18.2,
+        metric_timestamps: { cpu_usage: recentTimestamp, memory_usage: recentTimestamp, request_rate_per_second: recentTimestamp, latency_ms: recentTimestamp },
         history: {
           cpu: [{ timestamp: recentTimestamp, value: 24.5 }],
           memory: [{ timestamp: recentTimestamp, value: 62.1 }],
@@ -32,7 +33,7 @@ describe('MetricsDashboard Component', () => {
       isLoading: false,
       error: null,
       refetch: vi.fn(),
-    } as any);
+    } as unknown as ReturnType<typeof useMetricsHook.useSystemMetrics>);
 
     render(<MetricsDashboard />);
 
@@ -51,6 +52,7 @@ describe('MetricsDashboard Component', () => {
         memory_usage: 55.0,
         request_rate_per_second: 65,
         latency_ms: 22.0,
+        metric_timestamps: { cpu_usage: recentTimestamp, memory_usage: recentTimestamp },
         history: {
           cpu: [
             { timestamp: recentTimestamp, value: 44.0 },
@@ -65,7 +67,7 @@ describe('MetricsDashboard Component', () => {
       isLoading: false,
       error: null,
       refetch: vi.fn(),
-    } as any);
+    } as unknown as ReturnType<typeof useMetricsHook.useSystemMetrics>);
 
     render(<MetricsDashboard />);
 
@@ -86,7 +88,7 @@ describe('MetricsDashboard Component', () => {
       isLoading: false,
       error: null,
       refetch: vi.fn(),
-    } as any);
+    } as unknown as ReturnType<typeof useMetricsHook.useSystemMetrics>);
 
     render(<MetricsDashboard />);
 
@@ -101,6 +103,7 @@ describe('MetricsDashboard Component', () => {
         memory_usage: 0,
         request_rate_per_second: null,
         latency_ms: 0,
+        metric_timestamps: { cpu_usage: recentTimestamp, memory_usage: recentTimestamp },
         history: {
           cpu: [],
           memory: [],
@@ -109,7 +112,7 @@ describe('MetricsDashboard Component', () => {
       isLoading: false,
       error: null,
       refetch: vi.fn(),
-    } as any);
+    } as unknown as ReturnType<typeof useMetricsHook.useSystemMetrics>);
 
     render(<MetricsDashboard />);
 
@@ -124,6 +127,10 @@ describe('MetricsDashboard Component', () => {
         memory_usage: null,
         request_rate_per_second: null,
         latency_ms: null,
+        metric_timestamps: {
+          cpu_usage: new Date(Date.now() - 60_000).toISOString(),
+          memory_usage: new Date(Date.now() - 60_000).toISOString(),
+        },
         history: {
           cpu: [{ timestamp: new Date(Date.now() - 60_000).toISOString(), value: 20 }],
           memory: [{ timestamp: new Date(Date.now() - 60_000).toISOString(), value: 30 }],
@@ -132,13 +139,44 @@ describe('MetricsDashboard Component', () => {
       isLoading: false,
       error: null,
       refetch: vi.fn(),
-    } as any);
+    } as unknown as ReturnType<typeof useMetricsHook.useSystemMetrics>);
 
     render(<MetricsDashboard />);
 
     expect(screen.getByTestId('telemetry-source-badge')).toHaveTextContent('PROMETHEUS (STALE)');
     expect(screen.getAllByText('Unavailable')).toHaveLength(4);
-    expect(screen.getAllByText('Telemetry samples are stale. Waiting for fresh data.')).toHaveLength(2);
+    expect(screen.getAllByText('Telemetry samples are stale. Showing the last collected data.')).toHaveLength(2);
+  });
+
+  it('evaluates current metric freshness independently', () => {
+    vi.spyOn(useMetricsHook, 'useSystemMetrics').mockReturnValue({
+      data: {
+        source: 'prometheus',
+        cpu_usage: 24.5,
+        memory_usage: 62.1,
+        request_rate_per_second: null,
+        latency_ms: 18.2,
+        metric_timestamps: {
+          cpu_usage: recentTimestamp,
+          memory_usage: new Date(Date.now() - 60_000).toISOString(),
+          request_rate_per_second: null,
+          latency_ms: recentTimestamp,
+        },
+        history: {
+          cpu: [{ timestamp: recentTimestamp, value: 24.5 }],
+          memory: [{ timestamp: recentTimestamp, value: 62.1 }],
+        },
+      },
+      isLoading: false,
+      error: null,
+      refetch: vi.fn(),
+    } as unknown as ReturnType<typeof useMetricsHook.useSystemMetrics>);
+
+    render(<MetricsDashboard />);
+
+    expect(screen.getByText('24.5%')).toBeInTheDocument();
+    expect(screen.getAllByText('Unavailable')).toHaveLength(2);
+    expect(screen.getByTestId('telemetry-source-badge')).toHaveTextContent('PROMETHEUS (PARTIAL)');
   });
 
   it('renders error state when telemetry fetch fails', () => {
@@ -147,7 +185,7 @@ describe('MetricsDashboard Component', () => {
       isLoading: false,
       error: new Error('Network error'),
       refetch: vi.fn(),
-    } as any);
+    } as unknown as ReturnType<typeof useMetricsHook.useSystemMetrics>);
 
     render(<MetricsDashboard />);
 

@@ -18,6 +18,8 @@ async def test_prometheus_returns_valid_data():
     mock_client.is_cooling_down = False
 
     async def mock_query(q):
+        if "timestamp(" in q:
+            return time.time()
         if "idle" in q:
             return 25.5  # 25.5% CPU
         elif "MemTotal" in q:
@@ -46,6 +48,25 @@ async def test_prometheus_returns_valid_data():
     assert len(res.history.cpu) == 2
     assert res.history.cpu[0].value == 25.0
     assert res.history.cpu[1].value == 26.0
+    assert res.metric_timestamps.cpu_usage is not None
+    assert res.metric_timestamps.memory_usage is not None
+    assert res.metric_timestamps.request_rate_per_second is not None
+    assert res.metric_timestamps.latency_ms is not None
+
+
+@pytest.mark.asyncio
+async def test_metric_freshness_timestamps_are_independent():
+    mock_client = MagicMock(spec=PrometheusAsyncClient)
+    mock_client.is_cooling_down = False
+    mock_client.query = AsyncMock(side_effect=[10.0, 20.0, 1.0, 3.0, time.time(), None, time.time(), time.time()])
+    mock_client.query_range = AsyncMock(return_value=[])
+
+    response = await TelemetryAggregator(client=mock_client).get_system_telemetry()
+
+    assert response.metric_timestamps.cpu_usage is not None
+    assert response.metric_timestamps.memory_usage is None
+    assert response.metric_timestamps.request_rate_per_second is not None
+    assert response.metric_timestamps.latency_ms is not None
 
 
 @pytest.mark.asyncio
@@ -151,7 +172,7 @@ async def test_simulated_history_structure_and_bounds():
 async def test_prometheus_missing_metrics_are_unavailable_not_zero():
     mock_client = MagicMock(spec=PrometheusAsyncClient)
     mock_client.is_cooling_down = False
-    mock_client.query = AsyncMock(side_effect=[18.4, None, 0.4, None])
+    mock_client.query = AsyncMock(side_effect=[18.4, None, 0.4, None, time.time(), None, time.time(), None])
     mock_client.query_range = AsyncMock(
         side_effect=[[[int(time.time()), "18.4"]], None]
     )
@@ -197,3 +218,23 @@ async def test_client_circuit_cooling_prevents_hammering():
     duration = time.time() - t0
     assert val2 is None
     assert duration < 0.05  # Instant return without network attempt
+
+
+@pytest.mark.asyncio
+async def test_client_query_with_timestamp_returns_prometheus_sample_time():
+    client = PrometheusAsyncClient(base_url="http://prometheus.invalid/api/v1")
+    response = MagicMock(status_code=200)
+    response.json.return_value = {
+        "status": "success",
+        "data": {"result": [{"value": [1700000000.0, "12.5"]}]},
+    }
+    http_client = MagicMock()
+    http_client.get = AsyncMock(return_value=response)
+    context = MagicMock()
+    context.__aenter__ = AsyncMock(return_value=http_client)
+    context.__aexit__ = AsyncMock(return_value=None)
+
+    with patch("app.services.telemetry.prometheus_client.httpx.AsyncClient", return_value=context):
+        sample = await client.query_with_timestamp("up")
+
+    assert sample == (12.5, 1700000000.0)

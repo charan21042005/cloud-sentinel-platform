@@ -9,6 +9,12 @@ export interface SystemMetrics {
   memory_usage: number | null;
   request_rate_per_second: number | null;
   latency_ms: number | null;
+  metric_timestamps?: {
+    cpu_usage?: string | null;
+    memory_usage?: string | null;
+    request_rate_per_second?: string | null;
+    latency_ms?: string | null;
+  };
   history: {
     cpu: TimeSeriesDataPoint[];
     memory: TimeSeriesDataPoint[];

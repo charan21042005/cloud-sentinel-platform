@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import List, Optional
 
 
@@ -16,6 +16,15 @@ class SystemMetricsHistory(BaseModel):
     memory: List[TimeSeriesPoint]
 
 
+class MetricTimestamps(BaseModel):
+    """Last source sample time for each independently reported metric."""
+
+    cpu_usage: Optional[str] = None
+    memory_usage: Optional[str] = None
+    request_rate_per_second: Optional[str] = None
+    latency_ms: Optional[str] = None
+
+
 class SystemTelemetryResponse(BaseModel):
     """
     Enterprise DTO. The single source of truth for the CSI Dashboard.
@@ -28,3 +37,4 @@ class SystemTelemetryResponse(BaseModel):
     request_rate_per_second: Optional[float]
     latency_ms: Optional[float]
     history: SystemMetricsHistory
+    metric_timestamps: MetricTimestamps = Field(default_factory=MetricTimestamps)
