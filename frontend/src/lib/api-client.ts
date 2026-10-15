@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const apiClient = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL,
+  baseURL: process.env.NEXT_PUBLIC_API_URL || '/api-proxy',
   headers: {
     'Content-Type': 'application/json',
   },
@@ -24,10 +24,22 @@ apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      // Clear token and redirect if unauthorized
       if (typeof window !== 'undefined') {
-        localStorage.removeItem('token');
-        window.location.href = '/auth/login';
+        const requestHeaders = error.config?.headers;
+        const authorization =
+          typeof requestHeaders?.get === 'function'
+            ? requestHeaders.get('Authorization')
+            : requestHeaders?.Authorization;
+        const requestToken =
+          typeof authorization === 'string' ? authorization.replace(/^Bearer\s+/i, '') : null;
+        const currentToken = localStorage.getItem('token');
+
+        // An older request can finish after a new login. Only expire the session
+        // if the rejected request used the token that is still currently stored.
+        if (requestToken && currentToken && requestToken === currentToken) {
+          localStorage.removeItem('token');
+          window.location.href = '/auth/login';
+        }
       }
     }
     return Promise.reject(error);

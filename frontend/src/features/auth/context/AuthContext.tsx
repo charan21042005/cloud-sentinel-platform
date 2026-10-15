@@ -27,9 +27,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (token) {
         try {
           const userData = await authApi.getMe();
-          setUser(userData);
+          // Ignore a response from an old session if the user logged in again
+          // while this initial profile request was still in flight.
+          if (localStorage.getItem('token') === token) {
+            setUser(userData);
+          }
         } catch {
-          localStorage.removeItem('token');
+          // Do not clear a replacement token created while the request was pending.
+          if (localStorage.getItem('token') === token) {
+            localStorage.removeItem('token');
+          }
         }
       }
       setIsLoading(false);
