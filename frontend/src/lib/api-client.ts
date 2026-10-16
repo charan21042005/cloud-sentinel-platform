@@ -7,9 +7,24 @@ const apiClient = axios.create({
   },
 });
 
+const isPublicAuthRequest = (url?: string) =>
+  typeof url === 'string' && /\/auth\/(?:login|register)\/?(?:\?|$)/.test(url);
+
 // Request Interceptor: Inject JWT token from localStorage
 apiClient.interceptors.request.use(
   (config) => {
+    // Login and registration must remain independent of any stale saved session.
+    // In particular, a failed login should reach LoginForm so it can show its
+    // error instead of being treated as an expired dashboard session.
+    if (isPublicAuthRequest(config.url)) {
+      if (typeof config.headers?.delete === 'function') {
+        config.headers.delete('Authorization');
+      } else if (config.headers) {
+        delete config.headers.Authorization;
+      }
+      return config;
+    }
+
     const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -23,7 +38,7 @@ apiClient.interceptors.request.use(
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
+    if (error.response?.status === 401 && !isPublicAuthRequest(error.config?.url)) {
       if (typeof window !== 'undefined') {
         const requestHeaders = error.config?.headers;
         const authorization =
