@@ -9,6 +9,31 @@ const apiClient = axios.create({
 
 const isPublicAuthRequest = (url?: string) =>
   typeof url === 'string' && /\/auth\/(?:login|register)\/?(?:\?|$)/.test(url);
+const isCurrentUserRequest = (url?: string) =>
+  typeof url === 'string' && /\/users\/me(?:\?|$)/.test(url);
+
+let sessionValidation: { token: string; promise: Promise<boolean | null> } | null = null;
+
+function isSessionValid(token: string): Promise<boolean | null> {
+  if (sessionValidation?.token === token) return sessionValidation.promise;
+
+  const promise = axios
+    .get('/users/me', {
+      baseURL: apiClient.defaults.baseURL,
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    .then(() => true)
+    .catch((error: { response?: { status?: number } }) => {
+      if (error.response?.status === 401) return false;
+      return null;
+    })
+    .finally(() => {
+      if (sessionValidation?.promise === promise) sessionValidation = null;
+    });
+
+  sessionValidation = { token, promise };
+  return promise;
+}
 
 // Request Interceptor: Inject JWT token from localStorage
 apiClient.interceptors.request.use(
@@ -52,8 +77,21 @@ apiClient.interceptors.response.use(
         // An older request can finish after a new login. Only expire the session
         // if the rejected request used the token that is still currently stored.
         if (requestToken && currentToken && requestToken === currentToken) {
-          localStorage.removeItem('token');
-          window.location.href = '/auth/login';
+          const expireSession = () => {
+            if (localStorage.getItem('token') !== currentToken) return;
+            localStorage.removeItem('token');
+            window.location.href = '/auth/login';
+          };
+
+          if (isCurrentUserRequest(error.config?.url)) {
+            expireSession();
+          } else {
+            // A panel-specific 401 does not prove the whole session expired.
+            // Confirm against the canonical profile endpoint before redirecting.
+            void isSessionValid(currentToken).then((valid) => {
+              if (valid === false) expireSession();
+            });
+          }
         }
       }
     }
