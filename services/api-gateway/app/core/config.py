@@ -40,7 +40,9 @@ class Settings(BaseSettings):
     REDIS_URL: str = "redis://localhost:6379/0"
 
     # --- Prometheus Config ---
-    PROMETHEUS_URL: str = "http://sentinel-prometheus.sentinel-monitoring.svc.cluster.local:9090/api/v1"
+    PROMETHEUS_URL: str = (
+        "http://sentinel-prometheus.sentinel-monitoring.svc.cluster.local:9090/api/v1"
+    )
 
 
 settings = Settings()

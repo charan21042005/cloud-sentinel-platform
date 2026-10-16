@@ -2,7 +2,11 @@ import time
 import asyncio
 from datetime import datetime, timezone
 from typing import Optional
-from app.schemas.telemetry import SystemTelemetryResponse, SystemMetricsHistory, MetricTimestamps
+from app.schemas.telemetry import (
+    SystemTelemetryResponse,
+    SystemMetricsHistory,
+    MetricTimestamps,
+)
 from app.services.telemetry.queries import PromQLRegistry
 from app.services.telemetry.prometheus_client import PrometheusAsyncClient
 from app.services.telemetry.transformers import TelemetryTransformer
@@ -18,7 +22,11 @@ class TelemetryAggregator:
                       unavailable, timing out, or has no usable data.
     """
 
-    def __init__(self, client: Optional[PrometheusAsyncClient] = None, simulator: Optional[TelemetrySimulator] = None):
+    def __init__(
+        self,
+        client: Optional[PrometheusAsyncClient] = None,
+        simulator: Optional[TelemetrySimulator] = None,
+    ):
         self.client = client or PrometheusAsyncClient()
         self.simulator = simulator or TelemetrySimulator()
 
@@ -53,7 +61,9 @@ class TelemetryAggregator:
                 self.client.query(PromQLRegistry.REQUEST_SAMPLE_TIMESTAMP),
                 self.client.query(PromQLRegistry.LATENCY_SAMPLE_TIMESTAMP),
                 self.client.query_range(PromQLRegistry.CPU_HISTORY, start, now, step),
-                self.client.query_range(PromQLRegistry.MEMORY_HISTORY, start, now, step),
+                self.client.query_range(
+                    PromQLRegistry.MEMORY_HISTORY, start, now, step
+                ),
                 self.client.query_with_timestamp("vector(1)"),
                 return_exceptions=True,
             )
@@ -95,13 +105,16 @@ class TelemetryAggregator:
         # Determine if we have usable real telemetry data.
         # If Prometheus returned no usable data across all metrics (e.g. no nodes/pods scraped yet),
         # gracefully degrade to demo simulation.
-        has_real_metrics = any(
-            v is not None
-            for v in (raw_cpu, raw_memory, raw_requests, raw_latency)
-        ) or bool(raw_cpu_history) or bool(raw_memory_history)
+        has_real_metrics = (
+            any(v is not None for v in (raw_cpu, raw_memory, raw_requests, raw_latency))
+            or bool(raw_cpu_history)
+            or bool(raw_memory_history)
+        )
 
         if not has_real_metrics:
-            logger.info("[Telemetry Aggregator] No usable Prometheus data found, falling back to simulated telemetry.")
+            logger.info(
+                "[Telemetry Aggregator] No usable Prometheus data found, falling back to simulated telemetry."
+            )
             return await self.simulator.get_simulated_telemetry(
                 source_reachable=source_reachable,
                 source_checked_at=source_checked_at,
@@ -115,7 +128,9 @@ class TelemetryAggregator:
         lat_val = round(raw_latency, 1) if raw_latency is not None else None
 
         cpu_series = TelemetryTransformer.normalize_time_series(raw_cpu_history or [])
-        mem_series = TelemetryTransformer.normalize_time_series(raw_memory_history or [])
+        mem_series = TelemetryTransformer.normalize_time_series(
+            raw_memory_history or []
+        )
 
         return SystemTelemetryResponse(
             source="prometheus",

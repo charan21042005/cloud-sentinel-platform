@@ -10,7 +10,9 @@ from app.db.models.incident import Incident
 from app.core.security import verify_password
 from app.services.websocket.manager import ConnectionManager
 
-LOCAL_DB_URL = "postgresql+asyncpg://local-user:synthetic-password@127.0.0.1:5432/cloud_sentinel"
+LOCAL_DB_URL = (
+    "postgresql+asyncpg://local-user:synthetic-password@127.0.0.1:5432/cloud_sentinel"
+)
 
 
 def configure_bootstrap(
@@ -45,7 +47,11 @@ async def client_with_role(client: AsyncClient, db_session, role: str) -> AsyncC
     password = "synthetic-test-password"
     await client.post(
         "/api/v1/auth/register",
-        json={"username": username, "email": f"{role}@example.com", "password": password},
+        json={
+            "username": username,
+            "email": f"{role}@example.com",
+            "password": password,
+        },
     )
     user = (
         await db_session.execute(select(User).where(User.username == username))
@@ -113,11 +119,19 @@ async def test_invalid_token_is_unauthorized(client: AsyncClient):
 
 
 @pytest.mark.asyncio
-async def test_operator_permissions_are_limited_to_operations(client: AsyncClient, db_session):
+async def test_operator_permissions_are_limited_to_operations(
+    client: AsyncClient, db_session
+):
     operator = await client_with_role(client, db_session, "operator")
     assert (await operator.get("/api/v1/incidents/")).status_code == status.HTTP_200_OK
-    assert (await operator.get("/api/v1/users/")).status_code == status.HTTP_403_FORBIDDEN
-    assert (await operator.post("/api/v1/chaos/inject", json={"target_fault": "packet_loss"})).status_code == status.HTTP_403_FORBIDDEN
+    assert (
+        await operator.get("/api/v1/users/")
+    ).status_code == status.HTTP_403_FORBIDDEN
+    assert (
+        await operator.post(
+            "/api/v1/chaos/inject", json={"target_fault": "packet_loss"}
+        )
+    ).status_code == status.HTTP_403_FORBIDDEN
     profile = await operator.get("/api/v1/users/me")
     assert (
         await operator.patch(
@@ -160,8 +174,12 @@ async def test_admin_can_create_users_and_change_roles(client: AsyncClient, db_s
     listing = await admin.get("/api/v1/users/")
     assert listing.status_code == status.HTTP_200_OK
     assert all("hashed_password" not in user for user in listing.json())
-    managed = next(user for user in listing.json() if user["username"] == "managed_operator")
-    changed = await admin.patch(f"/api/v1/users/{managed['id']}/role", json={"role": "admin"})
+    managed = next(
+        user for user in listing.json() if user["username"] == "managed_operator"
+    )
+    changed = await admin.patch(
+        f"/api/v1/users/{managed['id']}/role", json={"role": "admin"}
+    )
     assert changed.status_code == status.HTTP_200_OK
     assert changed.json()["role"] == "admin"
     duplicate = await admin.post(
@@ -184,7 +202,9 @@ async def test_last_active_admin_cannot_be_demoted(client: AsyncClient, db_sessi
         f"/api/v1/users/{profile.json()['id']}/role", json={"role": "operator"}
     )
     assert response.status_code == status.HTTP_409_CONFLICT
-    assert response.json()["detail"] == "The last active administrator cannot be demoted"
+    assert (
+        response.json()["detail"] == "The last active administrator cannot be demoted"
+    )
 
 
 @pytest.mark.asyncio
@@ -192,7 +212,12 @@ async def test_admin_role_input_is_validated(client: AsyncClient, db_session):
     admin = await client_with_role(client, db_session, "admin")
     response = await admin.post(
         "/api/v1/users/",
-        json={"username": "bad_role", "email": "bad-role@example.com", "password": "synthetic-password", "role": "root"},
+        json={
+            "username": "bad_role",
+            "email": "bad-role@example.com",
+            "password": "synthetic-password",
+            "role": "root",
+        },
     )
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
@@ -210,7 +235,10 @@ async def test_bootstrap_is_cli_only_and_refuses_existing_admin(
     await client_with_role(client, db_session, "admin")
     prompts = iter(["another_admin", "another@example.com"])
     monkeypatch.setattr("builtins.input", lambda _prompt: next(prompts))
-    monkeypatch.setattr(bootstrap_admin, "getpass", lambda _prompt: "synthetic-bootstrap-password")
+    monkeypatch.setattr(
+        bootstrap_admin, "getpass", lambda _prompt: "synthetic-bootstrap-password"
+    )
+
     class InteractiveStream:
         def isatty(self):
             return True
@@ -231,7 +259,9 @@ async def test_bootstrap_creates_hashed_admin_once(db_session, monkeypatch):
     from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
     prompts = iter(["first_admin", "first-admin@example.com"])
-    passwords = iter(["synthetic-first-admin-password", "synthetic-first-admin-password"])
+    passwords = iter(
+        ["synthetic-first-admin-password", "synthetic-first-admin-password"]
+    )
     monkeypatch.setattr("builtins.input", lambda _prompt: next(prompts))
     monkeypatch.setattr(bootstrap_admin, "getpass", lambda _prompt: next(passwords))
 
@@ -267,7 +297,8 @@ async def test_bootstrap_creates_hashed_admin_once(db_session, monkeypatch):
     }
 
     monkeypatch.setattr(
-        "builtins.input", lambda _prompt: pytest.fail("repeat bootstrap prompted for credentials")
+        "builtins.input",
+        lambda _prompt: pytest.fail("repeat bootstrap prompted for credentials"),
     )
     with pytest.raises(SystemExit, match="An administrator already exists"):
         await bootstrap_admin.bootstrap_admin()
@@ -278,7 +309,12 @@ async def test_bootstrap_creates_hashed_admin_once(db_session, monkeypatch):
     [
         ("development", LOCAL_DB_URL, {"DATABASE_URL": LOCAL_DB_URL}, {}),
         ("", LOCAL_DB_URL, {"ENVIRONMENT": "", "DATABASE_URL": LOCAL_DB_URL}, {}),
-        ("staging", LOCAL_DB_URL, {"ENVIRONMENT": "staging", "DATABASE_URL": LOCAL_DB_URL}, {}),
+        (
+            "staging",
+            LOCAL_DB_URL,
+            {"ENVIRONMENT": "staging", "DATABASE_URL": LOCAL_DB_URL},
+            {},
+        ),
         (
             "production",
             LOCAL_DB_URL,
@@ -294,7 +330,12 @@ async def test_bootstrap_creates_hashed_admin_once(db_session, monkeypatch):
             },
         ),
         ("development", LOCAL_DB_URL, {"ENVIRONMENT": "development"}, {}),
-        ("production", LOCAL_DB_URL, {"ENVIRONMENT": "production", "DATABASE_URL": LOCAL_DB_URL}, {}),
+        (
+            "production",
+            LOCAL_DB_URL,
+            {"ENVIRONMENT": "production", "DATABASE_URL": LOCAL_DB_URL},
+            {},
+        ),
         ("development", "", {"ENVIRONMENT": "development", "DATABASE_URL": ""}, {}),
         (
             "development",
@@ -308,7 +349,10 @@ async def test_bootstrap_creates_hashed_admin_once(db_session, monkeypatch):
         (
             "development",
             "sqlite+aiosqlite:///./local.db",
-            {"ENVIRONMENT": "development", "DATABASE_URL": "sqlite+aiosqlite:///./local.db"},
+            {
+                "ENVIRONMENT": "development",
+                "DATABASE_URL": "sqlite+aiosqlite:///./local.db",
+            },
             {},
         ),
         (
@@ -340,7 +384,9 @@ def test_bootstrap_target_fails_closed(
 ):
     from app.cli import bootstrap_admin
 
-    configure_bootstrap(monkeypatch, environment, database_url, file_values, process_values)
+    configure_bootstrap(
+        monkeypatch, environment, database_url, file_values, process_values
+    )
     with pytest.raises(SystemExit):
         bootstrap_admin.validate_bootstrap_target()
 
@@ -353,9 +399,7 @@ def test_bootstrap_target_accepts_explicit_local_development_database(monkeypatc
 
 
 def test_bootstrap_target_accepts_only_verified_local_compose_database(monkeypatch):
-    compose_url = (
-        "postgresql+asyncpg://local-user:synthetic-password@postgres:5432/cloud_sentinel"
-    )
+    compose_url = "postgresql+asyncpg://local-user:synthetic-password@postgres:5432/cloud_sentinel"
     bootstrap_admin = configure_bootstrap(monkeypatch, database_url=compose_url)
     monkeypatch.setattr(
         bootstrap_admin,
@@ -372,9 +416,7 @@ def test_bootstrap_target_accepts_only_verified_local_compose_database(monkeypat
 
 
 def test_bootstrap_target_rejects_unverified_compose_database(monkeypatch):
-    compose_url = (
-        "postgresql+asyncpg://local-user:synthetic-password@postgres:5432/cloud_sentinel"
-    )
+    compose_url = "postgresql+asyncpg://local-user:synthetic-password@postgres:5432/cloud_sentinel"
     bootstrap_admin = configure_bootstrap(monkeypatch, database_url=compose_url)
     monkeypatch.setattr(
         bootstrap_admin, "_verify_local_compose_database", lambda _url: False
@@ -394,7 +436,9 @@ def test_bootstrap_host_check_rejects_nonlocal_and_ambiguous_hosts():
 
 
 @pytest.mark.asyncio
-async def test_bootstrap_refuses_noninteractive_terminal_before_database_access(monkeypatch):
+async def test_bootstrap_refuses_noninteractive_terminal_before_database_access(
+    monkeypatch,
+):
     from app.cli import bootstrap_admin
 
     configure_bootstrap(monkeypatch)
@@ -409,7 +453,9 @@ async def test_bootstrap_refuses_noninteractive_terminal_before_database_access(
     def database_access_must_not_happen():
         pytest.fail("non-interactive bootstrap attempted database access")
 
-    monkeypatch.setattr(bootstrap_admin, "SessionLocal", database_access_must_not_happen)
+    monkeypatch.setattr(
+        bootstrap_admin, "SessionLocal", database_access_must_not_happen
+    )
     with pytest.raises(SystemExit, match="interactive terminal"):
         await bootstrap_admin.bootstrap_admin()
 
@@ -417,9 +463,7 @@ async def test_bootstrap_refuses_noninteractive_terminal_before_database_access(
 def test_compose_child_requires_matching_api_container_identity(monkeypatch):
     from app.cli import bootstrap_admin
 
-    compose_url = (
-        "postgresql+asyncpg://local-user:synthetic-password@postgres:5432/cloud_sentinel"
-    )
+    compose_url = "postgresql+asyncpg://local-user:synthetic-password@postgres:5432/cloud_sentinel"
     bootstrap = configure_bootstrap(monkeypatch, database_url=compose_url)
     target = bootstrap.VerifiedComposeTarget("a" * 64, "172.20.0.4")
     monkeypatch.setenv("HOSTNAME", "b" * 12)
@@ -431,9 +475,7 @@ def test_compose_child_requires_matching_api_container_identity(monkeypatch):
 def test_compose_child_accepts_matching_api_container_identity(monkeypatch):
     from app.cli import bootstrap_admin
 
-    compose_url = (
-        "postgresql+asyncpg://local-user:synthetic-password@postgres:5432/cloud_sentinel"
-    )
+    compose_url = "postgresql+asyncpg://local-user:synthetic-password@postgres:5432/cloud_sentinel"
     bootstrap = configure_bootstrap(monkeypatch, database_url=compose_url)
     target = bootstrap.VerifiedComposeTarget("a" * 64, "172.20.0.4")
     monkeypatch.setenv("HOSTNAME", "a" * 12)
@@ -449,9 +491,7 @@ async def test_host_bootstrap_hands_off_to_verified_api_container(monkeypatch):
     from types import SimpleNamespace
     from app.cli import bootstrap_admin
 
-    compose_url = (
-        "postgresql+asyncpg://local-user:synthetic-password@postgres:5432/cloud_sentinel"
-    )
+    compose_url = "postgresql+asyncpg://local-user:synthetic-password@postgres:5432/cloud_sentinel"
     bootstrap = configure_bootstrap(monkeypatch, database_url=compose_url)
     target = bootstrap.BootstrapTarget(
         url=bootstrap.make_url(compose_url),
@@ -479,7 +519,12 @@ async def test_host_bootstrap_hands_off_to_verified_api_container(monkeypatch):
     assert calls == [
         (
             [
-                "docker", "exec", "-it", "sentinel-api-gateway", "python", "-c",
+                "docker",
+                "exec",
+                "-it",
+                "sentinel-api-gateway",
+                "python",
+                "-c",
                 "import asyncio,sys; from app.cli.bootstrap_admin import "
                 "_bootstrap_verified_compose_child; "
                 "asyncio.run(_bootstrap_verified_compose_child(sys.argv[1],sys.argv[2]))",
@@ -497,9 +542,7 @@ async def test_compose_child_rejects_wrong_database_identity_before_prompt(
 ):
     from app.cli import bootstrap_admin
 
-    compose_url = (
-        "postgresql+asyncpg://local-user:synthetic-password@postgres:5432/cloud_sentinel"
-    )
+    compose_url = "postgresql+asyncpg://local-user:synthetic-password@postgres:5432/cloud_sentinel"
     bootstrap = configure_bootstrap(monkeypatch, database_url=compose_url)
     target = bootstrap.VerifiedComposeTarget("a" * 64, "172.20.0.4")
     monkeypatch.setenv("HOSTNAME", "a" * 12)
@@ -545,19 +588,27 @@ async def test_websocket_rejects_anonymous_and_accepts_active_user(client, db_se
     manager = ConnectionManager()
     anonymous_socket = AsyncMock()
     assert not await manager.connect(anonymous_socket, "telemetry", None, db_session)
-    anonymous_socket.close.assert_awaited_once_with(code=1008, reason="Authentication required")
+    anonymous_socket.close.assert_awaited_once_with(
+        code=1008, reason="Authentication required"
+    )
     anonymous_socket.accept.assert_not_awaited()
 
     await client.post(
         "/api/v1/auth/register",
-        json={"username": "socket_user", "email": "socket@example.com", "password": "synthetic-socket-password"},
+        json={
+            "username": "socket_user",
+            "email": "socket@example.com",
+            "password": "synthetic-socket-password",
+        },
     )
     login = await client.post(
         "/api/v1/auth/login",
         json={"username": "socket_user", "password": "synthetic-socket-password"},
     )
     socket = AsyncMock()
-    assert await manager.connect(socket, "telemetry", login.json()["access_token"], db_session)
+    assert await manager.connect(
+        socket, "telemetry", login.json()["access_token"], db_session
+    )
     socket.accept.assert_awaited_once()
     socket.send_json.assert_awaited_once()
     manager.disconnect(socket, "telemetry")

@@ -29,7 +29,11 @@ async def test_alertmanager_webhook(client: AsyncClient, db_session):
 
     await client.post(
         "/api/v1/auth/register",
-        json={"username": "webhook_operator", "email": "webhook@example.com", "password": "webhook-password"},
+        json={
+            "username": "webhook_operator",
+            "email": "webhook@example.com",
+            "password": "webhook-password",
+        },
     )
     login = await client.post(
         "/api/v1/auth/login",
@@ -38,7 +42,11 @@ async def test_alertmanager_webhook(client: AsyncClient, db_session):
     from sqlalchemy import select
     from app.db.models.user import User
 
-    user = (await db_session.execute(select(User).where(User.username == "webhook_operator"))).scalar_one()
+    user = (
+        await db_session.execute(
+            select(User).where(User.username == "webhook_operator")
+        )
+    ).scalar_one()
     user_id = user.id
     user.role = "operator"
     await db_session.commit()

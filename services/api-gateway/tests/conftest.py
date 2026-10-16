@@ -34,7 +34,7 @@ def event_loop():
 
 
 @pytest.fixture(scope="session", autouse=True)
-async def setup_test_db():
+async def setup_test_db(event_loop):
     """
     Initialize the test database: create all tables.
     """

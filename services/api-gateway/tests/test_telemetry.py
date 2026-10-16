@@ -62,7 +62,9 @@ async def test_prometheus_returns_valid_data():
 async def test_metric_freshness_timestamps_are_independent():
     mock_client = MagicMock(spec=PrometheusAsyncClient)
     mock_client.is_cooling_down = False
-    mock_client.query = AsyncMock(side_effect=[10.0, 20.0, 1.0, 3.0, time.time(), None, time.time(), time.time()])
+    mock_client.query = AsyncMock(
+        side_effect=[10.0, 20.0, 1.0, 3.0, time.time(), None, time.time(), time.time()]
+    )
     mock_client.query_with_timestamp = AsyncMock(return_value=(1.0, time.time()))
     mock_client.query_range = AsyncMock(return_value=[])
 
@@ -96,8 +98,12 @@ async def test_prometheus_connection_failure():
     mock_client = MagicMock(spec=PrometheusAsyncClient)
     mock_client.is_cooling_down = False
     mock_client.query = AsyncMock(side_effect=httpx.ConnectError("Connection refused"))
-    mock_client.query_range = AsyncMock(side_effect=httpx.ConnectError("Connection refused"))
-    mock_client.query_with_timestamp = AsyncMock(side_effect=httpx.ConnectError("Connection refused"))
+    mock_client.query_range = AsyncMock(
+        side_effect=httpx.ConnectError("Connection refused")
+    )
+    mock_client.query_with_timestamp = AsyncMock(
+        side_effect=httpx.ConnectError("Connection refused")
+    )
 
     simulator = TelemetrySimulator()
     aggregator = TelemetryAggregator(client=mock_client, simulator=simulator)
@@ -118,9 +124,13 @@ async def test_prometheus_timeout():
     """3. Prometheus timeout -> simulated fallback is returned."""
     mock_client = MagicMock(spec=PrometheusAsyncClient)
     mock_client.is_cooling_down = False
-    mock_client.query = AsyncMock(side_effect=httpx.ReadTimeout("Timeout querying Prometheus"))
+    mock_client.query = AsyncMock(
+        side_effect=httpx.ReadTimeout("Timeout querying Prometheus")
+    )
     mock_client.query_range = AsyncMock(side_effect=httpx.ReadTimeout("Timeout"))
-    mock_client.query_with_timestamp = AsyncMock(side_effect=httpx.ReadTimeout("Timeout"))
+    mock_client.query_with_timestamp = AsyncMock(
+        side_effect=httpx.ReadTimeout("Timeout")
+    )
 
     aggregator = TelemetryAggregator(client=mock_client)
     res = await aggregator.get_system_telemetry()
@@ -198,7 +208,9 @@ async def test_simulated_history_structure_and_bounds():
 async def test_prometheus_missing_metrics_are_unavailable_not_zero():
     mock_client = MagicMock(spec=PrometheusAsyncClient)
     mock_client.is_cooling_down = False
-    mock_client.query = AsyncMock(side_effect=[18.4, None, 0.4, None, time.time(), None, time.time(), None])
+    mock_client.query = AsyncMock(
+        side_effect=[18.4, None, 0.4, None, time.time(), None, time.time(), None]
+    )
     mock_client.query_with_timestamp = AsyncMock(return_value=(1.0, time.time()))
     mock_client.query_range = AsyncMock(
         side_effect=[[[int(time.time()), "18.4"]], None]
@@ -232,8 +244,12 @@ def test_time_series_transformer_skips_invalid_and_non_finite_samples():
 @pytest.mark.asyncio
 async def test_client_circuit_cooling_prevents_hammering():
     """7. PrometheusAsyncClient circuit cooling prevents hammering unavailable server."""
-    client = PrometheusAsyncClient(base_url="http://invalid-host-never-resolves:9090", timeout=0.1, cooldown_seconds=5.0)
-    
+    client = PrometheusAsyncClient(
+        base_url="http://invalid-host-never-resolves:9090",
+        timeout=0.1,
+        cooldown_seconds=5.0,
+    )
+
     # First query fails and trips the circuit
     val1 = await client.query("up")
     assert val1 is None
@@ -261,7 +277,10 @@ async def test_client_query_with_timestamp_returns_prometheus_sample_time():
     context.__aenter__ = AsyncMock(return_value=http_client)
     context.__aexit__ = AsyncMock(return_value=None)
 
-    with patch("app.services.telemetry.prometheus_client.httpx.AsyncClient", return_value=context):
+    with patch(
+        "app.services.telemetry.prometheus_client.httpx.AsyncClient",
+        return_value=context,
+    ):
         sample = await client.query_with_timestamp("up")
 
     assert sample == (12.5, 1700000000.0)

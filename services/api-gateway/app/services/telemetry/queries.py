@@ -12,10 +12,16 @@ class PromQLRegistry:
     API_LATENCY = '(sum(rate(http_request_duration_seconds_sum{job="sentinel-api"}[1m])) / sum(rate(http_request_duration_seconds_count{job="sentinel-api"}[1m]))) * 1000'
 
     # timestamp() preserves source scrape time rather than query evaluation time.
-    CPU_SAMPLE_TIMESTAMP = 'max(timestamp(node_cpu_seconds_total{job="node-exporter",mode="idle"}))'
-    MEMORY_SAMPLE_TIMESTAMP = 'max(timestamp(node_memory_MemTotal_bytes{job="node-exporter"}))'
+    CPU_SAMPLE_TIMESTAMP = (
+        'max(timestamp(node_cpu_seconds_total{job="node-exporter",mode="idle"}))'
+    )
+    MEMORY_SAMPLE_TIMESTAMP = (
+        'max(timestamp(node_memory_MemTotal_bytes{job="node-exporter"}))'
+    )
     REQUEST_SAMPLE_TIMESTAMP = 'max(timestamp(http_requests_total{job="sentinel-api"}))'
-    LATENCY_SAMPLE_TIMESTAMP = 'max(timestamp(http_request_duration_seconds_count{job="sentinel-api"}))'
+    LATENCY_SAMPLE_TIMESTAMP = (
+        'max(timestamp(http_request_duration_seconds_count{job="sentinel-api"}))'
+    )
 
     # --- Range Queries (Time-Series Area Charts) ---
     CPU_HISTORY = CPU_UTILIZATION

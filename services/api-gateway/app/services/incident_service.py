@@ -257,7 +257,11 @@ class IncidentService:
         incident.status = "acknowledged"
         incident.acknowledged_at = datetime.now(timezone.utc)
         await self._append_event(
-            incident, "acknowledged", actor, {"action": "Acknowledged by SRE"}, actor_user_id
+            incident,
+            "acknowledged",
+            actor,
+            {"action": "Acknowledged by SRE"},
+            actor_user_id,
         )
         await self.incident_repo.db.commit()
         await self.incident_repo.db.refresh(incident)
@@ -302,7 +306,11 @@ class IncidentService:
         incident.status = "resolved"
         incident.resolved_at = datetime.now(timezone.utc)
         await self._append_event(
-            incident, "resolved", actor, {"resolution_source": "operator_or_system"}, actor_user_id
+            incident,
+            "resolved",
+            actor,
+            {"resolution_source": "operator_or_system"},
+            actor_user_id,
         )
         await self.incident_repo.db.commit()
         await self.incident_repo.db.refresh(incident)

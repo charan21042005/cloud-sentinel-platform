@@ -44,8 +44,11 @@ class AuthService:
         self.user_repo.db.add(user_obj)
         await self.user_repo.db.flush()
         self.audit_service.stage(
-            "user.created", "Public registration completed", actor_user_id=user_obj.id,
-            target_type="user", target_id=str(user_obj.id),
+            "user.created",
+            "Public registration completed",
+            actor_user_id=user_obj.id,
+            target_type="user",
+            target_id=str(user_obj.id),
             details={"role": "viewer", "registration": "public"},
         )
         await self.user_repo.db.commit()
@@ -57,20 +60,29 @@ class AuthService:
         user = await self.user_repo.get_by_username(login_data.username)
         if not user:
             await self.audit_service.record(
-                "authentication.login", "Login failed", outcome="failure",
+                "authentication.login",
+                "Login failed",
+                outcome="failure",
                 details={"reason": "invalid_credentials"},
             )
             return None
         if not verify_password(login_data.password, user.hashed_password):
             await self.audit_service.record(
-                "authentication.login", "Login failed", actor_user_id=user.id,
-                outcome="failure", target_type="user", target_id=str(user.id),
+                "authentication.login",
+                "Login failed",
+                actor_user_id=user.id,
+                outcome="failure",
+                target_type="user",
+                target_id=str(user.id),
                 details={"reason": "invalid_credentials"},
             )
             return None
         await self.audit_service.record(
-            "authentication.login", "Login succeeded", actor_user_id=user.id,
-            target_type="user", target_id=str(user.id),
+            "authentication.login",
+            "Login succeeded",
+            actor_user_id=user.id,
+            target_type="user",
+            target_id=str(user.id),
         )
         await self.user_repo.db.refresh(user)
         return user

@@ -27,11 +27,17 @@ class UserService:
     async def list_users(self) -> list[User]:
         return await self.user_repo.list_users()
 
-    async def create_managed_user(self, user_in: AdminUserCreate, actor_user_id) -> User:
+    async def create_managed_user(
+        self, user_in: AdminUserCreate, actor_user_id
+    ) -> User:
         if await self.user_repo.get_by_email(user_in.email):
-            raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Email already registered")
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT, detail="Email already registered"
+            )
         if await self.user_repo.get_by_username(user_in.username):
-            raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Username already taken")
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT, detail="Username already taken"
+            )
         user = User(
             username=user_in.username,
             email=user_in.email,
@@ -43,8 +49,11 @@ class UserService:
         await self.user_repo.db.flush()
         created = user
         self.audit_service.stage(
-            "user.created", "Administrator created a user",
-            actor_user_id=actor_user_id, target_type="user", target_id=str(created.id),
+            "user.created",
+            "Administrator created a user",
+            actor_user_id=actor_user_id,
+            target_type="user",
+            target_id=str(created.id),
             details={"role": created.role},
         )
         await self.user_repo.db.commit()
@@ -63,8 +72,11 @@ class UserService:
         user.role = role
         updated = user
         self.audit_service.stage(
-            "user.role_changed", "Administrator changed a user's role",
-            actor_user_id=actor_user_id, target_type="user", target_id=str(updated.id),
+            "user.role_changed",
+            "Administrator changed a user's role",
+            actor_user_id=actor_user_id,
+            target_type="user",
+            target_id=str(updated.id),
             details={"previous_role": previous_role, "new_role": updated.role},
         )
         await self.user_repo.db.commit()

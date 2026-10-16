@@ -47,8 +47,13 @@ class AuditService:
         details: Optional[dict[str, Any]] = None,
     ) -> AuditLog:
         event = self.stage(
-            event_type, message, actor_user_id=actor_user_id, outcome=outcome,
-            target_type=target_type, target_id=target_id, details=details,
+            event_type,
+            message,
+            actor_user_id=actor_user_id,
+            outcome=outcome,
+            target_type=target_type,
+            target_id=target_id,
+            details=details,
         )
         await self.repository.db.commit()
         await self.repository.db.refresh(event)

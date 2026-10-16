@@ -22,8 +22,12 @@ def upgrade() -> None:
         "audit_logs",
         sa.Column("outcome", sa.String(length=20), nullable=True),
     )
-    op.add_column("audit_logs", sa.Column("target_type", sa.String(length=50), nullable=True))
-    op.add_column("audit_logs", sa.Column("target_id", sa.String(length=100), nullable=True))
+    op.add_column(
+        "audit_logs", sa.Column("target_type", sa.String(length=50), nullable=True)
+    )
+    op.add_column(
+        "audit_logs", sa.Column("target_id", sa.String(length=100), nullable=True)
+    )
     op.add_column(
         "audit_logs",
         sa.Column("details", postgresql.JSONB(astext_type=sa.Text()), nullable=True),
@@ -43,7 +47,9 @@ def upgrade() -> None:
 def downgrade() -> None:
     op.drop_index("ix_audit_logs_created_at", table_name="audit_logs")
     op.drop_index("ix_audit_logs_actor_user_id", table_name="audit_logs")
-    op.drop_constraint("fk_audit_logs_actor_user_id_users", "audit_logs", type_="foreignkey")
+    op.drop_constraint(
+        "fk_audit_logs_actor_user_id_users", "audit_logs", type_="foreignkey"
+    )
     op.drop_column("audit_logs", "details")
     op.drop_column("audit_logs", "target_id")
     op.drop_column("audit_logs", "target_type")

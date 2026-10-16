@@ -59,7 +59,9 @@ class TelemetrySimulator:
             if len(self.cpu_history) > self.history_points:
                 self.cpu_history.pop(0)
 
-            self.memory_history.append(TimeSeriesPoint(timestamp=now_iso, value=mem_val))
+            self.memory_history.append(
+                TimeSeriesPoint(timestamp=now_iso, value=mem_val)
+            )
             if len(self.memory_history) > self.history_points:
                 self.memory_history.pop(0)
 

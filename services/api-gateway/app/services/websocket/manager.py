@@ -77,9 +77,7 @@ class ConnectionManager:
             from uuid import UUID
 
             user_id = UUID(token_data.sub)
-            query = select(User.id).where(
-                User.id == user_id, User.is_active.is_(True)
-            )
+            query = select(User.id).where(User.id == user_id, User.is_active.is_(True))
             if db is None:
                 async with SessionLocal() as session:
                     result = await session.execute(query)
@@ -90,7 +88,9 @@ class ConnectionManager:
             if active_user is not None:
                 return str(user_id)
         except (JWTError, ValidationError, ValueError, TypeError):
-            logger.info("[WebSocket Transport] Rejected an invalid authentication session.")
+            logger.info(
+                "[WebSocket Transport] Rejected an invalid authentication session."
+            )
         except Exception:
             logger.warning("[WebSocket Transport] Authentication check failed.")
             return None

@@ -12,7 +12,12 @@ class PrometheusAsyncClient:
     Abstracts connection pooling, bounded timeouts, circuit cooling, and JSON unwrapping.
     """
 
-    def __init__(self, base_url: Optional[str] = None, timeout: float = 2.0, cooldown_seconds: float = 10.0):
+    def __init__(
+        self,
+        base_url: Optional[str] = None,
+        timeout: float = 2.0,
+        cooldown_seconds: float = 10.0,
+    ):
         self.base_url = (base_url or settings.PROMETHEUS_URL).rstrip("/")
         self.timeout = timeout
         self.cooldown_seconds = cooldown_seconds
@@ -39,7 +44,9 @@ class PrometheusAsyncClient:
         sample = await self.query_with_timestamp(query_str)
         return sample[0] if sample is not None else None
 
-    async def query_with_timestamp(self, query_str: str) -> Optional[Tuple[float, float]]:
+    async def query_with_timestamp(
+        self, query_str: str
+    ) -> Optional[Tuple[float, float]]:
         """Return the finite value and Prometheus result timestamp for an instant query."""
         if self.is_cooling_down:
             return None

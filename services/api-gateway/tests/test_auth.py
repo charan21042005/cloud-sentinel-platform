@@ -66,7 +66,9 @@ async def test_auth_login_flow(client: AsyncClient):
 
 
 @pytest.mark.asyncio
-async def test_registration_persists_only_a_password_hash(client: AsyncClient, db_session):
+async def test_registration_persists_only_a_password_hash(
+    client: AsyncClient, db_session
+):
     password = "test-only-password-482"
     response = await client.post(
         "/api/v1/auth/register",
@@ -88,7 +90,9 @@ async def test_registration_persists_only_a_password_hash(client: AsyncClient, d
 
 
 @pytest.mark.asyncio
-async def test_public_registration_ignores_attempted_role_escalation(client: AsyncClient):
+async def test_public_registration_ignores_attempted_role_escalation(
+    client: AsyncClient,
+):
     response = await client.post(
         "/api/v1/auth/register",
         json={
@@ -107,8 +111,16 @@ async def test_public_registration_ignores_attempted_role_escalation(client: Asy
 @pytest.mark.parametrize(
     "payload",
     [
-        {"username": "ab", "email": "valid@example.com", "password": "long-enough-password"},
-        {"username": "valid_user", "email": "invalid-email", "password": "long-enough-password"},
+        {
+            "username": "ab",
+            "email": "valid@example.com",
+            "password": "long-enough-password",
+        },
+        {
+            "username": "valid_user",
+            "email": "invalid-email",
+            "password": "long-enough-password",
+        },
         {"username": "valid_user", "email": "valid@example.com", "password": "short"},
         {"username": "valid_user", "email": "valid@example.com", "password": "😀" * 19},
     ],
