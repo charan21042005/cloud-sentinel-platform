@@ -173,6 +173,11 @@ async def test_admin_can_create_users_and_change_roles(client: AsyncClient, db_s
 
     listing = await admin.get("/api/v1/users/")
     assert listing.status_code == status.HTTP_200_OK
+    # The frontend proxy canonicalizes API paths without a trailing slash;
+    # serve both forms directly so authenticated requests never redirect.
+    canonical_listing = await admin.get("/api/v1/users", follow_redirects=False)
+    assert canonical_listing.status_code == status.HTTP_200_OK
+    assert canonical_listing.json() == listing.json()
     assert all("hashed_password" not in user for user in listing.json())
     managed = next(
         user for user in listing.json() if user["username"] == "managed_operator"
